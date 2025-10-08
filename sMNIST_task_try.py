@@ -2,6 +2,7 @@ import torch
 from torch import nn, optim
 import torch.nn.utils
 from utils import get_mnist_data, coRNN, coESN, check, LSTM
+from utils_spikes import *
 from pathlib import Path
 import argparse
 from tqdm import tqdm
@@ -13,7 +14,8 @@ parser = argparse.ArgumentParser(description='training parameters')
 
 parser.add_argument('--n_hid', type=int, default=256,
                     help='hidden size of recurrent net')
-parser.add_argument('--epochs', type=int, default=120,
+parser.add_argument('--epochs', type=int, #default=120, #original defualt is 120. decrease to increase speed
+                    default=20,
                     help='max epochs')
 parser.add_argument('--batch', type=int, default=120,
                     help='batch size')
@@ -126,11 +128,15 @@ if args.esn:
         ## Reshape images for sequence learning:
         images = images.reshape(images.shape[0], 1, 784)
         images = images.permute(0, 2, 1)
+        print(images.shape) #(120, 784, 1) #(batch, time_steps (pixels), input_size)
         output = model(images)[-1][0]
+        print(output.shape) #(120, 256) (batch, hidden_size)
         activations.append(output.cpu())
         ys.append(labels)
     activations = torch.cat(activations, dim=0).numpy()
+    #print(activations.shape) #output r(t). This is what goes into the loss function. (57.000, 256) = (num_samples, hidden_size)
     ys = torch.cat(ys, dim=0).numpy()
+    #print(ys.shape) #labels (57.000,)
     scaler = preprocessing.StandardScaler().fit(activations)
     activations = scaler.transform(activations)
     classifier = LogisticRegression(max_iter=1000).fit(activations, ys)
