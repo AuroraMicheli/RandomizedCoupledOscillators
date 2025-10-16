@@ -1,0 +1,1 @@
+n_hid=256, Valid acc=57.47, Test acc=59.38, Rate=31.31%

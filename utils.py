@@ -529,12 +529,14 @@ def get_mackey_glass(lag=1, washout=200, window_size=0):
 
 
 def get_mnist_data(bs_train,bs_test):
-    train_dataset = torchvision.datasets.MNIST(root='data/',
+    train_dataset = torchvision.datasets.MNIST(#root='data/',
+                                               root = '/tudelft.net/staff-bulk/ewi/insy/VisionLab/amicheli/RandomizedCoupledOscillators/data/',
                                                train=True,
                                                transform=transforms.ToTensor(),
                                                download=True)
 
-    test_dataset = torchvision.datasets.MNIST(root='data/',
+    test_dataset = torchvision.datasets.MNIST(#root='data/',
+                                              root = '/tudelft.net/staff-bulk/ewi/insy/VisionLab/amicheli/RandomizedCoupledOscillators/data/',
                                               train=False,
                                               transform=transforms.ToTensor())
 

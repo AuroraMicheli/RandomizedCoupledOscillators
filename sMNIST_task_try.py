@@ -2,7 +2,7 @@ import torch
 from torch import nn, optim
 import torch.nn.utils
 from utils import get_mnist_data, coRNN, coESN, check, LSTM
-from utils_spikes import *
+#from utils_spikes import *
 from pathlib import Path
 import argparse
 from tqdm import tqdm
@@ -82,10 +82,17 @@ else:
                   no_friction=args.no_friction, device=device).to(device)
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
+
+
 train_loader, valid_loader, test_loader = get_mnist_data(args.batch,bs_test)
 
 objective = nn.CrossEntropyLoss()
 
+
+
+# -------------------------------
+# test functions
+# -------------------------------
 def test(data_loader):
     model.eval()
     correct = 0
@@ -93,25 +100,22 @@ def test(data_loader):
     with torch.no_grad():
         for i, (images, labels) in enumerate(data_loader):
             images, labels = images.to(device), labels.to(device)
-            images = images.reshape(bs_test, 1, 784)
-            images = images.permute(0, 2, 1)
-
+            images = images.reshape(bs_test, 1, 784).permute(0, 2, 1)
             output = model(images)
             test_loss += objective(output, labels).item()
             pred = output.data.max(1, keepdim=True)[1]
             correct += pred.eq(labels.data.view_as(pred)).sum()
-    test_loss /= i+1
+    test_loss /= i + 1
     accuracy = 100. * correct / len(data_loader.dataset)
-
     return accuracy.item()
+
 
 @torch.no_grad()
 def test_esn(data_loader, classifier, scaler):
     activations, ys = [], []
-    for images, labels in tqdm(data_loader):
+    for images, labels in tqdm(data_loader, ncols=80, disable=False):
         images = images.to(device)
-        images = images.reshape(bs_test, 1, 784)
-        images = images.permute(0, 2, 1)
+        images = images.reshape(bs_test, 1, 784).permute(0, 2, 1)
         output = model(images)[-1][0]
         activations.append(output.cpu())
         ys.append(labels)
@@ -121,35 +125,32 @@ def test_esn(data_loader, classifier, scaler):
     return classifier.score(activations, ys)
 
 
+# -------------------------------
+# training / logging
+# -------------------------------
 if args.esn:
     activations, ys = [], []
-    for images, labels in tqdm(train_loader):
+    for images, labels in tqdm(train_loader, ncols=80, disable=False, leave=True):
         images = images.to(device)
-        ## Reshape images for sequence learning:
-        images = images.reshape(images.shape[0], 1, 784)
-        images = images.permute(0, 2, 1)
-        print(images.shape) #(120, 784, 1) #(batch, time_steps (pixels), input_size)
-        output = model(images)[-1][0]
-        print(output.shape) #(120, 256) (batch, hidden_size)
+        images = images.reshape(images.shape[0], 1, 784).permute(0, 2, 1)
+        output = model(images)[-1][0]  #shape of output is [batch, n_hid]
         activations.append(output.cpu())
         ys.append(labels)
-    activations = torch.cat(activations, dim=0).numpy()
-    #print(activations.shape) #output r(t). This is what goes into the loss function. (57.000, 256) = (num_samples, hidden_size)
-    ys = torch.cat(ys, dim=0).numpy()
-    #print(ys.shape) #labels (57.000,)
+    activations = torch.cat(activations, dim=0).numpy() #shape is [N, n_hid], with N=len(train dataset)
+    ys = torch.cat(ys, dim=0).numpy() #shape [N,]
     scaler = preprocessing.StandardScaler().fit(activations)
-    activations = scaler.transform(activations)
+    activations = scaler.transform(activations) #standardize activations feature-wise. Subtract mean and divide by standard deviation for each hidden neuron’s activation.
     classifier = LogisticRegression(max_iter=1000).fit(activations, ys)
     valid_acc = test_esn(valid_loader, classifier, scaler)
     test_acc = test_esn(test_loader, classifier, scaler) if args.use_test else 0.0
+
 else:
     for epoch in range(args.epochs):
-        print(f"Epoch {epoch}")
+        print(f"\n=== Epoch {epoch + 1}/{args.epochs} ===", flush=True)
         model.train()
-        for images, labels in tqdm(train_loader):
+        for images, labels in tqdm(train_loader, ncols=80, disable=False, leave=True):
             images, labels = images.to(device), labels.to(device)
-            images = images.reshape(images.shape[0], 1, 784)
-            images = images.permute(0, 2, 1)
+            images = images.reshape(images.shape[0], 1, 784).permute(0, 2, 1)
 
             optimizer.zero_grad()
             output = model(images)
@@ -159,33 +160,37 @@ else:
 
         valid_acc = test(valid_loader)
         test_acc = test(test_loader) if args.use_test else 0.0
+
         Path(main_folder).mkdir(parents=True, exist_ok=True)
-        if args.no_friction:
-            f = open(f'{main_folder}/sMNIST_log_no_friction.txt', 'a')
-        else:
-            f = open(f'{main_folder}/sMNIST_log.txt', 'a')
+        log_file = f'{main_folder}/sMNIST_log_no_friction.txt' if args.no_friction else f'{main_folder}/sMNIST_log.txt'
+        with open(log_file, 'a') as f:
+            f.write(f'Epoch {epoch + 1}/{args.epochs}\n')
+            f.write(f'Valid accuracy: {valid_acc:.2f}\n')
+            f.write(f'Test accuracy: {test_acc:.2f}\n\n')
 
-        f.write('valid accuracy: ' + str(round(valid_acc, 2)) + '\n')
-        f.write('test accuracy: ' + str(round(test_acc, 2)) + '\n')
-        f.close()
-        print(f"Valid accuracy: ", valid_acc)
-        print(f"Test accuracy: ", test_acc)
+        print(f"✅ Valid accuracy: {valid_acc:.2f}", flush=True)
+        print(f"✅ Test accuracy: {test_acc:.2f}", flush=True)
 
-        if (epoch+1) % 100 == 0:
+        if (epoch + 1) % 100 == 0:
             args.lr /= 10.
             for param_group in optimizer.param_groups:
                 param_group['lr'] = args.lr
 
+
+# -------------------------------
+# Final run summary
+# -------------------------------
 if args.lstm:
     f = open(f'{main_folder}/sMNIST_log_lstm.txt', 'a')
-elif args.no_friction and (not args.esn): # coRNN without friction
+elif args.no_friction and (not args.esn):
     f = open(f'{main_folder}/sMNIST_log_no_friction.txt', 'a')
-elif args.esn and args.no_friction: # coESN
+elif args.esn and args.no_friction:
     f = open(f'{main_folder}/sMNIST_log_coESN.txt', 'a')
-elif args.esn: # ESN
+elif args.esn:
     f = open(f'{main_folder}/sMNIST_log_esn.txt', 'a')
-else: # original coRNN
+else:
     f = open(f'{main_folder}/sMNIST_log.txt', 'a')
+
 ar = ''
 for k, v in vars(args).items():
     ar += f'{str(k)}: {str(v)}, '

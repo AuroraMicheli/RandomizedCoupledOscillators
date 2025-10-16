@@ -1,0 +1,6 @@
+n_hid=256, Valid acc=56.17, Test acc=56.86
+n_hid=256, Valid acc=74.10, Test acc=74.75
+n_hid=256, Valid acc=60.47, Test acc=59.92
+n_hid=256, Valid acc=56.23, Test acc=56.15
+n_hid=256, Valid acc=59.70, Test acc=59.38
+n_hid=256, Valid acc=77.73, Test acc=77.94

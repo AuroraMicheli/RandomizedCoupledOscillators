@@ -1,3 +1,20 @@
-Epoch 0, Loss: 2.3016, Valid acc: 12.13
-Epoch 0, Loss: 2.3016, Valid acc: 11.60
-Epoch 1, Loss: 2.3015, Valid acc: 11.60
+Epoch 1, Loss: 2.3015, Valid acc: 11.00, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 2, Loss: 2.3011, Valid acc: 11.00, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 3, Loss: 2.3010, Valid acc: 11.00, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 4, Loss: 2.3008, Valid acc: 11.03, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 5, Loss: 2.3007, Valid acc: 11.03, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 6, Loss: 2.3005, Valid acc: 11.07, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 7, Loss: 2.3004, Valid acc: 11.07, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 8, Loss: 2.3002, Valid acc: 11.07, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 9, Loss: 2.3001, Valid acc: 11.07, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 10, Loss: 2.2999, Valid acc: 11.10, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 11, Loss: 2.2998, Valid acc: 11.10, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 12, Loss: 2.2997, Valid acc: 11.10, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 13, Loss: 2.2995, Valid acc: 11.10, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 14, Loss: 2.2993, Valid acc: 11.10, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 15, Loss: 2.2992, Valid acc: 11.10, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 16, Loss: 2.2991, Valid acc: 11.23, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 17, Loss: 2.2989, Valid acc: 11.17, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 18, Loss: 2.2988, Valid acc: 11.23, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 19, Loss: 2.2986, Valid acc: 11.17, Avg rate: 394.53%, MAC reduction: -12.05%
+Epoch 20, Loss: 2.2985, Valid acc: 11.10, Avg rate: 394.53%, MAC reduction: -12.05%
