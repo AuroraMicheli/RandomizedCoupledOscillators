@@ -18,70 +18,6 @@ from utils import get_mnist_data
 from sklearn import preprocessing
 from pathlib import Path
 
-####### ORIGINAL RON ##########
-class coESN(nn.Module):
-    """
-    Batch-first (B, L, I)
-    """
-    def __init__(self, n_inp, n_hid, dt, gamma, epsilon, rho, input_scaling, device='cpu',
-                 fading=False):
-        super().__init__()
-        self.n_hid = n_hid
-        self.device = device
-        self.fading = fading
-        self.dt = dt
-        if isinstance(gamma, tuple):
-            gamma_min, gamma_max = gamma
-            self.gamma = torch.rand(n_hid, requires_grad=False, device=device) * (gamma_max - gamma_min) + gamma_min
-        else:
-            self.gamma = gamma
-        if isinstance(epsilon, tuple):
-            eps_min, eps_max = epsilon
-            self.epsilon = torch.rand(n_hid, requires_grad=False, device=device) * (eps_max - eps_min) + eps_min
-        else:
-            self.epsilon = epsilon
-
-        h2h = 2 * (2 * torch.rand(n_hid, n_hid) - 1)
-        if gamma_max == gamma_min and eps_min == eps_max and gamma_max == 1:
-            leaky = dt**2
-            I = torch.eye(self.n_hid)
-            h2h = h2h * leaky + (I * (1 - leaky))
-            h2h = spectral_norm_scaling(h2h, rho)
-            self.h2h = (h2h + I * (leaky - 1)) * (1 / leaky)
-        else:
-            h2h = spectral_norm_scaling(h2h, rho)
-        self.h2h = nn.Parameter(h2h, requires_grad=False)
-
-        # x2h = 2 * (2 * torch.rand(n_inp, self.n_hid) - 1) * input_scaling
-        # alternative init
-        x2h = torch.rand(n_inp, n_hid) * input_scaling
-        self.x2h = nn.Parameter(x2h, requires_grad=False)
-        bias = (torch.rand(n_hid) * 2 - 1) * input_scaling
-        self.bias = nn.Parameter(bias, requires_grad=False)
-
-    def cell(self, x, hy, hz):
-        hz = hz + self.dt * (torch.tanh(
-            torch.matmul(x, self.x2h) + torch.matmul(hy, self.h2h) + self.bias)
-                             - self.gamma * hy - self.epsilon * hz)
-        if self.fading:
-            hz = hz - self.dt * hz
-
-        hy = hy + self.dt * hz
-        if self.fading:
-            hy = hy - self.dt * hy
-        return hy, hz
-
-    def forward(self, x):
-        ## initialize hidden states
-        hy = torch.zeros(x.size(0),self.n_hid).to(self.device)
-        hz = torch.zeros(x.size(0),self.n_hid).to(self.device)
-        all_states = []
-        for t in range(x.size(1)):
-            hy, hz = self.cell(x[:, t],hy,hz)
-            all_states.append(hy)
-
-        return torch.stack(all_states, dim=1), [hy]  # list to be compatible with ESN implementation
-    
 
     ####### SPIKING RON ##########
 
@@ -126,7 +62,7 @@ class spiking_coESN(nn.Module):
         bias = (torch.rand(n_hid) * 2 - 1) * input_scaling
         self.bias = nn.Parameter(bias, requires_grad=False)
 
-    def cell(self, x, hy, hz, theta: float = 0.99, ref_period=torch.Tensor):
+    def cell(self, x, hy, hz, theta: float = 0.1, ref_period=torch.Tensor):
         hz = hz + self.dt * (torch.tanh(
             torch.matmul(x, self.x2h) + torch.matmul(hy, self.h2h) + self.bias)
                              - self.gamma * hy - self.epsilon * hz)
@@ -138,10 +74,11 @@ class spiking_coESN(nn.Module):
             hy = hy - self.dt * hy
         
         # spiking non-linearity
-        s = (hz - theta - ref_period > 0).float()
+        with torch.no_grad():
+            s = (hz - theta - ref_period > 0).float()
         #ref_period = ref_period.mul(0.9) + s       #increase refractory period (decay). Surrogate of a soft reset
 
-        # reset membrane potential
+        # reset membrane potential NOW MISSING
      
         return hy, hz, s, ref_period
 
@@ -155,6 +92,7 @@ class spiking_coESN(nn.Module):
 
         all_states = []
         all_spikes = []
+        
         for t in range(x.size(1)):
             hy, hz, s, ref_period = self.cell(x[:, t],hy,hz, ref_period=ref_period)
             all_states.append(hy)
@@ -187,50 +125,94 @@ class spiking_coESN(nn.Module):
         torch.nn.init.xavier_uniform_(self.li_linear.weight)
         torch.nn.init.constant_(self.li_linear.bias, 0.0)
 
-        # Create a buffer for tau-based decay
+        # Create a buffer for tau-based deca y
         tau_mem_tensor = torch.tensor(tau_mem, device=self.device)
         alpha = torch.exp(-1.0 / tau_mem_tensor)
         self.register_buffer("li_alpha", alpha)
 
-    def li_layer(self, spikes: torch.Tensor):
+
+    #LI layer linear operation fully vectorized
+    def li_layer(self, spikes):
         """
-        Integrate spike activity through a leaky integrator output layer.
         spikes: (B, T, n_hid)
-        Returns:
-            u_all: membrane potentials over time, shape (B, T, n_classes)
-            u_final: final membrane potential (B, n_classes)
+        returns:
+            u_all: (B, T, n_classes)
+            u_final: (B, n_classes)
         """
         B, T, _ = spikes.shape
-        u = torch.zeros(B, self.n_classes, device=self.device)
-        u_all = []
+
+        # Vectorize linear layer
+        spikes_flat = spikes.reshape(B*T, self.n_hid)            # (B*T, n_hid)
+        lin_flat = self.li_linear(spikes_flat)                  # (B*T, n_classes)
+        lin = lin_flat.view(B, T, self.n_classes)              # (B, T, n_classes)
+
+        # Leaky integration (still a small Python loop)
+        u = torch.zeros(B, self.n_classes, device=spikes.device)
+        u_all = torch.zeros(B, T, self.n_classes, device=spikes.device)
 
         for t in range(T):
-            x_t = spikes[:, t]  # (B, n_hid)
-            in_sum = self.li_linear(x_t)
-            u = u * self.li_alpha + in_sum * (1.0 - self.li_alpha)
-            u_all.append(u)
+            u = u * self.li_alpha + lin[:, t] * (1 - self.li_alpha)
+            u_all[:, t] = u
 
-        u_all = torch.stack(u_all, dim=1)
         return u_all, u
+
     
+     # ---------- NEW FUNCTION BELOW ----------
+    def forward_streaming_li(self, x):
+        """
+        Streaming leaky integration (Option B).
+        Does not store (B,T,N) spikes, integrates output online.
+
+        Returns:
+            u_final: (B, n_classes)
+            stats: dict with total_spikes and avg_firing_rate
+        """
+        B, T = x.size(0), x.size(1)
+        hy = torch.zeros(B, self.n_hid, device=self.device)
+        hz = torch.zeros(B, self.n_hid, device=self.device)
+        ref_period = torch.zeros(B, self.n_hid, device=self.device)
+        u = torch.zeros(B, self.n_classes, device=self.device)
+
+        total_spikes = 0
+
+        for t in range(T):
+            hy, hz, s, ref_period = self.cell(x[:, t], hy, hz, ref_period=ref_period)
+            total_spikes += int((s != 0).sum().item())
+
+            # dense readout (can be replaced by sparse version later)
+            lin = self.li_linear(s)
+            u = u * self.li_alpha + lin * (1.0 - self.li_alpha)
+
+        avg_firing_rate = total_spikes / (B * T * self.n_hid)
+
+        stats = {
+            "total_spikes": total_spikes,
+            "avg_firing_rate": avg_firing_rate
+        }
+
+        return u, stats
+
+
 
     ############# TRAINING ON sMNIST #################
 
 import torch
 from torch import nn, optim
-from tqdm import tqdm
+
 from utils import get_mnist_data
 from sklearn import preprocessing
 from pathlib import Path
 
 parser = argparse.ArgumentParser(description='training parameters')
 
-parser.add_argument('--n_hid', type=int, default=256,
+parser.add_argument('--n_hid', type=int, #default=256, #original defualt is 256. decrease to increase speed
+                    default=120,
                     help='hidden size of recurrent net')
 parser.add_argument('--epochs', type=int, #default=120, #original defualt is 120. decrease to increase speed
                     default=20,
                     help='max epochs')
-parser.add_argument('--batch', type=int, default=120,
+parser.add_argument('--batch', type=int, #default=120, #original defualt is 120. increase to increase speed
+                    default=256,
                     help='batch size')
 parser.add_argument('--lr', type=float, default=0.0021,
                     help='learning rate')
@@ -266,6 +248,8 @@ print(args)
 
 # --- setup ---
 device = torch.device("cuda") if torch.cuda.is_available() and not args.cpu else torch.device("cpu")
+#device = torch.device("cpu")
+
 n_inp = 1
 n_out = 10
 bs_test = 100
@@ -293,12 +277,97 @@ objective = nn.CrossEntropyLoss()
 train_loader, valid_loader, test_loader = get_mnist_data(args.batch, bs_test)
 
 # --- training ---
+
+# --- training ---
+dense_MACs = None  # we'll compute this once based on model dims
+
+for epoch in range(args.epochs):
+    print(f"\nEpoch {epoch + 1}/{args.epochs}")
+    model.train()
+    total_loss = 0.0
+    total_spikes_epoch = 0
+    total_batches = 0
+
+    progress_bar = tqdm(train_loader, desc=f"Training", leave=False)
+
+    for images, labels in progress_bar:
+        images, labels = images.to(device), labels.to(device)
+        # reshape to (B, T, 1)
+        images = images.reshape(images.shape[0], 1, 784).permute(0, 2, 1)
+
+        optimizer.zero_grad()
+
+        # forward with streaming LI integration
+        u_final, stats = model.forward_streaming_li(images)
+        loss = objective(u_final, labels)
+        loss.backward()
+        optimizer.step()
+
+        total_loss += loss.item()
+        total_spikes_epoch += stats["total_spikes"]
+        total_batches += 1
+
+        avg_loss = total_loss / total_batches
+        avg_rate = stats["avg_firing_rate"]
+
+        progress_bar.set_postfix({
+            "loss": f"{avg_loss:.4f}",
+            "rate": f"{avg_rate*100:.2f}%"
+        })
+
+    # ---- epoch summary ----
+    avg_loss = total_loss / len(train_loader)
+    avg_rate_epoch = total_spikes_epoch / (len(train_loader.dataset) * model.n_hid)
+    print(f"Train loss: {avg_loss:.4f} | Avg firing rate: {avg_rate_epoch*100:.2f}%")
+
+    # --- validation ---
+    model.eval()
+    correct = 0
+    with torch.no_grad():
+        for images, labels in valid_loader:
+            images, labels = images.to(device), labels.to(device)
+            images = images.reshape(bs_test, 1, 784).permute(0, 2, 1)
+
+            u_final, _ = model.forward_streaming_li(images)
+            preds = u_final.argmax(dim=1)
+            correct += (preds == labels).sum().item()
+
+    valid_acc = 100.0 * correct / len(valid_loader.dataset)
+    print(f"Validation accuracy: {valid_acc:.2f}%")
+
+    # --- MACs estimation ---
+    if dense_MACs is None:
+        B = args.batch
+        T = 784
+        N_hid = model.n_hid
+        N_cls = model.n_classes
+        dense_MACs = T * B * N_hid * N_cls  # baseline dense cost
+    sparse_MACs = total_spikes_epoch * model.n_classes
+    mac_reduction = (1 - sparse_MACs / dense_MACs) * 100
+
+    print(f"Estimated MACs reduction: {mac_reduction:.2f}%")
+
+    # --- Save logs ---
+    Path(main_folder).mkdir(parents=True, exist_ok=True)
+    with open(f'{main_folder}/sMNIST_log_spiking_coESN.txt', 'a') as f:
+        f.write(
+            f"Epoch {epoch + 1}, "
+            f"Loss: {avg_loss:.4f}, "
+            f"Valid acc: {valid_acc:.2f}, "
+            f"Avg rate: {avg_rate_epoch*100:.2f}%, "
+            f"MAC reduction: {mac_reduction:.2f}%\n"
+        )
+
+
+'''
 for epoch in range(args.epochs):
     print(f"\nEpoch {epoch}")
     model.train()
     total_loss = 0.0
 
-    for images, labels in tqdm(train_loader):
+    progress_bar = tqdm(train_loader, desc=f"Training", leave=False)
+
+    for images, labels in progress_bar: #tqdm(train_loader):
         images, labels = images.to(device), labels.to(device)
         # reshape to (B, T, 1)
         images = images.reshape(images.shape[0], 1, 784).permute(0, 2, 1)
@@ -306,15 +375,25 @@ for epoch in range(args.epochs):
         optimizer.zero_grad()
 
         # reservoir forward
-        states, spikes, _ = model(images)
+      
+        states, spikes, _ = model(images)  #states nd spikes [batch, time, hidden units]
+        
+
+        #print("states:", states[0, :, 50])
+        num_spikes = (spikes != 0).sum().item()
+        print(f"Number of spikes: {num_spikes}")
 
         # LI output layer forward
-        u_all, u_final = model.li_layer(spikes)
+        #u_all, u_final = model.li_layer(spikes)
+        u_final, stats = model.forward_streaming_li(images) #function for online
 
         # loss on final membrane potential (logits)
         loss = objective(u_final, labels)
         loss.backward()
         optimizer.step()
+
+        total_spikes = stats["total_spikes"]
+        avg_rate = stats["avg_firing_rate"]
 
         total_loss += loss.item()
 
@@ -347,3 +426,4 @@ for epoch in range(args.epochs):
         args.lr /= 10.
         for param_group in optimizer.param_groups:
             param_group['lr'] = args.lr
+'''

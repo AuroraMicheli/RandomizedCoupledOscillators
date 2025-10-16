@@ -1,8 +1,12 @@
-n_hid: 256, epochs: 120, batch: 120, lr: 0.0021, dt: 0.042, gamma: 2.7, epsilon: 4.7, gamma_range: 2.7, epsilon_range: 4.7, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 1.0, rho: 0.99, leaky: 1.0, lstm: False, use_test: False, valid: 0.7, test: 0.0
+n_hid: 256, epochs: 40, batch: 256, lr: 0.0021, dt: 0.042, gamma: 2.7, epsilon: 4.7, gamma_range: 2.7, epsilon_range: 4.7, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 1.0, rho: 0.99, leaky: 1.0, lstm: False, use_test: False, valid: 0.71, test: 0.0
 **************
 
 
-n_hid: 256, epochs: 120, batch: 120, lr: 0.0021, dt: 0.042, gamma: 2.7, epsilon: 4.7, gamma_range: 2.7, epsilon_range: 4.7, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 1.0, rho: 0.99, leaky: 1.0, lstm: False, use_test: False, valid: 0.72, test: 0.0
+n_hid: 256, epochs: 40, batch: 256, lr: 0.0021, dt: 0.042, gamma: 2.7, epsilon: 4.7, gamma_range: 2.7, epsilon_range: 4.7, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 1.0, rho: 0.99, leaky: 1.0, lstm: False, use_test: False, valid: 0.7, test: 0.0
+**************
+
+
+n_hid: 256, epochs: 80, batch: 256, lr: 0.0021, dt: 0.042, gamma: 2.7, epsilon: 4.7, gamma_range: 2.7, epsilon_range: 4.7, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 1.0, rho: 0.99, leaky: 1.0, lstm: False, use_test: False, valid: 0.7, test: 0.0
 **************
 
 
