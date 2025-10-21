@@ -15,7 +15,7 @@ parser = argparse.ArgumentParser(description='training parameters')
 parser.add_argument('--n_hid', type=int, default=256,
                     help='hidden size of recurrent net')
 parser.add_argument('--epochs', type=int, #default=120, #original defualt is 120. decrease to increase speed
-                    default=20,
+                    default=120,
                     help='max epochs')
 parser.add_argument('--batch', type=int, default=120,
                     help='batch size')

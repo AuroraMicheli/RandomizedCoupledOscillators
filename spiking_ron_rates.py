@@ -72,8 +72,143 @@ class spiking_coESN(nn.Module):
         if ref_period is None:
             ref_period = torch.zeros_like(hz)
         s = (hy - theta - ref_period > 0).float()   #tried using hy as mem potential and better accuracy, it's probably higher so more spikes. check values
-
+        ref_period = ref_period.mul(0.9) + s
         #to implement proper HRF neurons add smooth reset/ref period like in paper
+
+        return hy, hz, s, ref_period
+
+    def bio_cell(self, x, hy, hz, theta=0.1, ref_period=None):
+        #Here also implemented version of soft reset and refractory period
+        hz = hz + self.dt * (
+            torch.tanh(torch.matmul(x, self.x2h) + torch.matmul(hy, self.h2h) + self.bias)
+            - self.gamma * hy - self.epsilon * hz
+        )
+        if self.fading:
+            hz = hz - self.dt * hz
+        hy = hy + self.dt * hz
+        if self.fading:
+            hy = hy - self.dt * hy
+
+        if ref_period is None:
+            ref_period = torch.zeros_like(hz)
+
+        # Spike detection (refractory increases threshold)
+        s = (hy - theta - ref_period > 0).float()
+
+        # Smooth reset and refractory decay
+        alpha = 0.3  # reset rate (increase for less spikes)
+        beta = 0.4 # velocity damping (increase for less spikes)
+        tau_ref = 0.25  # refractory time constant
+
+        hy = hy * (1 - s * alpha)         # soft reset
+        hz = hz * (1 - s * beta)          # damp velocity
+        import torch
+import torch.nn as nn
+import torchvision
+import torchvision.transforms as transforms
+from sklearn import preprocessing
+from sklearn.linear_model import LogisticRegression
+from tqdm import tqdm
+import argparse
+from pathlib import Path
+import numpy as np
+
+from esn import spectral_norm_scaling
+from utils import get_mnist_data
+
+
+########## SPIKING coESN (Reservoir only) ##########
+#spike rates per neuron are used as reservoir features to then compute regression 
+
+class spiking_coESN(nn.Module):
+    """
+    Spiking reservoir-only version (no trainable readout).
+    Batch-first input (B, L, I)
+    """
+    def __init__(self, n_inp, n_hid, dt, gamma, epsilon, rho, input_scaling, device='cpu', fading=False):
+        super().__init__()
+        self.n_hid = n_hid
+        self.device = device
+        self.fading = fading
+        self.dt = dt 
+
+        # Parameters
+        if isinstance(gamma, tuple):
+            gamma_min, gamma_max = gamma
+            self.gamma = torch.rand(n_hid, device=device) * (gamma_max - gamma_min) + gamma_min
+        else:
+            self.gamma = torch.tensor(gamma, device=device)
+
+        if isinstance(epsilon, tuple):
+            eps_min, eps_max = epsilon
+            self.epsilon = torch.rand(n_hid, device=device) * (eps_max - eps_min) + eps_min
+        else:
+            self.epsilon = torch.tensor(epsilon, device=device)
+
+        # Recurrent and input weights
+        h2h = 2 * (2 * torch.rand(n_hid, n_hid) - 1)
+        if gamma_min == gamma_max and eps_min == eps_max and gamma_max == 1:
+            leaky = dt**2
+            I = torch.eye(n_hid)
+            h2h = h2h * leaky + (I * (1 - leaky))
+            h2h = spectral_norm_scaling(h2h, rho)
+            self.h2h = (h2h + I * (leaky - 1)) * (1 / leaky)
+        else:
+            h2h = spectral_norm_scaling(h2h, rho)
+            self.h2h = nn.Parameter(h2h, requires_grad=False)
+
+        x2h = torch.rand(n_inp, n_hid) * input_scaling
+        self.x2h = nn.Parameter(x2h, requires_grad=False)
+        bias = (torch.rand(n_hid) * 2 - 1) * input_scaling
+        self.bias = nn.Parameter(bias, requires_grad=False)
+
+    def cell(self, x, hy, hz, theta=0.1, ref_period=None):
+        hz = hz + self.dt * (
+            torch.tanh(torch.matmul(x, self.x2h) + torch.matmul(hy, self.h2h) + self.bias)
+            - self.gamma * hy - self.epsilon * hz
+        )
+        if self.fading:
+            hz = hz - self.dt * hz
+        hy = hy + self.dt * hz
+        if self.fading:
+            hy = hy - self.dt * hy
+
+        if ref_period is None:
+            ref_period = torch.zeros_like(hz)
+        s = (hy - theta - ref_period > 0).float()   #tried using hy as mem potential and better accuracy, it's probably higher so more spikes. check values
+        ref_period = ref_period.mul(0.9) + s
+        #to implement proper HRF neurons add smooth reset/ref period like in paper
+
+        return hy, hz, s, ref_period
+
+    def bio_cell(self, x, hy, hz, theta=0.1, ref_period=None):
+        #Here also implemented version of soft reset and refractory period
+        hz = hz + self.dt * (
+            torch.tanh(torch.matmul(x, self.x2h) + torch.matmul(hy, self.h2h) + self.bias)
+            - self.gamma * hy - self.epsilon * hz
+        )
+        if self.fading:
+            hz = hz - self.dt * hz
+        hy = hy + self.dt * hz
+        if self.fading:
+            hy = hy - self.dt * hy
+
+        if ref_period is None:
+            ref_period = torch.zeros_like(hz)
+
+        # Spike detection (refractory increases threshold)
+        s = (hy - theta - ref_period > 0).float()
+
+        # Smooth reset and refractory decay
+        alpha = 0.3  # reset rate (increase for less spikes)
+        beta = 0.4 # velocity damping (increase for less spikes)
+        tau_ref = 0.25  # refractory time constant
+
+        hy = hy * (1 - s * alpha)         # soft reset
+        hz = hz * (1 - s * beta)          # damp velocity
+        ref_decay = torch.exp(-torch.as_tensor(self.dt / tau_ref, device=self.device))
+
+        ref_period = ref_period * ref_decay + s
 
         return hy, hz, s, ref_period
 
@@ -86,7 +221,7 @@ class spiking_coESN(nn.Module):
         spike_counts = torch.zeros(B, self.n_hid, device=self.device)
 
         for t in range(x.size(1)):
-            hy, hz, s, ref_period = self.cell(x[:, t], hy, hz, ref_period=ref_period)
+            hy, hz, s, ref_period = self.bio_cell(x[:, t], hy, hz, ref_period=ref_period)
             spike_counts += s
 
         mean_rates = spike_counts / x.size(1)  # (B, n_hid)
