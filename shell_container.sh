@@ -2,7 +2,7 @@
 
 # ==== PATHS ====
 CONTAINER=/tudelft.net/staff-bulk/ewi/insy/VisionLab/amicheli/Containers/container.sif
-FILE=/tudelft.net/staff-bulk/ewi/insy/VisionLab/amicheli/RandomizedCoupledOscillators/spiking_ron_out_li.py
+FILE=/tudelft.net/staff-bulk/ewi/insy/VisionLab/amicheli/RandomizedCoupledOscillators/sMNIST_task.py
 RESULTSFOLDER=/tudelft.net/staff-bulk/ewi/insy/VisionLab/amicheli/RandomizedCoupledOscillators/result/shell
 
 # ==== SETUP ====
@@ -28,6 +28,8 @@ nohup apptainer exec --nv $CONTAINER python -u $FILE \
     --inp_scaling 1.0 \
     --rho 0.99 \
     --use_test \
+    --esn \
+    --no_friction \
     >> $LOGFILE 2>&1 &
 
 # ==== LOG INFO ====
