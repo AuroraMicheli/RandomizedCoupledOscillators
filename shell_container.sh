@@ -2,7 +2,7 @@
 
 # ==== PATHS ====
 CONTAINER=/tudelft.net/staff-bulk/ewi/insy/VisionLab/amicheli/Containers/container.sif
-FILE=/tudelft.net/staff-bulk/ewi/insy/VisionLab/amicheli/RandomizedCoupledOscillators/sMNIST_task.py
+FILE=/tudelft.net/staff-bulk/ewi/insy/VisionLab/amicheli/RandomizedCoupledOscillators/spiking_ron_rates_disentangle.py
 RESULTSFOLDER=/tudelft.net/staff-bulk/ewi/insy/VisionLab/amicheli/RandomizedCoupledOscillators/result/shell
 
 # ==== SETUP ====
@@ -13,8 +13,21 @@ echo "Running the script $FILE in the container $CONTAINER"
 # Ensure result folder exists
 mkdir -p $RESULTSFOLDER
 
+# ==== AUTO-ADD ARGS ====
+# If the script name contains "sMNIST", add extra arguments
+FILE_NAME=$(basename "$FILE")
+EXTRA_ARGS=""
+if [[ "$FILE_NAME" == *"sMNIST"* ]]; then
+    EXTRA_ARGS="--esn --no_friction"
+fi
+
 # Log file has the same base name as the Python file, with .log extension
 LOGFILE=$RESULTSFOLDER/$(basename "$FILE" .py).log
+
+echo "Running $FILE_NAME in container $CONTAINER"
+echo "Extra args: $EXTRA_ARGS"
+echo "Logging to: $LOGFILE"
+echo ""
 
 # ==== RUN ====
 nohup apptainer exec --nv $CONTAINER python -u $FILE \
@@ -28,8 +41,7 @@ nohup apptainer exec --nv $CONTAINER python -u $FILE \
     --inp_scaling 1.0 \
     --rho 0.99 \
     --use_test \
-    --esn \
-    --no_friction \
+    $EXTRA_ARGS \
     >> $LOGFILE 2>&1 &
 
 # ==== LOG INFO ====

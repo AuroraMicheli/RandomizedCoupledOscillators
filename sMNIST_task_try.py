@@ -2,7 +2,6 @@ import torch
 from torch import nn, optim
 import torch.nn.utils
 from utils import get_mnist_data, coRNN, coESN, check, LSTM
-#from utils_spikes import *
 from pathlib import Path
 import argparse
 from tqdm import tqdm
@@ -160,14 +159,14 @@ else:
 
         valid_acc = test(valid_loader)
         test_acc = test(test_loader) if args.use_test else 0.0
-
+        '''
         Path(main_folder).mkdir(parents=True, exist_ok=True)
         log_file = f'{main_folder}/sMNIST_log_no_friction.txt' if args.no_friction else f'{main_folder}/sMNIST_log.txt'
         with open(log_file, 'a') as f:
             f.write(f'Epoch {epoch + 1}/{args.epochs}\n')
             f.write(f'Valid accuracy: {valid_acc:.2f}\n')
             f.write(f'Test accuracy: {test_acc:.2f}\n\n')
-
+        '''
         print(f"✅ Valid accuracy: {valid_acc:.2f}", flush=True)
         print(f"✅ Test accuracy: {test_acc:.2f}", flush=True)
 
@@ -180,6 +179,16 @@ else:
 # -------------------------------
 # Final run summary
 # -------------------------------
+
+print("\n************** FINAL SUMMARY **************")
+for k, v in vars(args).items():
+    print(f"{k}: {v}")
+print(f"Valid accuracy: {valid_acc:.2f}")
+print(f"Test accuracy: {test_acc:.2f}")
+print("*******************************************\n", flush=True)
+
+
+'''
 if args.lstm:
     f = open(f'{main_folder}/sMNIST_log_lstm.txt', 'a')
 elif args.no_friction and (not args.esn):
@@ -198,3 +207,4 @@ ar += f'valid: {str(round(valid_acc, 2))}, test: {str(round(test_acc, 2))}'
 f.write(ar + '\n')
 f.write('**************\n\n\n')
 f.close()
+'''

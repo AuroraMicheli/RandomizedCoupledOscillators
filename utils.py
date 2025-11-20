@@ -1,7 +1,7 @@
 from scipy.integrate import odeint
 import numpy as np
 import torch
-from aeon.datasets import load_classification
+#from aeon.datasets import load_classification
 import os
 import torchvision
 import torchvision.transforms as transforms
