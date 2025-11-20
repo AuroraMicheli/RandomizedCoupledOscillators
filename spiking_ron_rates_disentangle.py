@@ -1,3 +1,4 @@
+import torch
 import torch.nn as nn
 import torchvision
 import torchvision.transforms as transforms
@@ -7,9 +8,13 @@ from tqdm import tqdm
 import argparse
 from pathlib import Path
 import numpy as np
+from utils_aurora import *
 
 from esn import spectral_norm_scaling
 from utils import get_mnist_data
+
+import matplotlib.pyplot as plt
+import random
 
 
 ########## SPIKING coESN (Reservoir only) ##########
@@ -76,51 +81,101 @@ class spiking_coESN(nn.Module):
 
         return hy, hz, s, ref_period
 
-    def bio_cell(self, x, hy, hz, theta=0.1, ref_period=None):
-        #Here also implemented version of soft reset and refractory period
-        hz = hz + self.dt * (
-            torch.tanh(torch.matmul(x, self.x2h) + torch.matmul(hy, self.h2h) + self.bias)
-            - self.gamma * hy - self.epsilon * hz
-        )
-        if self.fading:
-            hz = hz - self.dt * hz
-        hy = hy + self.dt * hz
-        if self.fading:
-            hy = hy - self.dt * hy
+    def bio_cell(self, x, hy, hz, lif_v, s, theta=0.05, ref_period=None):
+        """
+        LIF-driven HRF (Harmonic Balanced Resonate-and-Fire) dynamics.
+        - LIF neurons receive input current from external + recurrent drive (version 1) implements recurrent drive via potentials, version 2) implements recurrent drive via spikes)
+        and produce spikes via thresholding with soft reset (subtractive).
+        - Their spikes drive the HRF oscillators.
+        - All additional parameters are currently neutralized for simplicity.
+        """
 
+        dt = self.dt
+        device = self.device
+
+        # ==== LIF parameters ====
+        lif_tau_m = 20.0       # membrane time constant (ms equivalent)
+        lif_tau_ref = 1e9      # refractory time constant (huge = inactive)
+        #lif_input_scale = 1.0  # input current scaling (there's already an input scaling param in the init)
+        lif_ref_inh = 0.0      # no refractory inhibition
+        spike_gain = 1.0       # LIF→HRF coupling gain
+
+        # ==== HRF parameters ====
+        alpha = 0.3            # HRF reset rate
+        beta = 0.4             # HRF velocity damping
+        tau_ref = 0.25         # HRF refractory constant
+
+        # ==== Input drive ====
+        #version 1) xternal input + HRF potentials
+        '''
+        input_current = lif_input_scale * (
+            torch.matmul(x, self.x2h) + torch.matmul(hy, self.h2h) + self.bias
+        )
+        '''
+        #version 2) xternal input + HRF spikes
+        input_current = torch.matmul(x, self.x2h) + torch.matmul(s, self.h2h) + self.bias
+        
+        
+        # ==== LIF membrane update ====
+        # Leaky integration: dv/dt = -v / tau_m + input
+        lif_v = lif_v + dt * (-lif_v / lif_tau_m + input_current)
+
+        # Spike generation
+        lif_s = (lif_v > theta).float()
+
+        # Soft reset (subtraction by threshold)
+        lif_v = lif_v - lif_s * theta
+
+        # Optional refractory inhibition (currently neutralized)
+        '''
+        lif_ref_decay = torch.exp(-torch.as_tensor(dt / lif_tau_ref, device=device))
+        lif_inhibition = lif_ref_inh * (1.0 - lif_ref_decay)
+        lif_s = lif_s * (1.0 - lif_inhibition)
+        '''
+        
+        # ==== HRF oscillator dynamics ====
+        drive = spike_gain * lif_s
+
+        hz = hz + dt * (drive - self.gamma * hy - self.epsilon * hz)
+        if self.fading:
+            hz = hz - dt * hz
+        hy = hy + dt * hz
+        if self.fading:
+            hy = hy - dt * hy
+
+        # ==== HRF spike + refractory ====
         if ref_period is None:
             ref_period = torch.zeros_like(hz)
-
-        # Spike detection (refractory increases threshold)
         s = (hy - theta - ref_period > 0).float()
 
-        # Smooth reset and refractory decay
-        alpha = 0.3  # reset rate (increase for less spikes)
-        beta = 0.4 # velocity damping (increase for less spikes)
-        tau_ref = 0.25  # refractory time constant
+        hy = hy * (1 - s * alpha)  # soft reset for HRF
+        hz = hz * (1 - s * beta)   # damp oscillation velocity
 
-        hy = hy * (1 - s * alpha)         # soft reset
-        hz = hz * (1 - s * beta)          # damp velocity
-        ref_decay = torch.exp(-torch.as_tensor(self.dt / tau_ref, device=self.device))
-
+        ref_decay = torch.exp(-torch.as_tensor(dt / tau_ref, device=device))
         ref_period = ref_period * ref_decay + s
 
-        return hy, hz, s, ref_period
+        return hy, hz, s, ref_period, lif_v, lif_s
 
     def forward(self, x):
         B = x.size(0)
         hy = torch.zeros(B, self.n_hid, device=self.device)
         hz = torch.zeros(B, self.n_hid, device=self.device)
         ref_period = torch.zeros(B, self.n_hid, device=self.device)
+        s = torch.zeros(B, self.n_hid, device=self.device)
 
+        lif_v = torch.zeros(B, self.n_hid, device=self.device)  # LIF membrane potential
         spike_counts = torch.zeros(B, self.n_hid, device=self.device)
 
         for t in range(x.size(1)):
-            hy, hz, s, ref_period = self.bio_cell(x[:, t], hy, hz, ref_period=ref_period)
-            spike_counts += s
+            hy, hz, s, ref_period, lif_v, lif_s = self.bio_cell(
+                x[:, t], hy, hz, lif_v, s, ref_period=ref_period
+            )
+            #spike_counts += s
+            spike_counts += lif_s #check whether the hrf neurons are doing anything or not
 
-        mean_rates = spike_counts / x.size(1)  # (B, n_hid)
+        mean_rates = spike_counts / x.size(1)
         return mean_rates
+
 
 
 ########## MAIN ##########
@@ -165,6 +220,14 @@ train_loader, valid_loader, test_loader = get_mnist_data(args.batch, bs_test)
 
 print("\n=== Generating spike-rate features ===")
 
+
+
+#visualize_dynamics(model, train_loader, device, n_neurons=100, n_timesteps=150)
+visualize_dynamics_and_spikes(model, train_loader, device, n_neurons=100, n_timesteps=150)
+
+#############################
+
+
 def extract_features(loader, model, device):
     model.eval()
     feats, labels_all = [], []
@@ -180,7 +243,9 @@ def extract_features(loader, model, device):
     return feats, labels_all
 
 feats, _ = extract_features(train_loader, model, device)
-print(f"spiking rates before normalization: mean={feats.mean():.2f}, std={feats.std():.2f}")
+print(f"spiking rates before normalization: mean={feats.mean():.2f}, std={feats.std():.2f}") #spikes per neuron per time step
+#to have an idea: spikes per neuron per image ~ mean*T = mean*784 ~ 23.5
+
 
 
 train_feats, train_labels = extract_features(train_loader, model, device)
@@ -210,10 +275,10 @@ if test_feats is not None:
 else:
     test_acc = 0.0
 
-# --- log results ---
-Path("result").mkdir(parents=True, exist_ok=True)
-with open("result/sMNIST_spiking_coESN_optionA.txt", "a") as f:
-    f.write(f"n_hid={args.n_hid}, Valid acc={valid_acc:.2f}, Test acc={test_acc:.2f}\n")
-
-print("\n=== Done. Features saved and accuracies logged. ===")
+# --- unified logging ---
+print(f"\n=== Done. Results ===")
+print(f"Hidden units: {args.n_hid}")
+print(f"Validation accuracy: {valid_acc:.2f}%")
+print(f"Test accuracy: {test_acc:.2f}%")
+print("=== End of run ===")
 
