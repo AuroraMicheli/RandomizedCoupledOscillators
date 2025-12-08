@@ -35,7 +35,7 @@ parser.add_argument('--no_friction', action="store_true", help="remove friction 
 parser.add_argument('--esn', action="store_true")
 parser.add_argument('--inp_scaling', type=float, default=1.,
                     help='ESN input scaling')
-parser.add_argument('--rho', type=float, default=0.99,
+parser.add_argument('--rho', type=float, default=0.99,    #default it was 0.99
                     help='ESN spectral radius')
 parser.add_argument('--leaky', type=float, default=1.0,
                     help='ESN spectral radius')
@@ -175,6 +175,8 @@ if args.lstm:
 elif args.no_friction and (not args.esn): # coRNN without friction
     f = open(f'{main_folder}/sMNIST_log_no_friction.txt', 'a')
 elif args.esn and args.no_friction: # coESN
+    print(f"Valid accuracy: ", valid_acc)
+    print(f"Test accuracy: ", test_acc)
     f = open(f'{main_folder}/sMNIST_log_coESN.txt', 'a')
 elif args.esn: # ESN
     f = open(f'{main_folder}/sMNIST_log_esn.txt', 'a')
