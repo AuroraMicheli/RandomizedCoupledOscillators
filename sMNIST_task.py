@@ -8,6 +8,7 @@ from tqdm import tqdm
 from esn import DeepReservoir
 from sklearn.linear_model import LogisticRegression
 from sklearn import preprocessing
+from utils_aurora import *
 
 parser = argparse.ArgumentParser(description='training parameters')
 
@@ -23,11 +24,11 @@ parser.add_argument('--dt', type=float, default=0.042,
                     help='step size <dt> of the coRNN')
 parser.add_argument('--gamma', type=float, default=2.7,
                     help='y controle parameter <gamma> of the coRNN')
-parser.add_argument('--epsilon', type=float, default=4.7,
+parser.add_argument('--epsilon', type=float, default=0.51, #default=4.7
                     help='z controle parameter <epsilon> of the coRNN')
-parser.add_argument('--gamma_range', type=float, default=2.7,
+parser.add_argument('--gamma_range', type=float, default=2.0, #default=2.7
                     help='y controle parameter <gamma> of the coRNN')
-parser.add_argument('--epsilon_range', type=float, default=4.7,
+parser.add_argument('--epsilon_range', type=float, default=1.0, #default=4.7
                     help='z controle parameter <epsilon> of the coRNN')
 parser.add_argument('--cpu', action="store_true")
 parser.add_argument('--check', action="store_true")
@@ -35,7 +36,7 @@ parser.add_argument('--no_friction', action="store_true", help="remove friction 
 parser.add_argument('--esn', action="store_true")
 parser.add_argument('--inp_scaling', type=float, default=1.,
                     help='ESN input scaling')
-parser.add_argument('--rho', type=float, default=0.99,    #default it was 0.99
+parser.add_argument('--rho', type=float, default=9.0,    #default it was 0.99
                     help='ESN spectral radius')
 parser.add_argument('--leaky', type=float, default=1.0,
                     help='ESN spectral radius')
@@ -178,6 +179,9 @@ elif args.esn and args.no_friction: # coESN
     print(f"Valid accuracy: ", valid_acc)
     print(f"Test accuracy: ", test_acc)
     f = open(f'{main_folder}/sMNIST_log_coESN.txt', 'a')
+
+    visualize_coesn_hy_middle(model, test_loader, device)
+
 elif args.esn: # ESN
     f = open(f'{main_folder}/sMNIST_log_esn.txt', 'a')
 else: # original coRNN

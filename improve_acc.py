@@ -65,11 +65,26 @@ class spiking_coESN_rescaled(nn.Module):
         self.x2h = nn.Parameter(x2h, requires_grad=False)
         
         # Rescaled bias
-        bias = ((torch.rand(n_hid) * 2 - 1) * 0.01 ) + self.theta_lif 
+        #bias = ((torch.rand(n_hid) * 2 - 1) * 0.01 ) + self.theta_lif 
+        bias = (torch.rand(n_hid) * 2 - 1) * input_scaling  #original one, centered in 0
         self.bias = nn.Parameter(bias, requires_grad=False)
         
+        # NEW: LIF -> HRF Synaptic Weights (Simulating Tanh Bounding and Diversity)
+        # Initialize weights uniformly in a bounded range, e.g., [-1.0, 1.0].
+        # When a spike (1) is multiplied by this matrix, the input to the HRF
+        # will effectively be bounded between -1.0 and 1.0, mimicking tanh(input)
+        # where the input leads to saturation.
+        lif2hrf = (torch.rand(n_hid, n_hid) * 2 - 1) * 1.0 
+        
+        # We can apply spectral norm scaling here to control the stability, similar to h2h,
+        # ensuring the maximum possible drive doesn't cause instability.
+        #lif2hrf = spectral_norm_scaling(lif2hrf, 1.0) # Scaling by 1.0 ensures max singular value is 1.0
+        
+        self.lif2hrf = nn.Parameter(lif2hrf, requires_grad=False)
+
+
         # Spike Gain
-        self.spike_gain = nn.Parameter(torch.tensor(3.0, device=device), requires_grad=False)
+        self.spike_gain = nn.Parameter(torch.tensor(1.0, device=device), requires_grad=False)
 
 
     # bio_cell remains the same as it outputs 's' (spikes) which the forward pass filters.
@@ -101,7 +116,9 @@ class spiking_coESN_rescaled(nn.Module):
         lif_v = lif_v - lif_s * theta_lif
         
         # ==== HRF oscillator dynamics ====
-        drive = spike_gain * lif_s
+        #drive = (spike_gain * lif_s) #+ (spike_gain * s)
+        drive = torch.matmul(lif_s, self.lif2hrf)
+
 
         hz = hz + dt * (drive - self.gamma * hy - self.epsilon * hz)
         if self.fading:
@@ -164,12 +181,13 @@ class spiking_coESN_rescaled(nn.Module):
             # Feature Option 4: Capture final HRF potential
             if t == L - 1:
                 final_hy = hy
+            
 
         # --- FEATURE OPTIONS: UNCOMMENT THE ONE YOU WANT TO USE ---
         
         # 1. Mean Firing Rate (Baseline) - Feature size: n_hid
-        # mean_rates = spike_counts / L
-        # return mean_rates
+        mean_rates = spike_counts / L
+        #return mean_rates
 
         # 2. Concatenated Spike Counts (First Half, Second Half) - Feature size: 2 * n_hid
         # second_half_spike_counts = spike_counts - half_spike_counts
@@ -181,13 +199,13 @@ class spiking_coESN_rescaled(nn.Module):
         # This is your "fine-grained" feature option.
         mean_filtered_trace = filtered_trace_sum / L
         final_filtered_trace = filtered_trace
-        return torch.cat((mean_filtered_trace, final_filtered_trace), dim=1)
+        #return torch.cat((mean_filtered_trace, final_filtered_trace), dim=1)
 
 
         # 4. Concatenated Spike Rate and Final HRF Potential - Feature size: 2 * n_hid
         # mean_rates = spike_counts / L
         # return torch.cat((mean_rates, final_hy), dim=1)
-
+        return final_hy
 
 ########## MAIN with Rescaled Model and New Filter Parameter ##########
 
@@ -195,14 +213,14 @@ parser = argparse.ArgumentParser(description='Spiking coESN Option A (firing-rat
 parser.add_argument('--n_hid', type=int, default=256)
 parser.add_argument('--batch', type=int, default=256)  
 parser.add_argument('--dt', type=float, default=0.042)
-parser.add_argument('--gamma', type=float, default=2.7)
-parser.add_argument('--epsilon', type=float, default=4.7)
-parser.add_argument('--gamma_range', type=float, default=2.7)
-parser.add_argument('--epsilon_range', type=float, default=4.7)
+parser.add_argument('--gamma', type=float, default=2.7) #2.7 default
+parser.add_argument('--epsilon', type=float, default=0.08) #0.51 from paper for smnist
+parser.add_argument('--gamma_range', type=float, default=2)
+parser.add_argument('--epsilon_range', type=float, default=1)
 
 # RESCALED DEFAULTS: Use modest scaling and low thresholds
-parser.add_argument('--inp_scaling', type=float, default=1.0)   
-parser.add_argument('--theta_lif', type=float, default=0.005) # Low Threshold
+parser.add_argument('--inp_scaling', type=float, default=2.0)   
+parser.add_argument('--theta_lif', type=float, default=0.05) # Low Threshold
 parser.add_argument('--theta_rf', type=float, default=0.005)  # Low Threshold
 parser.add_argument('--tau_filter', type=float, default=20.0) # New Filter Time Constant (ms equivalent)
 
@@ -241,7 +259,7 @@ train_loader, valid_loader, test_loader = get_mnist_data(args.batch, bs_test)
 print("\n=== Generating spike-rate features ===")
 
 #############################
-visualize_dynamics_and_spikes_middle(model, train_loader, device, n_neurons=100, n_timesteps=150)
+visualize_dynamics_and_spikes_middle(model, train_loader, device, n_neurons=100, n_timesteps=200)
 
 def extract_features(loader, model, device):
     model.eval()

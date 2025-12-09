@@ -466,3 +466,155 @@ def visualize_dynamics_and_spikes_middle(
             f"  {save_prefix}_LIF_spike_raster.png\n"
             f"  {save_prefix}_HRF_spike_raster.png"
         )
+
+
+def visualize_coesn_hy(
+    model,
+    loader,
+    device,
+    n_neurons=100,
+    save_path="hy_ron.png"
+):
+    """
+    Visualize hy dynamics for coESN.
+    
+    Produces ONE figure with 2 subplots:
+      - Raw hy activity (heatmap)
+      - Z-scored hy activity (heatmap)
+    """
+
+    model.eval()
+    with torch.no_grad():
+
+        # ---- Get one batch ----
+        images, labels = next(iter(loader))
+        images = images.to(device)
+        images = images.reshape(images.shape[0], 1, 784).permute(0, 2, 1)
+        B, T, _ = images.shape
+
+        # ---- Initialize states ----
+        hy = torch.zeros(B, model.n_hid, device=device)
+        hz = torch.zeros(B, model.n_hid, device=device)
+
+        # ---- Record hy over time ----
+        hy_list = []
+
+        for t in range(T):
+            hy, hz = model.cell(images[:, t], hy, hz)
+            hy_list.append(hy[0].detach().cpu().numpy())  # take sample 0
+
+        hy_array = np.stack(hy_list, axis=0)  # shape (T, neurons)
+
+        # ---- Select subset of neurons ----
+        n_total = hy_array.shape[1]
+        sel_idx = random.sample(range(n_total), min(n_neurons, n_total))
+        hy_sel = hy_array[:, sel_idx].T  # shape (neurons, time)
+
+        # ---- Z-score normalization per neuron ----
+        hy_norm = (hy_sel - hy_sel.mean(axis=1, keepdims=True)) / (
+            hy_sel.std(axis=1, keepdims=True) + 1e-9
+        )
+
+        # ---- Plot raw + z-scored ----
+        fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
+
+        im0 = axes[0].imshow(hy_sel, aspect='auto', cmap='viridis', origin='lower')
+        axes[0].set_title("hy dynamics (raw)")
+        axes[0].set_xlabel("Time step")
+        axes[0].set_ylabel("Neuron index")
+        fig.colorbar(im0, ax=axes[0], label="hy")
+
+        im1 = axes[1].imshow(hy_norm, aspect='auto', cmap='viridis',
+                             origin='lower', vmin=-2, vmax=2)
+        axes[1].set_title("hy dynamics (z-scored)")
+        axes[1].set_xlabel("Time step")
+        fig.colorbar(im1, ax=axes[1], label="z-scored hy")
+
+        plt.suptitle("coESN hy state dynamics", fontsize=14)
+        plt.tight_layout()
+        plt.savefig(save_path, dpi=300)
+        plt.close()
+
+        print(f"Saved hy visualization → {save_path}")
+
+
+def visualize_coesn_hy_middle(
+    model,
+    loader,
+    device,
+    n_neurons=100,
+    n_timesteps=200,
+    save_path="hy_middle.png"
+):
+    """
+    Visualize hy dynamics for coESN over the MIDDLE n_timesteps.
+    
+    Produces ONE figure with 2 subplots:
+      - Raw hy activity (heatmap)
+      - Z-scored hy activity (heatmap)
+    """
+
+    model.eval()
+    with torch.no_grad():
+
+        # ---- Get one batch ----
+        images, labels = next(iter(loader))
+        images = images.to(device)
+        images = images.reshape(images.shape[0], 1, 784).permute(0, 2, 1)
+        B, T, _ = images.shape
+
+        # ---- Define middle segment ----
+        n_timesteps = min(n_timesteps, T)
+        start = max(0, (T - n_timesteps) // 2)
+        end = start + n_timesteps
+        print(f"[coESN hy middle] middle slice: t={start} to t={end} out of T={T}")
+
+        # ---- Initialize states ----
+        hy = torch.zeros(B, model.n_hid, device=device)
+        hz = torch.zeros(B, model.n_hid, device=device)
+
+        # ---- Record hy only in the middle slice ----
+        hy_list = []
+
+        for t in range(T):
+            hy, hz = model.cell(images[:, t], hy, hz)
+
+            if start <= t < end:
+                hy_list.append(hy[0].detach().cpu().numpy())  # sample 0
+
+        # ---- Stack into array ----
+        hy_array = np.stack(hy_list, axis=0)  # shape (middle_T, neurons)
+
+        # ---- Select subset of neurons ----
+        n_total = hy_array.shape[1]
+        sel_idx = random.sample(range(n_total), min(n_neurons, n_total))
+        hy_sel = hy_array[:, sel_idx].T  # shape (neurons, time)
+
+        # ---- Z-score normalization ----
+        hy_norm = (hy_sel - hy_sel.mean(axis=1, keepdims=True)) / (
+            hy_sel.std(axis=1, keepdims=True) + 1e-9
+        )
+
+        # ---- Plot raw + z-scored ----
+        fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
+
+        im0 = axes[0].imshow(hy_sel, aspect='auto', cmap='viridis', origin='lower')
+        axes[0].set_title("hy dynamics (raw, middle slice)")
+        axes[0].set_xlabel("Middle time steps")
+        axes[0].set_ylabel("Neuron index")
+        fig.colorbar(im0, ax=axes[0], label="hy")
+
+        im1 = axes[1].imshow(
+            hy_norm, aspect='auto', cmap='viridis', origin='lower',
+            vmin=-2, vmax=2
+        )
+        axes[1].set_title("hy dynamics (z-scored, middle slice)")
+        axes[1].set_xlabel("Middle time steps")
+        fig.colorbar(im1, ax=axes[1], label="z-scored hy")
+
+        plt.suptitle("coESN hy state dynamics (middle segment)", fontsize=14)
+        plt.tight_layout()
+        plt.savefig(save_path, dpi=300)
+        plt.close()
+
+        print(f"Saved middle-slice hy visualization → {save_path}")
