@@ -74,7 +74,7 @@ class spiking_coESN_rescaled(nn.Module):
         # When a spike (1) is multiplied by this matrix, the input to the HRF
         # will effectively be bounded between -1.0 and 1.0, mimicking tanh(input)
         # where the input leads to saturation.
-        lif2hrf = (torch.rand(n_hid, n_hid) * 2 - 1) * 1.0 
+        lif2hrf = (torch.rand(n_hid, n_hid) * 2 - 1) * 2.0 
         
         # We can apply spectral norm scaling here to control the stability, similar to h2h,
         # ensuring the maximum possible drive doesn't cause instability.
