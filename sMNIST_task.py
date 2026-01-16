@@ -67,6 +67,8 @@ elif args.esn and not args.no_friction:
                           input_scaling=args.inp_scaling,
                           connectivity_recurrent=args.n_hid,
                           connectivity_input=args.n_hid, leaky=args.leaky).to(device)
+
+
 elif args.esn and args.no_friction:
     model = coESN(n_inp, args.n_hid, args.dt, gamma, epsilon, args.rho,
                   args.inp_scaling, device=device).to(device)
@@ -75,6 +77,9 @@ elif args.esn and args.no_friction:
         print("Check: ", check_passed)
         if not check_passed:
             raise ValueError("Check not passed.")
+
+
+
 
 else:
     model = coRNN(n_inp, args.n_hid, n_out,args.dt,gamma,epsilon,
@@ -175,9 +180,24 @@ if args.lstm:
     f = open(f'{main_folder}/sMNIST_log_lstm.txt', 'a')
 elif args.no_friction and (not args.esn): # coRNN without friction
     f = open(f'{main_folder}/sMNIST_log_no_friction.txt', 'a')
+
 elif args.esn and args.no_friction: # coESN
     print(f"Valid accuracy: ", valid_acc)
     print(f"Test accuracy: ", test_acc)
+
+    # ===== Theoretical ANN Energy =====
+    T = 784  # sMNIST sequence length
+
+    ann_energy = estimate_ann_energy(
+        n_inp=1,
+        n_hid=args.n_hid,
+        T=T
+    )
+
+    print("\n=== Theoretical ANN Energy (coESN) ===")
+    print(f"Total MACs: {ann_energy['MACs']:.3e}")
+    print(f"Energy (J): {ann_energy['Energy_J']:.3e}")
+    #------------------------------------------------------------
     f = open(f'{main_folder}/sMNIST_log_coESN.txt', 'a')
 
     visualize_coesn_hy_middle(model, test_loader, device)

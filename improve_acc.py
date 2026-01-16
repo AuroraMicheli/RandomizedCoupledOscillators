@@ -16,6 +16,8 @@ from utils import get_mnist_data
 import matplotlib.pyplot as plt
 import random
 
+
+
 # --- RESCALED SPIKING coESN (Reservoir only) ---
 class spiking_coESN_rescaled(nn.Module):
     """
@@ -24,7 +26,7 @@ class spiking_coESN_rescaled(nn.Module):
     Adds customizable LIF/HRF thresholds and feature options, including filtered spikes.
     """
     def __init__(self, n_inp, n_hid, dt, gamma, epsilon, rho, input_scaling, 
-                 theta_lif, theta_rf, tau_filter, device='cpu', fading=False): # Added tau_filter
+                 theta_lif, theta_rf, tau_filter, count_lif_spikes=False, device='cpu', fading=False): # Added tau_filter
         super().__init__()
         self.n_hid = n_hid
         self.device = device
@@ -33,6 +35,7 @@ class spiking_coESN_rescaled(nn.Module):
         self.theta_lif = theta_lif
         self.theta_rf = theta_rf
         self.tau_filter = tau_filter # Filter time constant
+        self.count_lif_spikes = count_lif_spikes
 
         # Parameters (same as before)
         if isinstance(gamma, tuple):
@@ -102,7 +105,7 @@ class spiking_coESN_rescaled(nn.Module):
         # ==== HRF parameters ====
         alpha = 0.0
         beta = 0.0
-        tau_ref = 0.25
+        tau_ref = 0.25  #to be tuned
 
         # ==== Input drive ====
         # Recurrent connection is still via s (spikes), as constrained
@@ -111,33 +114,33 @@ class spiking_coESN_rescaled(nn.Module):
         # ==== LIF membrane update ====
         lif_v = lif_v + dt * (-lif_v / lif_tau_m + input_current)
         lif_s = (lif_v > theta_lif).float()
-
+        #drive = lif_v
         # Soft reset (subtraction by threshold)
         lif_v = lif_v - lif_s * theta_lif
         
         # ==== HRF oscillator dynamics ====
         #drive = (spike_gain * lif_s) #+ (spike_gain * s)
         drive = torch.matmul(lif_s, self.lif2hrf)
-
+        #drive = lif_v
 
         hz = hz + dt * (drive - self.gamma * hy - self.epsilon * hz)
-        if self.fading:
+        if self.fading: #fading comes from original ron 
             hz = hz - dt * hz
         hy = hy + dt * hz
         if self.fading:
             hy = hy - dt * hy
 
-        # ==== HRF spike + refractory ====
+        # ==== HRF spike + reset (alfa-beta) + refractory ====
         if ref_period is None:
             ref_period = torch.zeros_like(hz)
             
         s = (hy - theta_rf - ref_period > 0).float()
         
-        hy = hy * (1 - s * alpha)
-        hz = hz * (1 - s * beta)
+        hy = hy * (1 - s * alpha)  #special soft reset (from balanced rf)
+        hz = hz * (1 - s * beta)   #special soft reset
 
         ref_decay = torch.exp(-torch.as_tensor(dt / tau_ref, device=device))
-        ref_period = ref_period * ref_decay + s
+        ref_period = ref_period * ref_decay + s  #refractory period introduced to prevent excessive spiking
         
         return hy, hz, s, ref_period, lif_v, lif_s
 
@@ -153,11 +156,14 @@ class spiking_coESN_rescaled(nn.Module):
         s = torch.zeros(B, n_hid, device=device)
         
         lif_v = torch.zeros(B, n_hid, device=device)
-        spike_counts = torch.zeros(B, n_hid, device=device)
+        #spike_counts = torch.zeros(B, n_hid, device=device)
         
         # Variables for advanced features
         half_spike_counts = torch.zeros(B, n_hid, device=device)
         final_hy = None
+       
+        total_hrf_spikes = 0.0
+        total_lif_spikes = 0.0
         
         # New state variable for the filtered trace
         filtered_trace = torch.zeros(B, n_hid, device=device)
@@ -168,8 +174,10 @@ class spiking_coESN_rescaled(nn.Module):
             hy, hz, s, ref_period, lif_v, lif_s = self.bio_cell(
                 x[:, t], hy, hz, lif_v, s, ref_period=ref_period
             )
-            spike_counts += s # Count HRF spikes (for mean rate)
             
+            total_hrf_spikes += s.sum()
+            total_lif_spikes += lif_s.sum()
+
             # Update Filtered Trace (Exponential Decay + New Spike)
             filtered_trace = filtered_trace * decay_factor + s
             filtered_trace_sum += filtered_trace
@@ -186,7 +194,7 @@ class spiking_coESN_rescaled(nn.Module):
         # --- FEATURE OPTIONS: UNCOMMENT THE ONE YOU WANT TO USE ---
         
         # 1. Mean Firing Rate (Baseline) - Feature size: n_hid
-        mean_rates = spike_counts / L
+        mean_rates = total_hrf_spikes / L
         #return mean_rates
 
         # 2. Concatenated Spike Counts (First Half, Second Half) - Feature size: 2 * n_hid
@@ -203,16 +211,32 @@ class spiking_coESN_rescaled(nn.Module):
 
 
         # 4. Concatenated Spike Rate and Final HRF Potential - Feature size: 2 * n_hid
-        # mean_rates = spike_counts / L
-        # return torch.cat((mean_rates, final_hy), dim=1)
-        return final_hy
+        mean_rates = total_hrf_spikes / L
+        #return torch.cat((mean_rates, final_hy), dim=1)
+        
+        #r = total_spikes / (B * L * n_hid)
+        
+        r_hrf = total_hrf_spikes / (B * L * n_hid)
+        r_lif = total_lif_spikes / (B * L * n_hid)
+
+        if self.count_lif_spikes:
+            r_total = r_hrf + r_lif
+        else:
+            r_total = r_hrf
+
+        return final_hy, {
+            "r_total": r_total.detach(),
+            "r_hrf": r_hrf.detach(),
+            "r_lif": r_lif.detach()
+        }
+
 
 ########## MAIN with Rescaled Model and New Filter Parameter ##########
 
 parser = argparse.ArgumentParser(description='Spiking coESN Option A (firing-rate readout)')
-parser.add_argument('--n_hid', type=int, default=256)
+parser.add_argument('--n_hid', type=int, default=256) #256 default
 parser.add_argument('--batch', type=int, default=256)  
-parser.add_argument('--dt', type=float, default=0.042)
+parser.add_argument('--dt', type=float, default=0.042)  #0.042 original
 parser.add_argument('--gamma', type=float, default=2.7) #2.7 default
 parser.add_argument('--epsilon', type=float, default=0.08) #0.51 from paper for smnist
 parser.add_argument('--gamma_range', type=float, default=2)
@@ -225,6 +249,7 @@ parser.add_argument('--theta_rf', type=float, default=0.005)  # Low Threshold
 parser.add_argument('--tau_filter', type=float, default=20.0) # New Filter Time Constant (ms equivalent)
 
 parser.add_argument('--rho', type=float, default=0.99)
+parser.add_argument('--count_lif_spikes', action="store_true")
 parser.add_argument('--cpu', action="store_true")
 parser.add_argument('--use_test', action="store_true")
 args = parser.parse_args()
@@ -251,6 +276,7 @@ model = spiking_coESN_rescaled(
     theta_lif=args.theta_lif,
     theta_rf=args.theta_rf,
     tau_filter=args.tau_filter, # Pass new parameter
+    count_lif_spikes=args.count_lif_spikes,
     device=device
 ).to(device)
 
@@ -264,27 +290,43 @@ visualize_dynamics_and_spikes_middle(model, train_loader, device, n_neurons=100,
 def extract_features(loader, model, device):
     model.eval()
     feats, labels_all = [], []
+    #r_all = []
+    r_tot, r_hrf, r_lif = [], [], []
     with torch.no_grad():
         for images, labels in tqdm(loader, ncols=80):
             images = images.to(device)
             # Reshape MNIST image to a sequence of 784 1D inputs
             images = images.reshape(images.shape[0], 1, 784).permute(0, 2, 1)
-            rates = model(images)   # (B, n_feats)
+            rates, r = model(images)   # (B, n_feats)
             feats.append(rates.cpu())
+            #r_all.append(r.cpu())
+            r_tot.append(r["r_total"])
+            r_hrf.append(r["r_hrf"])
+            r_lif.append(r["r_lif"])
             labels_all.append(labels)
     feats = torch.cat(feats, dim=0).numpy()
     labels_all = torch.cat(labels_all, dim=0).numpy()
-    return feats, labels_all
+    #r_mean = torch.stack(r_all).mean().item()
+
+    #return feats, labels_all, r_mean
+    return (
+        feats,
+        labels_all,
+        torch.stack(r_tot).mean().item(),
+        torch.stack(r_hrf).mean().item(),
+        torch.stack(r_lif).mean().item()
+    )
 
 # Note: The feature vector size changes based on your choice in model.forward()
-train_feats, train_labels = extract_features(train_loader, model, device)
+#train_feats, train_labels, train_r = extract_features(train_loader, model, device)
+train_feats, train_labels, r_tot_train, r_hrf_train, r_lif_train = extract_features(train_loader, model, device)
 print(f"Feature vector size: {train_feats.shape[1]}") # Print feature size
 
-valid_feats, valid_labels = extract_features(valid_loader, model, device)
+valid_feats, valid_labels, r_tot_valid, r_hrf_valid, r_lif_valid = extract_features(valid_loader, model, device)
 if args.use_test:
-    test_feats, test_labels = extract_features(test_loader, model, device)
+    test_feats, test_labels, r_tot_test, r_hrf_test, r_lif_test = extract_features(test_loader, model, device)
 else:
-    test_feats, test_labels = None, None
+    test_feats, test_labels, r_tot_test, r_hrf_test, r_lif_test = None, None
 
 # --- standardize ---
 scaler = preprocessing.StandardScaler().fit(train_feats)
@@ -306,9 +348,40 @@ if test_feats is not None:
 else:
     test_acc = 0.0
 
+print(f"Average firing rate r hrf (train): {r_hrf_train:.4f}")
+print(f"Average firing rate r lif (train): {r_lif_train:.4f}")
+
+
+'''
 # --- unified logging ---
 print(f"\n=== Done. Results ===")
 print(f"Hidden units: {args.n_hid}")
 print(f"Validation accuracy: {valid_acc:.2f}%")
 print(f"Test accuracy: {test_acc:.2f}%")
+print(f"Average firing rate r (train): {train_r:.4f}")
+print(f"Average firing rate r (valid): {valid_r:.4f}")
+
+
+print(f"HRF firing rate (train): {r_hrf_train:.4f}")
+print(f"HRF firing rate (valid): {r_hrf_valid:.4f}")
+print(f"LIF firing rate (train): {r_lif_train:.4f}")
+print(f"LIF firing rate (valid): {r_lif_valid:.4f}")
+print(f"TOTAL firing rate (train): {r_tot_train:.4f}")
+print(f"TOTAL firing rate (valid): {r_tot_valid:.4f}")
+'''
+# ===== Theoretical SNN Energy =====
+T = 784  # sMNIST timesteps
+
+snn_energy = estimate_snn_energy(
+    r_hrf=r_hrf_train,
+    r_lif=r_lif_train,
+    n_hid=args.n_hid,
+    T=T,
+    include_lif=args.count_lif_spikes
+)
+
+print("\n=== Theoretical SNN Energy ===")
+print(f"Total SOPs: {snn_energy['SOPs']:.3e}")
+print(f"Energy (J): {snn_energy['Energy_J']:.3e}")
+print(f"(include LIF spikes: {args.count_lif_spikes})")
 print("=== End of run ===")
