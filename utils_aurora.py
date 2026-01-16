@@ -3,6 +3,65 @@ import numpy as np
 import random
 import torch
 
+def estimate_ann_energy(n_inp, n_hid, T):
+    """
+    Theoretical energy for non-spiking coESN
+    Following Appendix B (MAC-based energy)
+    """
+    E_MAC = 4.6e-12  # Joules per MAC (from paper)
+
+    # x2h + h2h
+    macs_per_timestep = (
+        n_inp * n_hid +        # input to hidden
+        n_hid * n_hid          # recurrent
+    )
+    '''
+    #option without taking into account x2h:
+    macs_per_timestep = n_hid * n_hid          # recurrent
+    
+    '''
+    total_macs = T * macs_per_timestep
+    energy = total_macs * E_MAC
+
+
+    return {
+        "MACs": total_macs,
+        "Energy_J": energy
+    }
+
+
+
+def estimate_snn_energy(
+    r_hrf,
+    r_lif,
+    n_hid,
+    T,
+    include_lif=True
+):
+    """
+    Theoretical SNN energy (Appendix B style)
+    r_* are average firing rates
+    """
+    E_SOP = 0.9e-12  # Joules per SOP
+
+    if include_lif:
+        r_total = r_hrf + r_lif
+    else:
+        r_total = r_hrf
+
+    # total spikes per sample
+    total_spikes = r_total * n_hid * T
+
+    # each spike triggers n_hid synaptic ops
+    total_sops = total_spikes * n_hid
+
+    energy = total_sops * E_SOP
+
+    return {
+        "SOPs": total_sops,
+        "Energy_J": energy
+    }
+
 def visualize_dynamics_and_spikes(
     model, loader, device, n_neurons=100, n_timesteps=150, save_prefix="spiking_coesn"
 ):
