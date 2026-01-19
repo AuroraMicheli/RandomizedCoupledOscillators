@@ -98,7 +98,7 @@ class spiking_coESN_rescaled(nn.Module):
         theta_rf = self.theta_rf
         
         # ==== LIF parameters ====
-        lif_tau_m = 20.0
+        lif_tau_m = 20.0 #20.0
         lif_tau_ref = 1e9
         spike_gain = self.spike_gain
 
@@ -115,16 +115,20 @@ class spiking_coESN_rescaled(nn.Module):
         lif_v = lif_v + dt * (-lif_v / lif_tau_m + input_current)
         lif_s = (lif_v > theta_lif).float()
         #drive = lif_v
+      
         # Soft reset (subtraction by threshold)
         lif_v = lif_v - lif_s * theta_lif
         
         # ==== HRF oscillator dynamics ====
+
+        #======== EXPERIMENTS WITH DIFFERENT DRIVES===================
         #drive = (spike_gain * lif_s) #+ (spike_gain * s)
-        drive = torch.matmul(lif_s, self.lif2hrf)
+        #drive = torch.matmul(lif_s, self.lif2hrf)  #the one that works best, spikes*matrix
+        #drive = (torch.tanh(lif_v))
+
+        #lif_v_hp = lif_v - lif_v.mean(dim=1, keepdim=True)
         #drive = lif_v
-        #drive = (lif_s)*2
-
-
+        #drive = torch.tanh(input_current)
 
 
         hz = hz + dt * (drive - self.gamma * hy - self.epsilon * hz)
@@ -158,7 +162,9 @@ class spiking_coESN_rescaled(nn.Module):
         hz = torch.zeros(B, n_hid, device=device)
         ref_period = torch.zeros(B, n_hid, device=device)
         s = torch.zeros(B, n_hid, device=device)
-        
+
+        hrf_spikes_feat = torch.zeros(B, n_hid, device=device)
+
         lif_v = torch.zeros(B, n_hid, device=device)
         #spike_counts = torch.zeros(B, n_hid, device=device)
         
@@ -168,11 +174,22 @@ class spiking_coESN_rescaled(nn.Module):
        
         total_hrf_spikes = 0.0
         total_lif_spikes = 0.0
-        
+    
         # New state variable for the filtered trace
         filtered_trace = torch.zeros(B, n_hid, device=device)
         filtered_trace_sum = torch.zeros(B, n_hid, device=device)
         decay_factor = torch.exp(-torch.as_tensor(self.dt / self.tau_filter, device=device))
+
+        #to comppute sttistics of the different types of drive
+        # --- Statistics accumulators ---
+        lif_v_sum = 0.0
+        lif_v_sq_sum = 0.0
+
+        lif2hrf_sum = 0.0
+        lif2hrf_sq_sum = 0.0
+
+        stat_count = 0  # counts total elements accumulated
+
         
         for t in range(L):
             hy, hz, s, ref_period, lif_v, lif_s = self.bio_cell(
@@ -182,6 +199,7 @@ class spiking_coESN_rescaled(nn.Module):
             total_hrf_spikes += s.sum()
             total_lif_spikes += lif_s.sum()
 
+            hrf_spikes_feat += s  #to use mean firing rate per neuron per sample as a feature
             # Update Filtered Trace (Exponential Decay + New Spike)
             filtered_trace = filtered_trace * decay_factor + s
             filtered_trace_sum += filtered_trace
@@ -193,12 +211,27 @@ class spiking_coESN_rescaled(nn.Module):
             # Feature Option 4: Capture final HRF potential
             if t == L - 1:
                 final_hy = hy
+
+            #compute statistics-diagnostic drive
+            # --- lif_v statistics ---
+            lif_v_sum += lif_v.sum()
+            lif_v_sq_sum += (lif_v ** 2).sum()
+
+            # --- lif_s -> HRF drive statistics ---
+            lif2hrf_drive = torch.matmul(lif_s, self.lif2hrf)
+            lif2hrf_sum += lif2hrf_drive.sum()
+            lif2hrf_sq_sum += (lif2hrf_drive ** 2).sum()
+
+            # total number of elements accumulated this step
+            stat_count += lif_v.numel()
+
             
 
         # --- FEATURE OPTIONS: UNCOMMENT THE ONE YOU WANT TO USE ---
         
         # 1. Mean Firing Rate (Baseline) - Feature size: n_hid
-        mean_rates = total_hrf_spikes / L
+        #mean_rates = total_hrf_spikes / L / B
+        mean_rates = hrf_spikes_feat / L
         #return mean_rates
 
         # 2. Concatenated Spike Counts (First Half, Second Half) - Feature size: 2 * n_hid
@@ -215,7 +248,8 @@ class spiking_coESN_rescaled(nn.Module):
 
 
         # 4. Concatenated Spike Rate and Final HRF Potential - Feature size: 2 * n_hid
-        mean_rates = total_hrf_spikes / L
+        #mean_rates = total_hrf_spikes / L 
+       
         #return torch.cat((mean_rates, final_hy), dim=1)
         
         #r = total_spikes / (B * L * n_hid)
@@ -228,10 +262,24 @@ class spiking_coESN_rescaled(nn.Module):
         else:
             r_total = r_hrf
 
-        return final_hy, {
+        #compute statistics-diagnostic drive
+        # --- Compute statistics ---
+        lif_v_mean = lif_v_sum / stat_count
+        lif_v_std = torch.sqrt(lif_v_sq_sum / stat_count - lif_v_mean ** 2)
+
+        lif2hrf_mean = lif2hrf_sum / stat_count
+        lif2hrf_std = torch.sqrt(lif2hrf_sq_sum / stat_count - lif2hrf_mean ** 2)
+
+       
+        features = torch.cat((mean_rates, final_hy), dim=1)
+        return final_hy, {   #final_hy to return membrane potentials only
             "r_total": r_total.detach(),
             "r_hrf": r_hrf.detach(),
-            "r_lif": r_lif.detach()
+            "r_lif": r_lif.detach(),
+            "lif_v_mean": lif_v_mean.detach(),
+            "lif_v_std": lif_v_std.detach(),
+            "lif2hrf_mean": lif2hrf_mean.detach(),
+            "lif2hrf_std": lif2hrf_std.detach(),
         }
 
 
@@ -248,8 +296,8 @@ parser.add_argument('--epsilon_range', type=float, default=1)
 
 # RESCALED DEFAULTS: Use modest scaling and low thresholds
 parser.add_argument('--inp_scaling', type=float, default=2.0)   
-parser.add_argument('--theta_lif', type=float, default=0.05) # Low Threshold #0.05
-parser.add_argument('--theta_rf', type=float, default=0.005)  # Low Threshold #0.005
+parser.add_argument('--theta_lif', type=float, default=5.0) # Low Threshold #default=0.05
+parser.add_argument('--theta_rf', type=float, default=0.005)  # Low Threshold #standard 0.005
 parser.add_argument('--tau_filter', type=float, default=20.0) # New Filter Time Constant (ms equivalent)
 
 parser.add_argument('--rho', type=float, default=0.99)
@@ -294,43 +342,77 @@ visualize_dynamics_and_spikes_middle(model, train_loader, device, n_neurons=100,
 def extract_features(loader, model, device):
     model.eval()
     feats, labels_all = [], []
-    #r_all = []
+
     r_tot, r_hrf, r_lif = [], [], []
+    lif_v_mean_all, lif_v_std_all = [], []
+    lif2hrf_mean_all, lif2hrf_std_all = [], []
+
     with torch.no_grad():
         for images, labels in tqdm(loader, ncols=80):
             images = images.to(device)
-            # Reshape MNIST image to a sequence of 784 1D inputs
             images = images.reshape(images.shape[0], 1, 784).permute(0, 2, 1)
-            rates, r = model(images)   # (B, n_feats)
+
+            rates, r = model(images)
+
             feats.append(rates.cpu())
-            #r_all.append(r.cpu())
+            labels_all.append(labels)
+
             r_tot.append(r["r_total"])
             r_hrf.append(r["r_hrf"])
             r_lif.append(r["r_lif"])
-            labels_all.append(labels)
+
+            lif_v_mean_all.append(r["lif_v_mean"])
+            lif_v_std_all.append(r["lif_v_std"])
+            lif2hrf_mean_all.append(r["lif2hrf_mean"])
+            lif2hrf_std_all.append(r["lif2hrf_std"])
+
     feats = torch.cat(feats, dim=0).numpy()
     labels_all = torch.cat(labels_all, dim=0).numpy()
-    #r_mean = torch.stack(r_all).mean().item()
 
-    #return feats, labels_all, r_mean
     return (
         feats,
         labels_all,
         torch.stack(r_tot).mean().item(),
         torch.stack(r_hrf).mean().item(),
-        torch.stack(r_lif).mean().item()
+        torch.stack(r_lif).mean().item(),
+        torch.stack(lif_v_mean_all).mean().item(),
+        torch.stack(lif_v_std_all).mean().item(),
+        torch.stack(lif2hrf_mean_all).mean().item(),
+        torch.stack(lif2hrf_std_all).mean().item(),
     )
 
 # Note: The feature vector size changes based on your choice in model.forward()
 #train_feats, train_labels, train_r = extract_features(train_loader, model, device)
-train_feats, train_labels, r_tot_train, r_hrf_train, r_lif_train = extract_features(train_loader, model, device)
+(
+    train_feats,
+    train_labels,
+    r_tot_train,
+    r_hrf_train,
+    r_lif_train,
+    lif_v_mean_train,
+    lif_v_std_train,
+    lif2hrf_mean_train,
+    lif2hrf_std_train,
+) = extract_features(train_loader, model, device)
+
 print(f"Feature vector size: {train_feats.shape[1]}") # Print feature size
 
-valid_feats, valid_labels, r_tot_valid, r_hrf_valid, r_lif_valid = extract_features(valid_loader, model, device)
+(
+    valid_feats,
+    valid_labels,
+    r_tot_valid,
+    r_hrf_valid,
+    r_lif_valid,
+    lif_v_mean_valid,
+    lif_v_std_valid,
+    lif2hrf_mean_valid,
+    lif2hrf_std_valid,
+) = extract_features(valid_loader, model, device)
+
 if args.use_test:
-    test_feats, test_labels, r_tot_test, r_hrf_test, r_lif_test = extract_features(test_loader, model, device)
+    test_feats, test_labels, r_tot_test, r_hrf_test, r_lif_test, *_ = extract_features(test_loader, model, device)
 else:
-    test_feats, test_labels, r_tot_test, r_hrf_test, r_lif_test = None, None
+    test_feats, test_labels, r_tot_test, r_hrf_test, r_lif_test, *_ = None, None
 
 # --- standardize ---
 scaler = preprocessing.StandardScaler().fit(train_feats)
@@ -354,6 +436,12 @@ else:
 
 print(f"Average firing rate r hrf (train): {r_hrf_train:.4f}")
 print(f"Average firing rate r lif (train): {r_lif_train:.4f}")
+
+
+print(
+    f"LIF v: mean={lif_v_mean_train:.4e}, std={lif_v_std_train:.4e} | "
+    f"LIF→HRF drive: mean={lif2hrf_mean_train:.4e}, std={lif2hrf_std_train:.4e}"
+)
 
 
 '''
@@ -401,7 +489,6 @@ plot_hrf_membrane_traces(
     t_window=250,
     save_path="hrf_membrane_traces_middle.png"
 )
-
 
 print("\n=== Theoretical SNN Energy ===")
 print(f"Total SOPs: {snn_energy['SOPs']:.3e}")

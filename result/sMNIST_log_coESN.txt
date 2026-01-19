@@ -54,3 +54,7 @@ n_hid: 256, epochs: 120, batch: 120, lr: 0.0021, dt: 0.042, gamma: 2.7, epsilon:
 **************
 
 
+n_hid: 800, epochs: 120, batch: 120, lr: 0.0021, dt: 0.042, gamma: 2.7, epsilon: 0.51, gamma_range: 2.0, epsilon_range: 1.0, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 1.0, rho: 9.0, leaky: 1.0, lstm: False, use_test: True, valid: 0.95, test: 0.96
+**************
+
+

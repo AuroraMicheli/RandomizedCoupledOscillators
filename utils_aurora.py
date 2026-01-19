@@ -3,6 +3,143 @@ import numpy as np
 import random
 import torch
 
+def plot_hrf_membrane_traces(
+    model,
+    loader,
+    device,
+    n_neurons=30,
+    t_window=200,
+    save_path="hrf_membrane_traces_middle.png",
+):
+    model.eval()
+
+    # Take one batch, one sample
+    images, _ = next(iter(loader))
+    images = images.to(device)
+    images = images.reshape(images.shape[0], 1, 784).permute(0, 2, 1)
+
+    B, T, _ = images.shape
+    mid = T // 2
+    t0 = mid - t_window // 2
+    t1 = mid + t_window // 2
+
+    # States
+    hy = torch.zeros(B, model.n_hid, device=device)
+    hz = torch.zeros_like(hy)
+    ref = torch.zeros_like(hy)
+    s = torch.zeros_like(hy)
+    lif_v = torch.zeros_like(hy)
+
+    # Sample neurons
+    idx = torch.randperm(model.n_hid)[:n_neurons]
+
+    traces = []
+
+    with torch.no_grad():
+        for t in range(T):
+            hy, hz, s, ref, lif_v, lif_s = model.bio_cell(
+                images[:, t], hy, hz, lif_v, s, ref
+            )
+
+            if t0 <= t < t1:
+                traces.append(hy[0, idx].cpu().numpy())  # <- HRF membrane potentials
+
+    traces = np.stack(traces)  # (time, neurons)
+
+    # ---- Plot ----
+    plt.figure(figsize=(10, 6))
+
+    for i in range(traces.shape[1]):
+        plt.plot(traces[:, i], lw=1, label=f"n{i}")
+
+    plt.axhline(model.theta_rf, color="k", linestyle="--", alpha=0.5, label="θ_rf")
+    plt.axhline(0.0, color="gray", linestyle=":", alpha=0.5)
+
+    plt.title("HRF membrane potentials (raw, middle time window)")
+    plt.xlabel("Time step")
+    plt.ylabel("Membrane potential")
+    plt.tight_layout()
+
+    # Optional: legend only if few neurons
+    if n_neurons <= 10:
+        plt.legend(loc="best", fontsize=8)
+
+    plt.savefig(save_path, dpi=150)
+    plt.close()
+
+    print(f"Saved HRF membrane plot to: {save_path}")
+
+
+
+def plot_lif_membrane_traces(
+    model,
+    loader,
+    device,
+    n_neurons=30,
+    t_window=200,
+    save_path="lif_membrane_traces_middle.png",
+):
+    model.eval()
+
+    # Take one batch, one sample
+    images, _ = next(iter(loader))
+    images = images.to(device)
+    images = images.reshape(images.shape[0], 1, 784).permute(0, 2, 1)
+
+    B, T, _ = images.shape
+    mid = T // 2
+    t0 = mid - t_window // 2
+    t1 = mid + t_window // 2
+
+    # States
+    hy = torch.zeros(B, model.n_hid, device=device)
+    hz = torch.zeros_like(hy)
+    ref = torch.zeros_like(hy)
+    s = torch.zeros_like(hy)
+    lif_v = torch.zeros_like(hy)
+
+    # Sample neurons
+    idx = torch.randperm(model.n_hid)[:n_neurons]
+
+    traces = []
+
+    with torch.no_grad():
+        for t in range(T):
+            hy, hz, s, ref, lif_v, lif_s = model.bio_cell(
+                images[:, t], hy, hz, lif_v, s, ref
+            )
+
+            if t0 <= t < t1:
+                traces.append(lif_v[0, idx].cpu().numpy())
+
+    traces = np.stack(traces)  # (time, neurons)
+
+    # ---- Plot ----
+    plt.figure(figsize=(10, 6))
+
+    for i in range(traces.shape[1]):
+        plt.plot(traces[:, i], lw=1, label=f"n{i}")
+
+    plt.axhline(model.theta_lif, color="k", linestyle="--", alpha=0.5, label="θ_lif")
+    plt.axhline(0.0, color="gray", linestyle=":", alpha=0.5)
+
+    plt.title("LIF membrane potentials (raw, middle time window)")
+    plt.xlabel("Time step")
+    plt.ylabel("Membrane potential")
+    plt.tight_layout()
+
+    # Optional: legend only if few neurons
+    if n_neurons <= 10:
+        plt.legend(loc="best", fontsize=8)
+
+    plt.savefig(save_path, dpi=150)
+    plt.close()
+
+    print(f"Saved LIF membrane plot to: {save_path}")
+
+
+
+
 def estimate_ann_energy(n_inp, n_hid, T):
     """
     Theoretical energy for non-spiking coESN
@@ -30,7 +167,49 @@ def estimate_ann_energy(n_inp, n_hid, T):
     }
 
 
+def estimate_snn_energy_sparse(
+    r_hrf,
+    r_lif,
+    n_hid,
+    T,
+    lif2hrf_connections,
+    include_lif=True,
+    E_SOP=0.9e-12
+):
+    """
+    Energy estimator compatible with sparse LIF→HRF connectivity
+    """
 
+    # --- HRF spikes ---
+    hrf_spikes = r_hrf * n_hid * T
+    hrf_sops = hrf_spikes * n_hid  # dense HRF→HRF
+
+    total_sops = hrf_sops
+
+    # --- LIF spikes ---
+    if include_lif:
+        lif_spikes = r_lif * n_hid * T
+
+        # average fanout per LIF neuron
+        lif_fanout = lif2hrf_connections / n_hid
+
+        lif_sops = lif_spikes * lif_fanout
+        total_sops += lif_sops
+    else:
+        lif_sops = 0.0
+
+    energy = total_sops * E_SOP
+
+    return {
+        "SOPs": total_sops,
+        "Energy_J": energy,
+        "HRF_SOPs": hrf_sops,
+        "LIF_SOPs": lif_sops
+    }
+
+
+
+    
 def estimate_snn_energy(
     r_hrf,
     r_lif,
@@ -120,25 +299,6 @@ def visualize_dynamics_and_spikes(
         hrf_spikes = hrf_spikes[:, sel_idx].T
 
         # ==============================================================
-        # 1) LIF membrane potentials
-        # ==============================================================
-        '''
-        plt.figure(figsize=(10, 6))
-        #plt.imshow(lif_vs, aspect='auto', cmap='viridis', origin='lower')
-        plt.imshow((lif_vs - lif_vs.mean(axis=1, keepdims=True)) / (lif_vs.std(axis=1, keepdims=True) + 1e-9),
-           aspect='auto', cmap='viridis', origin='lower') #normalized per neuron to better visualize
-           #z-score normalization: for each neuron, subtract neuron's mean and divide by neuron's std. replaces original voltage scale
-           #with a dimensionless scale centered around 0
-
-        plt.colorbar(label="Membrane potential (LIF)")
-        plt.xlabel("Time step (last %d)" % n_timesteps)
-        plt.ylabel("Neuron index")
-        plt.title("LIF membrane potentials (sample)")
-        plt.tight_layout()
-        plt.savefig(f"{save_prefix}_LIF_membrane_heatmap.png", dpi=300)
-        plt.close()
-        '''
-        # ==============================================================
         # 1) LIF membrane potentials (comparison normalized and not)
         # ==============================================================
         fig, axes = plt.subplots(1, 2, figsize=(14, 6), sharey=True)
@@ -178,22 +338,6 @@ def visualize_dynamics_and_spikes(
         plt.savefig(f"{save_prefix}_HRF_membrane_comparison.png", dpi=300)
         plt.close()
 
-        '''
-        # ==============================================================
-        # 2) HRF potentials
-        # ==============================================================
-        plt.figure(figsize=(10, 6))
-        #plt.imshow(hrf_ys, aspect='auto', cmap='viridis', origin='lower')
-        plt.imshow((hrf_ys - hrf_ys.mean(axis=1, keepdims=True)) / (hrf_ys.std(axis=1, keepdims=True) + 1e-9),
-           aspect='auto', cmap='viridis', origin='lower') #normalized per neuron to better visualize
-        plt.colorbar(label="Potential (HRF)")
-        plt.xlabel("Time step (last %d)" % n_timesteps)
-        plt.ylabel("Neuron index")
-        plt.title("HRF potentials (sample)")
-        plt.tight_layout()
-        plt.savefig(f"{save_prefix}_HRF_potential_heatmap.png", dpi=300)
-        plt.close()
-        '''
         # ==============================================================
         # 3) LIF spike raster
         # ==============================================================
