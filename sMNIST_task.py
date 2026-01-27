@@ -12,7 +12,7 @@ from utils_aurora import *
 
 parser = argparse.ArgumentParser(description='training parameters')
 
-parser.add_argument('--n_hid', type=int, default=256,
+parser.add_argument('--n_hid', type=int, default=800, #default 256
                     help='hidden size of recurrent net')
 parser.add_argument('--epochs', type=int, default=120,
                     help='max epochs')
@@ -26,9 +26,9 @@ parser.add_argument('--gamma', type=float, default=2.7,
                     help='y controle parameter <gamma> of the coRNN')
 parser.add_argument('--epsilon', type=float, default=0.51, #default=4.7
                     help='z controle parameter <epsilon> of the coRNN')
-parser.add_argument('--gamma_range', type=float, default=2.0, #default=2.7
+parser.add_argument('--gamma_range', type=float, default=1.0, #default=2.7
                     help='y controle parameter <gamma> of the coRNN')
-parser.add_argument('--epsilon_range', type=float, default=1.0, #default=4.7
+parser.add_argument('--epsilon_range', type=float, default=0.5, #default=4.7
                     help='z controle parameter <epsilon> of the coRNN')
 parser.add_argument('--cpu', action="store_true")
 parser.add_argument('--check', action="store_true")
