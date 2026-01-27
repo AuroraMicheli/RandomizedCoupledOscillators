@@ -198,6 +198,7 @@ class spiking_coESN_rescaled(nn.Module):
             total_hrf_spikes += s.sum()
             total_lif_spikes += lif_s.sum()
         
+
         # Compute temporal features
         hy_mean = hy_sum / L
         hy_rms = torch.sqrt(hy_sq_sum / L + 1e-8)  # Root mean square (oscillation amplitude)
@@ -205,12 +206,16 @@ class spiking_coESN_rescaled(nn.Module):
         hy_final = hy  # Final state (phase information)
         
         # Concatenate features: 3*n_hid dimensional
+       
         features = torch.cat([
             hy_rms,    # RMS captures oscillation amplitude (always positive, informative)
             hy_std,    # Std captures dynamics/variability
             hy_final   # Final state captures endpoint phase
         ], dim=1)
         
+
+        #features = hy_final
+
         # Compute average firing rates for energy analysis
         r_hrf = total_hrf_spikes / (B * L * n_hid)
         r_lif = total_lif_spikes / (B * L * n_hid)
@@ -226,11 +231,11 @@ class spiking_coESN_rescaled(nn.Module):
 ########## MAIN with Rescaled Model and Time-Pooled Features ##########
 
 parser = argparse.ArgumentParser(description='Spiking coESN with Time-Pooled Readout Features')
-parser.add_argument('--n_hid', type=int, default=256)
+parser.add_argument('--n_hid', type=int, default=256) #default 256
 parser.add_argument('--batch', type=int, default=256)  
 parser.add_argument('--dt', type=float, default=0.042)
 parser.add_argument('--gamma', type=float, default=2.7)
-parser.add_argument('--epsilon', type=float, default=0.08)
+parser.add_argument('--epsilon', type=float, default=0.08) #0.08
 parser.add_argument('--gamma_range', type=float, default=2)
 parser.add_argument('--epsilon_range', type=float, default=1)
 
@@ -240,7 +245,7 @@ parser.add_argument('--theta_rf', type=float, default=0.005)
 parser.add_argument('--tau_filter', type=float, default=20.0)
 
 parser.add_argument('--rho', type=float, default=0.99)
-parser.add_argument('--count_lif_spikes', action="store_true")
+#parser.add_argument('--count_lif_spikes', action="store_true")
 parser.add_argument('--cpu', action="store_true")
 parser.add_argument('--use_test', action="store_true")
 
@@ -274,7 +279,7 @@ model = spiking_coESN_rescaled(
     theta_lif=args.theta_lif,
     theta_rf=args.theta_rf,
     tau_filter=args.tau_filter,
-    count_lif_spikes=args.count_lif_spikes,
+    #count_lif_spikes=args.count_lif_spikes,
     sparse_lif2hrf=args.sparse_lif2hrf,
     connectivity=args.connectivity,
     device=device
@@ -372,7 +377,7 @@ snn_energy = estimate_snn_energy_sparse(
     n_hid=args.n_hid,
     T=T,
     lif2hrf_connections=model.n_lif2hrf_connections,
-    include_lif=args.count_lif_spikes
+    include_lif=True    #args.count_lif_spikes
 )
 
 
@@ -415,7 +420,7 @@ plot_hrf_membrane_traces(
 print("\n=== Theoretical SNN Energy ===")
 print(f"Total SOPs: {snn_energy['SOPs']:.3e}")
 print(f"Energy (J): {snn_energy['Energy_J']:.3e}")
-print(f"(include LIF spikes: {args.count_lif_spikes})")
+#print(f"(include LIF spikes: {args.count_lif_spikes})")
 
 print("\n=== Final Results Summary ===")
 print(f"Model: Spiking coESN with Time-Pooled Readout")
