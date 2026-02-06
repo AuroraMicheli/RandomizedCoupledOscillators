@@ -1,7 +1,7 @@
 from torch import nn, optim
 import torch
 import torch.nn.utils
-from utils import coRNN, coESN, check, LSTM, get_FordA_data, TrainedRON
+from utils import coRNN, coESN, check, LSTM, get_FordA_data #, TrainedRON
 from pathlib import Path
 import argparse
 from tqdm import tqdm
@@ -9,10 +9,11 @@ from esn import DeepReservoir
 from sklearn.linear_model import LogisticRegression
 from sklearn import preprocessing
 import numpy as np
+from utils_aurora import *
 
 parser = argparse.ArgumentParser(description='training parameters')
 
-parser.add_argument('--n_hid', type=int, default=100,
+parser.add_argument('--n_hid', type=int, default=256,
                     help='hidden size of recurrent net')
 parser.add_argument('--epochs', type=int, default=120, 
                     help='max epochs')
@@ -20,23 +21,23 @@ parser.add_argument('--batch', type=int, default=120,
                     help='batch size')
 parser.add_argument('--lr', type=float, default=0.0021,
                     help='learning rate')
-parser.add_argument('--dt', type=float, default=0.042,
+parser.add_argument('--dt', type=float, default=0.2, #0.042
                     help='step size <dt> of the coRNN')
-parser.add_argument('--gamma', type=float, default=2.7,
+parser.add_argument('--gamma', type=float, default=1.0, #2.7
                     help='y controle parameter <gamma> of the coRNN')
-parser.add_argument('--epsilon', type=float, default=4.7,
+parser.add_argument('--epsilon', type=float, default=5., #4.7
                     help='z controle parameter <epsilon> of the coRNN')
-parser.add_argument('--gamma_range', type=float, default=2.7,
+parser.add_argument('--gamma_range', type=float, default=1.0, #2.7
                     help='y controle parameter <gamma> of the coRNN')
-parser.add_argument('--epsilon_range', type=float, default=4.7,
+parser.add_argument('--epsilon_range', type=float, default=10., #4.7
                     help='z controle parameter <epsilon> of the coRNN')
 parser.add_argument('--cpu', action="store_true")
 parser.add_argument('--check', action="store_true")
 parser.add_argument('--no_friction', action="store_true", help="remove friction term inside non-linearity")
 parser.add_argument('--esn', action="store_true")
-parser.add_argument('--inp_scaling', type=float, default=1.,
+parser.add_argument('--inp_scaling', type=float, default=0.1, #1.0
                     help='ESN input scaling')
-parser.add_argument('--rho', type=float, default=0.99,
+parser.add_argument('--rho', type=float, default=0.9, #0.99
                     help='ESN spectral radius')
 parser.add_argument('--leaky', type=float, default=1.0,
                     help='ESN spectral radius')
@@ -95,6 +96,8 @@ gamma = (args.gamma - args.gamma_range / 2., args.gamma + args.gamma_range / 2.)
 epsilon = (args.epsilon - args.epsilon_range / 2., args.epsilon + args.epsilon_range / 2.)
 
 max_test_accs = []
+all_train_accs = []  # Track train accuracies across trials
+
 if args.test_trials > 1:
     main_folder = 'result'
     if args.esn:
@@ -109,6 +112,10 @@ else:
         
 
 for trial in range(args.test_trials):
+    print("\n" + "="*70)
+    print(f"TRIAL {trial + 1}/{args.test_trials}")
+    print("="*70)
+    
     accs = []
 
 
@@ -139,8 +146,12 @@ for trial in range(args.test_trials):
     optimizer = optim.Adam(model.parameters(), lr=args.lr)
 
     if args.esn:
+        print("\n" + "="*70)
+        print("EXTRACTING FEATURES AND TRAINING READOUT")
+        print("="*70)
+        
         activations, ys = [], []
-        for x, y in tqdm(train_loader):
+        for x, y in tqdm(train_loader, desc="Train features"):
             x = x.to(device)
             output = model(x)[-1][0]
             activations.append(output.cpu())
@@ -150,9 +161,29 @@ for trial in range(args.test_trials):
         scaler = preprocessing.StandardScaler().fit(activations)
         activations = scaler.transform(activations)
         classifier = LogisticRegression(max_iter=1000).fit(activations, ys)
-        valid_acc = test_esn(valid_loader, classifier, scaler) if args.test_trials<=1 else 0.0
-        test_acc = test_esn(test_loader, classifier, scaler) if args.use_test else 0.0
-        accs.append(test_acc)
+        
+        # Compute train accuracy
+        train_acc = classifier.score(activations, ys) * 100
+        print(f"\n✅ Train accuracy: {train_acc:.2f}%")
+        
+        # Compute valid accuracy
+        if args.test_trials <= 1:
+            valid_acc = test_esn(valid_loader, classifier, scaler)
+            print(f"✅ Valid accuracy: {valid_acc * 100:.2f}%")
+        else:
+            valid_acc = 0.0
+        
+        # Compute test accuracy
+        if args.use_test:
+            test_acc = test_esn(test_loader, classifier, scaler)
+            print(f"✅ Test accuracy:  {test_acc * 100:.2f}%")
+        else:
+            test_acc = 0.0
+        
+        print("="*70 + "\n")
+        accs.append(test_acc * 100)  # Convert to percentage
+        all_train_accs.append(train_acc)
+        
     else:
         for epoch in range(args.epochs):
             print(f"Epoch {epoch}")
@@ -222,6 +253,59 @@ for trial in range(args.test_trials):
 
 mean_test = np.mean(np.array(max_test_accs))
 std_test = np.std(np.array(max_test_accs))
+
+# Compute mean and std for train accuracy (only for ESN where we track it)
+if args.esn and len(all_train_accs) > 0:
+    mean_train = np.mean(np.array(all_train_accs))
+    std_train = np.std(np.array(all_train_accs))
+else:
+    mean_train = 0.0
+    std_train = 0.0
+
+
+# ===== Theoretical ANN Energy =====
+if args.esn and args.no_friction: # coESN
+    T = 500  # sMNIST sequence length
+
+    ann_energy = estimate_ann_energy(
+        n_inp=1,
+        n_hid=args.n_hid,
+        T=T
+    )
+
+    print("\n=== Theoretical ANN Energy (coESN) ===")
+    print(f"Total MACs: {ann_energy['MACs']:.3e}")
+    print(f"Energy (J): {ann_energy['Energy_J']:.3e}")
+    #------------------------------------------------------------
+
+# Print summary statistics to terminal
+print("\n" + "="*70)
+print("FINAL RESULTS SUMMARY (ACROSS ALL TRIALS)")
+print("="*70)
+print(f"Dataset: FordA")
+if args.lstm:
+    model_type = "LSTM"
+elif args.esn and args.no_friction:
+    model_type = "coESN"
+elif args.esn:
+    model_type = "ESN (DeepReservoir)"
+elif args.trained_ron:
+    model_type = "Trained RON"
+elif args.no_friction:
+    model_type = "coRNN (no friction)"
+else:
+    model_type = "coRNN"
+print(f"Model: {model_type}")
+print(f"Hidden units: {args.n_hid}")
+print(f"Number of trials: {args.test_trials}")
+print(f"-" * 70)
+if args.esn and len(all_train_accs) > 0:
+    print(f"Training accuracy:   {mean_train:.2f}% ± {std_train:.2f}%")
+print(f"Test accuracy:       {mean_test:.2f}% ± {std_test:.2f}%")
+print(f"-" * 70)
+print(f"Test accuracies per trial: {[f'{acc:.2f}' for acc in max_test_accs]}")
+print("="*70 + "\n")
+
 
 if args.lstm:
     f = open(f'{main_folder}/FordA_log_lstm.txt', 'a')

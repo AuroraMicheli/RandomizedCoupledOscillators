@@ -1,5 +1,25 @@
 import torch
 from torch import nn, optim
+import random
+import numpy as np
+
+
+SEED = 58
+
+random.seed(SEED)
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+
+if torch.cuda.is_available():
+    torch.cuda.manual_seed(SEED)
+    torch.cuda.manual_seed_all(SEED)
+
+torch.backends.cudnn.deterministic = True
+torch.backends.cudnn.benchmark = False
+# =====================================================
+
+
+
 import torch.nn.utils
 from utils import get_mnist_data, coRNN, coESN, check, LSTM
 from pathlib import Path
@@ -10,9 +30,10 @@ from sklearn.linear_model import LogisticRegression
 from sklearn import preprocessing
 from utils_aurora import *
 
+
 parser = argparse.ArgumentParser(description='training parameters')
 
-parser.add_argument('--n_hid', type=int, default=800, #default 256
+parser.add_argument('--n_hid', type=int, default=256, #default 256
                     help='hidden size of recurrent net')
 parser.add_argument('--epochs', type=int, default=120,
                     help='max epochs')
@@ -26,9 +47,9 @@ parser.add_argument('--gamma', type=float, default=2.7,
                     help='y controle parameter <gamma> of the coRNN')
 parser.add_argument('--epsilon', type=float, default=0.51, #default=4.7
                     help='z controle parameter <epsilon> of the coRNN')
-parser.add_argument('--gamma_range', type=float, default=1.0, #default=2.7
+parser.add_argument('--gamma_range', type=float, default=2.0, #default=2.7
                     help='y controle parameter <gamma> of the coRNN')
-parser.add_argument('--epsilon_range', type=float, default=0.5, #default=4.7
+parser.add_argument('--epsilon_range', type=float, default=1.0, #default=4.7
                     help='z controle parameter <epsilon> of the coRNN')
 parser.add_argument('--cpu', action="store_true")
 parser.add_argument('--check', action="store_true")
@@ -177,6 +198,8 @@ else:
                 param_group['lr'] = args.lr
 
 if args.lstm:
+    print(f"Valid accuracy: ", valid_acc)
+    print(f"Test accuracy: ", test_acc)
     f = open(f'{main_folder}/sMNIST_log_lstm.txt', 'a')
 elif args.no_friction and (not args.esn): # coRNN without friction
     f = open(f'{main_folder}/sMNIST_log_no_friction.txt', 'a')
@@ -213,3 +236,5 @@ ar += f'valid: {str(round(valid_acc, 2))}, test: {str(round(test_acc, 2))}'
 f.write(ar + '\n')
 f.write('**************\n\n\n')
 f.close()
+
+

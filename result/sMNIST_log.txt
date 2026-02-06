@@ -1,0 +1,12 @@
+valid accuracy: 10.77
+test accuracy: 11.35
+valid accuracy: 10.77
+test accuracy: 11.35
+valid accuracy: 10.77
+test accuracy: 11.35
+valid accuracy: 10.77
+test accuracy: 11.35
+valid accuracy: 10.77
+test accuracy: 11.35
+valid accuracy: 10.77
+test accuracy: 11.35

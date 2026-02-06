@@ -6,3 +6,4 @@ MNIST/
 .txt/
 .sbatch/
 .sh/
+.out

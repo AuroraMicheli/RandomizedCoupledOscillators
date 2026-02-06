@@ -206,15 +206,15 @@ class spiking_coESN_rescaled(nn.Module):
         hy_final = hy  # Final state (phase information)
         
         # Concatenate features: 3*n_hid dimensional
-       
+        '''
         features = torch.cat([
             hy_rms,    # RMS captures oscillation amplitude (always positive, informative)
             hy_std,    # Std captures dynamics/variability
             hy_final   # Final state captures endpoint phase
         ], dim=1)
         
-
-        #features = hy_final
+        '''
+        features = hy_final
 
         # Compute average firing rates for energy analysis
         r_hrf = total_hrf_spikes / (B * L * n_hid)
