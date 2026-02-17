@@ -1,0 +1,198 @@
+
+🔍 Config 1/50: inp=0.464 dens=0.201 dt=0.397 γ=0.24±0.26 ε=0.0278±0.043 ρ=0.90 θlif=0.1951 θrf=0.0054 C=0.001
+   ✅ Test: 50.37±0.90%  Train: 97.49%  Gap: 47.1%
+
+🔍 Config 2/50: inp=0.098 dens=0.110 dt=0.616 γ=0.37±0.17 ε=0.0486±0.011 ρ=1.49 θlif=0.0390 θrf=0.0017 C=0.1
+   ✅ Test: 49.93±1.27%  Train: 100.00%  Gap: 50.1%
+
+🔍 Config 3/50: inp=0.086 dens=0.088 dt=0.438 γ=0.14±0.18 ε=0.0859±0.069 ρ=1.14 θlif=0.2277 θrf=0.0092 C=1.0
+   ✅ Test: 71.29±0.88%  Train: 100.00%  Gap: 28.7%
+
+🔍 Config 4/50: inp=0.211 dens=0.033 dt=0.556 γ=0.02±0.39 ε=0.0400±0.002 ρ=1.05 θlif=0.2807 θrf=0.0028 C=0.01
+❌ Config 4 seed 0 FAILED
+     File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+       type_err, msg_dtype if msg_dtype is not None else X.dtype
+   ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🔍 Config 5/50: inp=0.028 dens=0.080 dt=0.294 γ=0.28±0.03 ε=0.0358±0.011 ρ=1.05 θlif=0.2745 θrf=0.0020 C=1.0
+   ✅ Test: 55.12±1.37%  Train: 100.00%  Gap: 44.9%
+
+🔍 Config 6/50: inp=0.105 dens=0.043 dt=0.639 γ=0.40±0.43 ε=0.0241±0.052 ρ=0.93 θlif=0.1413 θrf=0.0015 C=0.01
+   ✅ Test: 47.81±1.42%  Train: 100.00%  Gap: 52.2%
+
+🔍 Config 7/50: inp=0.181 dens=0.148 dt=0.211 γ=0.43±0.40 ε=0.0363±0.074 ρ=1.11 θlif=0.1668 θrf=0.0050 C=1.0
+⏰ Config 7 seed 0 TIMEOUT (>600s)
+
+🔍 Config 8/50: inp=1.776 dens=0.052 dt=0.200 γ=0.30±0.29 ε=0.0586±0.051 ρ=1.00 θlif=0.1755 θrf=0.0199 C=0.1
+⏰ Config 8 seed 0 TIMEOUT (>600s)
+
+🔍 Config 9/50: inp=0.595 dens=0.129 dt=0.611 γ=0.20±0.37 ε=0.0485±0.001 ρ=1.08 θlif=0.1197 θrf=0.0109 C=0.1
+   ✅ Test: 48.09±0.55%  Train: 100.00%  Gap: 51.9%
+
+🔍 Config 10/50: inp=0.055 dens=0.075 dt=0.240 γ=0.21±0.43 ε=0.0684±0.080 ρ=0.88 θlif=0.0328 θrf=0.0022 C=0.01
+   ✅ Test: 65.97±0.28%  Train: 100.00%  Gap: 34.0%
+
+🔍 Config 11/50: inp=1.226 dens=0.242 dt=0.339 γ=0.47±0.32 ε=0.0213±0.028 ρ=1.45 θlif=0.1738 θrf=0.0108 C=0.01
+   ✅ Test: 40.08±0.79%  Train: 99.54%  Gap: 59.5%
+
+🔍 Config 12/50: inp=0.029 dens=0.224 dt=0.203 γ=0.38±0.25 ε=0.0249±0.020 ρ=0.77 θlif=0.0503 θrf=0.0054 C=0.01
+   ✅ Test: 56.68±0.53%  Train: 100.00%  Gap: 43.3%
+
+🔍 Config 13/50: inp=0.291 dens=0.047 dt=0.559 γ=0.39±0.45 ε=0.0684±0.070 ρ=1.19 θlif=0.0319 θrf=0.0026 C=0.01
+   ✅ Test: 58.29±0.74%  Train: 100.00%  Gap: 41.7%
+
+🔍 Config 14/50: inp=0.044 dens=0.038 dt=0.244 γ=0.15±0.31 ε=0.1176±0.010 ρ=1.26 θlif=0.0365 θrf=0.0164 C=1.0
+   ✅ Test: 46.19±0.51%  Train: 100.00%  Gap: 53.8%
+
+🔍 Config 15/50: inp=0.595 dens=0.048 dt=0.201 γ=0.35±0.16 ε=0.0217±0.042 ρ=0.87 θlif=0.2231 θrf=0.0042 C=0.1
+   ✅ Test: 62.34±0.48%  Train: 100.00%  Gap: 37.7%
+
+🔍 Config 16/50: inp=0.257 dens=0.079 dt=0.489 γ=0.08±0.35 ε=0.0971±0.020 ρ=1.17 θlif=0.0914 θrf=0.0093 C=0.001
+   ✅ Test: 52.53±0.87%  Train: 99.42%  Gap: 46.9%
+
+🔍 Config 17/50: inp=0.751 dens=0.175 dt=0.305 γ=0.03±0.41 ε=0.0467±0.043 ρ=1.46 θlif=0.1524 θrf=0.0020 C=0.1
+⏰ Config 17 seed 0 TIMEOUT (>600s)
+
+🔍 Config 18/50: inp=1.398 dens=0.228 dt=0.390 γ=0.05±0.45 ε=0.0508±0.021 ρ=0.76 θlif=0.2623 θrf=0.0098 C=0.001
+❌ Config 18 seed 0 FAILED
+     File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+       type_err, msg_dtype if msg_dtype is not None else X.dtype
+   ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🔍 Config 19/50: inp=0.107 dens=0.163 dt=0.732 γ=0.34±0.02 ε=0.0251±0.019 ρ=0.89 θlif=0.0806 θrf=0.0111 C=0.01
+   ✅ Test: 30.42±0.87%  Train: 100.00%  Gap: 69.6%
+
+🔍 Config 20/50: inp=0.022 dens=0.219 dt=0.367 γ=0.03±0.19 ε=0.0731±0.016 ρ=0.77 θlif=0.0418 θrf=0.0018 C=0.01
+   ✅ Test: 47.36±0.04%  Train: 100.00%  Gap: 52.6%
+
+🔍 Config 21/50: inp=0.056 dens=0.045 dt=0.765 γ=0.26±0.22 ε=0.1094±0.012 ρ=0.92 θlif=0.0697 θrf=0.0025 C=0.001
+   ✅ Test: 65.93±0.47%  Train: 99.99%  Gap: 34.1%
+
+🔍 Config 22/50: inp=0.279 dens=0.158 dt=0.687 γ=0.44±0.39 ε=0.0574±0.078 ρ=0.76 θlif=0.1216 θrf=0.0169 C=0.1
+   ✅ Test: 37.94±0.33%  Train: 100.00%  Gap: 62.1%
+
+🔍 Config 23/50: inp=0.576 dens=0.038 dt=0.662 γ=0.10±0.34 ε=0.1048±0.070 ρ=1.05 θlif=0.0887 θrf=0.0080 C=0.1
+❌ Config 23 seed 0 FAILED
+     File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+       type_err, msg_dtype if msg_dtype is not None else X.dtype
+   ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🔍 Config 24/50: inp=0.227 dens=0.271 dt=0.283 γ=0.37±0.35 ε=0.0969±0.019 ρ=1.38 θlif=0.0633 θrf=0.0019 C=0.001
+   ✅ Test: 54.00±0.27%  Train: 97.65%  Gap: 43.6%
+
+🔍 Config 25/50: inp=0.309 dens=0.079 dt=0.650 γ=0.23±0.39 ε=0.0242±0.058 ρ=1.16 θlif=0.0758 θrf=0.0082 C=0.01
+   ✅ Test: 47.64±0.55%  Train: 100.00%  Gap: 52.4%
+
+🔍 Config 26/50: inp=0.102 dens=0.261 dt=0.316 γ=0.20±0.06 ε=0.0454±0.024 ρ=0.80 θlif=0.0361 θrf=0.0048 C=0.1
+⏰ Config 26 seed 0 TIMEOUT (>600s)
+
+🔍 Config 27/50: inp=1.437 dens=0.185 dt=0.567 γ=0.48±0.05 ε=0.0353±0.056 ρ=1.27 θlif=0.0886 θrf=0.0018 C=1.0
+   ✅ Test: 37.07±0.59%  Train: 100.00%  Gap: 62.9%
+
+🔍 Config 28/50: inp=0.590 dens=0.206 dt=0.584 γ=0.09±0.10 ε=0.0427±0.037 ρ=1.03 θlif=0.1422 θrf=0.0012 C=0.01
+   ✅ Test: 48.48±0.73%  Train: 100.00%  Gap: 51.5%
+
+🔍 Config 29/50: inp=0.130 dens=0.090 dt=0.766 γ=0.16±0.25 ε=0.0256±0.058 ρ=0.72 θlif=0.0675 θrf=0.0044 C=0.01
+   ✅ Test: 47.44±0.67%  Train: 100.00%  Gap: 52.6%
+
+🔍 Config 30/50: inp=0.155 dens=0.231 dt=0.453 γ=0.34±0.25 ε=0.0400±0.048 ρ=0.92 θlif=0.1037 θrf=0.0122 C=0.01
+   ✅ Test: 43.58±0.31%  Train: 100.00%  Gap: 56.4%
+
+🔍 Config 31/50: inp=0.144 dens=0.118 dt=0.331 γ=0.04±0.04 ε=0.0785±0.006 ρ=0.75 θlif=0.0519 θrf=0.0091 C=0.01
+⏰ Config 31 seed 0 TIMEOUT (>600s)
+
+🔍 Config 32/50: inp=0.860 dens=0.136 dt=0.201 γ=0.11±0.28 ε=0.1111±0.060 ρ=1.37 θlif=0.0311 θrf=0.0082 C=0.1
+⏰ Config 32 seed 0 TIMEOUT (>600s)
+
+🔍 Config 33/50: inp=0.030 dens=0.179 dt=0.258 γ=0.20±0.48 ε=0.0303±0.074 ρ=0.75 θlif=0.2650 θrf=0.0020 C=1.0
+⏰ Config 33 seed 0 TIMEOUT (>600s)
+
+🔍 Config 34/50: inp=0.275 dens=0.106 dt=0.210 γ=0.33±0.45 ε=0.0380±0.022 ρ=0.93 θlif=0.2085 θrf=0.0186 C=0.01
+   ✅ Test: 62.16±0.23%  Train: 100.00%  Gap: 37.8%
+
+🔍 Config 35/50: inp=1.509 dens=0.147 dt=0.291 γ=0.21±0.31 ε=0.0301±0.043 ρ=0.77 θlif=0.2850 θrf=0.0188 C=0.1
+⏰ Config 35 seed 0 TIMEOUT (>600s)
+
+🔍 Config 36/50: inp=0.171 dens=0.092 dt=0.202 γ=0.16±0.43 ε=0.0284±0.072 ρ=1.34 θlif=0.0744 θrf=0.0044 C=0.001
+   ✅ Test: 66.43±0.52%  Train: 99.01%  Gap: 32.6%
+
+🔍 Config 37/50: inp=0.232 dens=0.058 dt=0.452 γ=0.31±0.10 ε=0.0257±0.024 ρ=1.19 θlif=0.2813 θrf=0.0011 C=0.001
+   ✅ Test: 48.56±1.37%  Train: 99.74%  Gap: 51.2%
+
+🔍 Config 38/50: inp=0.021 dens=0.228 dt=0.300 γ=0.40±0.21 ε=0.0416±0.044 ρ=1.30 θlif=0.0569 θrf=0.0096 C=0.001
+   ✅ Test: 37.41±0.50%  Train: 99.95%  Gap: 62.5%
+
+🔍 Config 39/50: inp=0.394 dens=0.174 dt=0.794 γ=0.28±0.24 ε=0.0522±0.076 ρ=1.15 θlif=0.0307 θrf=0.0026 C=1.0
+   ✅ Test: 37.53±0.82%  Train: 100.00%  Gap: 62.5%
+
+🔍 Config 40/50: inp=1.322 dens=0.146 dt=0.401 γ=0.32±0.09 ε=0.0741±0.051 ρ=0.88 θlif=0.0374 θrf=0.0013 C=0.1
+⏰ Config 40 seed 0 TIMEOUT (>600s)
+
+🔍 Config 41/50: inp=0.022 dens=0.135 dt=0.470 γ=0.01±0.29 ε=0.1157±0.010 ρ=1.26 θlif=0.1569 θrf=0.0064 C=0.001
+❌ Config 41 seed 0 FAILED
+     File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+       type_err, msg_dtype if msg_dtype is not None else X.dtype
+   ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🔍 Config 42/50: inp=0.086 dens=0.088 dt=0.446 γ=0.08±0.12 ε=0.0486±0.006 ρ=1.29 θlif=0.2075 θrf=0.0156 C=1.0
+   ✅ Test: 69.92±1.32%  Train: 100.00%  Gap: 30.1%
+
+🔍 Config 43/50: inp=0.030 dens=0.031 dt=0.270 γ=0.20±0.14 ε=0.1177±0.033 ρ=0.79 θlif=0.1388 θrf=0.0103 C=0.001
+   ✅ Test: 60.98±0.91%  Train: 99.95%  Gap: 39.0%
+
+🔍 Config 44/50: inp=1.272 dens=0.053 dt=0.325 γ=0.30±0.06 ε=0.0961±0.016 ρ=1.28 θlif=0.0518 θrf=0.0053 C=0.1
+⏰ Config 44 seed 0 TIMEOUT (>600s)
+
+🔍 Config 45/50: inp=0.517 dens=0.180 dt=0.482 γ=0.31±0.17 ε=0.0340±0.037 ρ=1.03 θlif=0.0489 θrf=0.0018 C=0.1
+   ✅ Test: 43.32±0.74%  Train: 100.00%  Gap: 56.7%
+
+🔍 Config 46/50: inp=1.675 dens=0.097 dt=0.784 γ=0.36±0.10 ε=0.0774±0.005 ρ=1.17 θlif=0.1523 θrf=0.0030 C=0.01
+   ✅ Test: 40.00±0.64%  Train: 100.00%  Gap: 60.0%
+
+🔍 Config 47/50: inp=0.033 dens=0.107 dt=0.759 γ=0.17±0.37 ε=0.0421±0.032 ρ=1.36 θlif=0.1091 θrf=0.0111 C=0.1
+   ✅ Test: 45.64±0.93%  Train: 100.00%  Gap: 54.4%
+
+🔍 Config 48/50: inp=0.160 dens=0.136 dt=0.371 γ=0.39±0.16 ε=0.0416±0.077 ρ=1.41 θlif=0.0803 θrf=0.0200 C=0.001
+   ✅ Test: 48.78±0.90%  Train: 99.71%  Gap: 50.9%
+
+🔍 Config 49/50: inp=0.022 dens=0.134 dt=0.602 γ=0.04±0.49 ε=0.1049±0.064 ρ=0.84 θlif=0.1265 θrf=0.0159 C=0.1
+❌ Config 49 seed 0 FAILED
+     File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+       type_err, msg_dtype if msg_dtype is not None else X.dtype
+   ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🔍 Config 50/50: inp=0.677 dens=0.110 dt=0.675 γ=0.28±0.33 ε=0.0327±0.008 ρ=1.37 θlif=0.1026 θrf=0.0127 C=0.01
+   ✅ Test: 41.39±0.29%  Train: 100.00%  Gap: 58.6%
+
+======================================================================
+✅ Completed: 35/50 configs successful
+❌ Failed: 15/50 configs
+======================================================================
+
+🏆 TOP 10 CONFIGURATIONS:
+Rank  Test%        Train%     Gap      inp_scl  density  C      dt      gamma   eps     rho   
+----------------------------------------------------------------------------------------------------
+1     71.29±0.88  100.0%     28.7%   0.086   0.088   1.0   0.438  0.14   0.0859 1.14  
+2     69.92±1.32  100.0%     30.1%   0.086   0.088   1.0   0.446  0.08   0.0486 1.29  
+3     66.43±0.52  99.0%     32.6%   0.171   0.092   0.001 0.202  0.16   0.0284 1.34  
+4     65.97±0.28  100.0%     34.0%   0.055   0.075   0.01  0.240  0.21   0.0684 0.88  
+5     65.93±0.47  100.0%     34.1%   0.056   0.045   0.001 0.765  0.26   0.1094 0.92  
+6     62.34±0.48  100.0%     37.7%   0.595   0.048   0.1   0.201  0.35   0.0217 0.87  
+7     62.16±0.23  100.0%     37.8%   0.275   0.106   0.01  0.210  0.33   0.0380 0.93  
+8     60.98±0.91  99.9%     39.0%   0.030   0.031   0.001 0.270  0.20   0.1177 0.79  
+9     58.29±0.74  100.0%     41.7%   0.291   0.047   0.01  0.559  0.39   0.0684 1.19  
+10    56.68±0.53  100.0%     43.3%   0.029   0.224   0.01  0.203  0.38   0.0249 0.77  
+
+📊 PARAMETER TRENDS (top 10 vs all):
+      inp_scaling: top10=0.1673±0.1691  all=0.3273±0.3941
+    input_density: top10=0.0844±0.0523  all=0.1274±0.0678
+               dt: top10=0.3533±0.1834  all=0.4819±0.1938
+            gamma: top10=0.2506±0.1036  all=0.2770±0.1174
+          epsilon: top10=0.0612±0.0330  all=0.0514±0.0284
+              rho: top10=1.0136±0.1984  all=1.0955±0.2200
+
+📊 REGULARIZATION (C) BREAKDOWN:
+  C=0.001 : n=9, test=53.89±8.77%, gap=45.3%
+  C=0.01  : n=14, test=48.38±9.27%, gap=51.6%
+  C=0.1   : n=6, test=47.87±7.50%, gap=52.1%
+  C=1.0   : n=6, test=52.85±13.93%, gap=47.1%

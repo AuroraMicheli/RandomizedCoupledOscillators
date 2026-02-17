@@ -8,7 +8,7 @@ from tqdm import tqdm
 from esn import DeepReservoir
 from sklearn import preprocessing
 from sklearn.linear_model import LogisticRegression
-
+from utils_aurora import *
 
 parser = argparse.ArgumentParser(description='training parameters')
 
@@ -22,13 +22,13 @@ parser.add_argument('--lr', type=float, default=0.0054,
                     help='learning rate')
 parser.add_argument('--dt', type=float, default=0.076,
                     help='step size <dt> of the coRNN')
-parser.add_argument('--gamma', type=float, default=0.4,
+parser.add_argument('--gamma', type=float, default=4.0, #0.4
                     help='y controle parameter <gamma> of the coRNN')
-parser.add_argument('--epsilon', type=float, default=8.0,
+parser.add_argument('--epsilon', type=float, default=0.8, #8.0
                     help='z controle parameter <epsilon> of the coRNN')
-parser.add_argument('--gamma_range', type=float, default=2.7,
+parser.add_argument('--gamma_range', type=float, default=2.0, #1.0
                     help='y controle parameter <gamma> of the coRNN')
-parser.add_argument('--epsilon_range', type=float, default=4.7,
+parser.add_argument('--epsilon_range', type=float, default=2.0, #4.7
                     help='z controle parameter <epsilon> of the coRNN')
 parser.add_argument('--cpu', action="store_true")
 parser.add_argument('--check', action="store_true")
@@ -36,7 +36,7 @@ parser.add_argument('--no_friction', action="store_true")
 parser.add_argument('--esn', action="store_true")
 parser.add_argument('--inp_scaling', type=float, default=1.,
                     help='ESN input scaling')
-parser.add_argument('--rho', type=float, default=0.99,
+parser.add_argument('--rho', type=float, default=0.9,
                     help='ESN spectral radius')
 parser.add_argument('--leaky', type=float, default=1.0,
                     help='ESN spectral radius')
@@ -171,6 +171,24 @@ else:
             args.lr /= 10.
             for param_group in optimizer.param_groups:
                 param_group['lr'] = args.lr
+
+print(f"Validation accuracy: {valid_acc:.2f}%")
+print(f"Test accuracy: {test_acc:.2f}%")
+
+# ===== Theoretical ANN Energy =====
+if args.esn and args.no_friction: # coESN
+    T = 768  # sMNIST sequence length
+
+    ann_energy = estimate_ann_energy(
+        n_inp=1,
+        n_hid=args.n_hid,
+        T=T
+    )
+
+    print("\n=== Theoretical ANN Energy (coESN) ===")
+    print(f"Total MACs: {ann_energy['MACs']:.3e}")
+    print(f"Energy (J): {ann_energy['Energy_J']:.3e}")
+    #------------------------------------------------------------
 
 if args.lstm:
     f = open(f'{main_folder}/psMNIST_log_lstm.txt', 'a')

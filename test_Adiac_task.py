@@ -20,23 +20,23 @@ parser.add_argument('--batch', type=int, default=120,
                     help='batch size')
 parser.add_argument('--lr', type=float, default=0.0021,
                     help='learning rate')
-parser.add_argument('--dt', type=float, default=0.042,
+parser.add_argument('--dt', type=float, default=0.01, #0.042
                     help='step size <dt> of the coRNN')
-parser.add_argument('--gamma', type=float, default=2.7,
+parser.add_argument('--gamma', type=float, default=3., #2.7 
                     help='y controle parameter <gamma> of the coRNN')
-parser.add_argument('--epsilon', type=float, default=4.7,
+parser.add_argument('--epsilon', type=float, default=5.0, #4.7
                     help='z controle parameter <epsilon> of the coRNN')
-parser.add_argument('--gamma_range', type=float, default=2.7,
+parser.add_argument('--gamma_range', type=float, default=2., #2.7
                     help='y controle parameter <gamma> of the coRNN')
-parser.add_argument('--epsilon_range', type=float, default=4.7,
+parser.add_argument('--epsilon_range', type=float, default=10., #2.7
                     help='z controle parameter <epsilon> of the coRNN')
 parser.add_argument('--cpu', action="store_true")
 parser.add_argument('--check', action="store_true")
 parser.add_argument('--no_friction', action="store_true", help="remove friction term inside non-linearity")
 parser.add_argument('--esn', action="store_true")
-parser.add_argument('--inp_scaling', type=float, default=1.,
+parser.add_argument('--inp_scaling', type=float, default=10., #1.0
                     help='ESN input scaling')
-parser.add_argument('--rho', type=float, default=0.99,
+parser.add_argument('--rho', type=float, default=9.0, #0.99
                     help='ESN spectral radius')
 parser.add_argument('--leaky', type=float, default=1.0,
                     help='ESN spectral radius')
@@ -46,9 +46,10 @@ parser.add_argument('--test_trials', type=int, default=5,
 parser.add_argument('--lstm', action="store_true", help="use LSTM")
 
 
-main_folder = 'adiac_validation_result'
+main_folder = 'result'
 args = parser.parse_args()
 print(args)
+
 
 device = torch.device("cuda") if torch.cuda.is_available() and not args.cpu else torch.device("cpu")
 
@@ -95,7 +96,7 @@ epsilon = (args.epsilon - args.epsilon_range / 2., args.epsilon + args.epsilon_r
 
 max_test_accs = []
 if args.test_trials > 1:
-    main_folder = 'test_results'
+    main_folder = 'result'
     if args.esn:
         train_loader, valid_loader, test_loader = get_Adiac_data(args.batch,bs_test, whole_train=True)
     else:
@@ -146,6 +147,12 @@ for trial in range(args.test_trials):
         scaler = preprocessing.StandardScaler().fit(activations)
         activations = scaler.transform(activations)
         classifier = LogisticRegression(max_iter=1000).fit(activations, ys)
+
+        # ✅ Compute train accuracy
+        train_acc = classifier.score(activations, ys)
+        print(f"Train accuracy (ESN/coESN): {train_acc*100:.2f}%")
+
+
         valid_acc = test_esn(valid_loader, classifier, scaler) if args.test_trials<=1 else 0.0
         test_acc = test_esn(test_loader, classifier, scaler) if args.use_test else 0.0
         accs.append(test_acc)
