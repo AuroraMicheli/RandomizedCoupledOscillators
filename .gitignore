@@ -7,3 +7,4 @@ MNIST/
 .sbatch/
 .sh/
 .out
+data/
