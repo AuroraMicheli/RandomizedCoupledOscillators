@@ -1,0 +1,218 @@
+Warmed cache: train T=30
+Warmed cache: test T=30
+Warmed cache: train T=50
+Warmed cache: test T=50
+Warmed cache: train T=100
+Warmed cache: test T=100
+Warmed cache: train T=200
+Warmed cache: test T=200
+All caches warmed.
+
+Config 1/50: T=30 sf=8(512ch) mode=final(512feat,ratio=0.48) C=100.0 inp=0.248 dens=0.071 dt=0.118 g=0.037+/-0.752 e=0.0089 rho=0.75 th_lif=0.0514 th_rf=0.0026
+  -> Test: 8.84+/-0.18%  Train: 9.69%  Gap: 0.8%
+
+Config 2/50: T=200 sf=8(512ch) mode=rms_std_final(1536feat,ratio=1.43) C=0.001 inp=0.674 dens=0.332 dt=0.132 g=0.041+/-0.147 e=0.0169 rho=0.69 th_lif=0.1141 th_rf=0.0222
+  -> Test: 8.84+/-0.18%  Train: 9.63%  Gap: 0.8%
+
+Config 3/50: T=200 sf=16(128ch) mode=mean(512feat,ratio=0.48) C=0.001 inp=1.546 dens=0.079 dt=0.313 g=0.006+/-0.792 e=0.0286 rho=0.86 th_lif=0.0138 th_rf=0.0125
+  -> Test: 13.76+/-2.32%  Train: 17.83%  Gap: 4.1%
+
+Config 4/50: T=30 sf=4(2048ch) mode=mean(512feat,ratio=0.48) C=10.0 inp=0.069 dens=0.084 dt=0.150 g=0.017+/-0.805 e=0.0371 rho=0.71 th_lif=0.3881 th_rf=0.0164
+  -> Test: 9.60+/-0.47%  Train: 13.03%  Gap: 3.4%
+
+Config 5/50: T=50 sf=16(128ch) mode=mean(512feat,ratio=0.48) C=100.0 inp=0.346 dens=0.094 dt=0.360 g=0.939+/-0.020 e=0.0134 rho=1.12 th_lif=0.2850 th_rf=0.0064
+  -> Test: 13.51+/-2.48%  Train: 20.80%  Gap: 7.3%
+
+Config 6/50: T=50 sf=8(512ch) mode=rms_std_final(1536feat,ratio=1.43) C=0.001 inp=2.299 dens=0.790 dt=0.165 g=0.250+/-0.083 e=0.0389 rho=1.29 th_lif=0.7064 th_rf=0.0047
+  -> Test: 9.09+/-0.31%  Train: 9.84%  Gap: 0.8%
+
+Config 7/50: T=100 sf=8(512ch) mode=final(512feat,ratio=0.48) C=100.0 inp=0.034 dens=0.548 dt=0.198 g=0.020+/-0.444 e=0.1342 rho=0.91 th_lif=0.1296 th_rf=0.0111
+  -> Test: 15.28+/-1.70%  Train: 28.04%  Gap: 12.8%
+
+Config 8/50: T=30 sf=4(2048ch) mode=mean(512feat,ratio=0.48) C=1.0 inp=0.148 dens=0.053 dt=0.110 g=0.521+/-0.627 e=0.0171 rho=1.29 th_lif=0.0196 th_rf=0.0660
+  -> Test: 8.96+/-0.18%  Train: 9.66%  Gap: 0.7%
+
+Config 9/50: T=100 sf=8(512ch) mode=final(512feat,ratio=0.48) C=0.1 inp=2.487 dens=0.783 dt=0.103 g=0.805+/-0.769 e=0.0069 rho=0.99 th_lif=0.2044 th_rf=0.0197
+  -> Test: 9.22+/-0.18%  Train: 9.63%  Gap: 0.4%
+
+Config 10/50: T=30 sf=8(512ch) mode=rms_std_final(1536feat,ratio=1.43) C=10.0 inp=0.036 dens=0.065 dt=0.306 g=0.010+/-0.668 e=0.0439 rho=1.11 th_lif=0.1082 th_rf=0.0025
+  -> Test: 33.33+/-1.55%  Train: 93.53%  Gap: 60.2%
+
+Config 11/50: T=30 sf=8(512ch) mode=rms_std_final(1536feat,ratio=1.43) C=0.001 inp=2.529 dens=0.022 dt=0.148 g=0.402+/-0.037 e=0.0054 rho=0.97 th_lif=0.0424 th_rf=0.0395
+  -> Test: 11.62+/-0.18%  Train: 14.21%  Gap: 2.6%
+
+Config 12/50: T=100 sf=4(2048ch) mode=final(512feat,ratio=0.48) C=100.0 inp=0.027 dens=0.023 dt=0.181 g=0.014+/-0.546 e=0.0182 rho=0.70 th_lif=0.3620 th_rf=0.0194
+  -> Test: 63.01+/-0.64%  Train: 100.00%  Gap: 37.0%
+
+Config 13/50: T=200 sf=16(128ch) mode=final(512feat,ratio=0.48) C=10.0 inp=0.069 dens=0.024 dt=0.124 g=0.191+/-0.969 e=0.0646 rho=1.11 th_lif=0.3157 th_rf=0.0137
+  -> Test: 48.11+/-3.49%  Train: 100.00%  Gap: 51.9%
+
+Config 14/50: T=200 sf=4(2048ch) mode=rms_std_final(1536feat,ratio=1.43) C=10.0 inp=0.301 dens=0.266 dt=0.233 g=0.104+/-0.212 e=0.0120 rho=0.85 th_lif=0.0599 th_rf=0.0959
+  -> Test: 8.84+/-0.18%  Train: 9.78%  Gap: 0.9%
+
+Config 15/50: T=30 sf=4(2048ch) mode=mean(512feat,ratio=0.48) C=0.001 inp=0.073 dens=0.441 dt=0.320 g=0.056+/-0.143 e=0.0144 rho=0.53 th_lif=0.0888 th_rf=0.0599
+  -> Test: 9.34+/-0.18%  Train: 9.69%  Gap: 0.3%
+
+Config 16/50: T=100 sf=4(2048ch) mode=rms_std_final(1536feat,ratio=1.43) C=0.01 inp=0.183 dens=0.041 dt=0.105 g=0.038+/-0.994 e=0.0059 rho=0.91 th_lif=0.1508 th_rf=0.0187
+  -> Test: 11.36+/-1.12%  Train: 20.37%  Gap: 9.0%
+
+Config 17/50: T=30 sf=16(128ch) mode=rms_std_final(1536feat,ratio=1.43) C=0.001 inp=0.445 dens=0.097 dt=0.173 g=0.018+/-0.772 e=0.0504 rho=1.11 th_lif=0.1831 th_rf=0.0075
+  -> Test: 11.11+/-1.70%  Train: 12.94%  Gap: 1.8%
+
+Config 18/50: T=100 sf=4(2048ch) mode=rms_std_final(1536feat,ratio=1.43) C=10.0 inp=0.031 dens=0.469 dt=0.464 g=0.087+/-0.899 e=0.0051 rho=1.49 th_lif=0.8591 th_rf=0.0572
+  -> Test: 26.01+/-1.99%  Train: 57.75%  Gap: 31.7%
+
+Config 19/50: T=50 sf=16(128ch) mode=rms_std_final(1536feat,ratio=1.43) C=10.0 inp=0.185 dens=0.048 dt=0.110 g=0.659+/-0.136 e=0.0063 rho=1.37 th_lif=0.3246 th_rf=0.0040
+  -> Test: 42.93+/-2.63%  Train: 100.00%  Gap: 57.1%
+
+Config 20/50: T=50 sf=8(512ch) mode=mean(512feat,ratio=0.48) C=1.0 inp=0.291 dens=0.633 dt=0.488 g=0.062+/-0.408 e=0.0147 rho=0.95 th_lif=0.2099 th_rf=0.0219
+  -> Test: 9.09+/-0.00%  Train: 9.81%  Gap: 0.7%
+
+Config 21/50: T=50 sf=4(2048ch) mode=rms_std_final(1536feat,ratio=1.43) C=0.001 inp=0.668 dens=0.025 dt=0.283 g=0.321+/-0.583 e=0.0059 rho=1.48 th_lif=0.3398 th_rf=0.0031
+  -> Test: 9.47+/-0.31%  Train: 11.17%  Gap: 1.7%
+
+Config 22/50: T=30 sf=4(2048ch) mode=rms_std_final(1536feat,ratio=1.43) C=1.0 inp=0.031 dens=0.678 dt=0.185 g=0.025+/-0.678 e=0.0113 rho=1.32 th_lif=0.1093 th_rf=0.0037
+  -> Test: 9.34+/-0.18%  Train: 9.69%  Gap: 0.3%
+
+Config 23/50: T=30 sf=4(2048ch) mode=rms_std_final(1536feat,ratio=1.43) C=0.1 inp=1.720 dens=0.028 dt=0.362 g=0.065+/-0.562 e=0.0073 rho=0.95 th_lif=0.4823 th_rf=0.0282
+  -> Test: 9.09+/-0.00%  Train: 9.72%  Gap: 0.6%
+
+Config 24/50: T=100 sf=8(512ch) mode=mean(512feat,ratio=0.48) C=10.0 inp=0.055 dens=0.049 dt=0.170 g=0.023+/-0.934 e=0.1355 rho=0.59 th_lif=0.1805 th_rf=0.0161
+  -> Test: 58.59+/-4.02%  Train: 100.00%  Gap: 41.4%
+
+Config 25/50: T=200 sf=4(2048ch) mode=mean(512feat,ratio=0.48) C=0.001 inp=0.553 dens=0.529 dt=0.222 g=0.027+/-0.100 e=0.0181 rho=0.95 th_lif=0.1836 th_rf=0.0033
+  -> Test: 9.34+/-0.18%  Train: 9.69%  Gap: 0.3%
+
+Config 26/50: T=30 sf=8(512ch) mode=final(512feat,ratio=0.48) C=0.001 inp=2.745 dens=0.036 dt=0.422 g=0.026+/-0.957 e=0.1277 rho=1.21 th_lif=0.2180 th_rf=0.0088
+  -> Test: 9.22+/-0.18%  Train: 10.15%  Gap: 0.9%
+
+Config 27/50: T=200 sf=4(2048ch) mode=mean(512feat,ratio=0.48) C=100.0 inp=0.061 dens=0.379 dt=0.295 g=0.187+/-0.575 e=0.0323 rho=1.11 th_lif=0.3944 th_rf=0.0606
+  -> Test: 15.91+/-2.03%  Train: 28.78%  Gap: 12.9%
+
+Config 28/50: T=200 sf=4(2048ch) mode=final(512feat,ratio=0.48) C=100.0 inp=0.459 dens=0.072 dt=0.280 g=0.007+/-0.538 e=0.0651 rho=1.20 th_lif=0.2350 th_rf=0.0066
+  -> Test: 8.96+/-0.18%  Train: 11.45%  Gap: 2.5%
+
+Config 29/50: T=100 sf=4(2048ch) mode=rms_std_final(1536feat,ratio=1.43) C=10.0 inp=0.074 dens=0.031 dt=0.322 g=0.008+/-0.871 e=0.0067 rho=0.78 th_lif=0.0271 th_rf=0.0323
+  -> Test: 13.76+/-0.78%  Train: 24.64%  Gap: 10.9%
+
+Config 30/50: T=50 sf=4(2048ch) mode=mean(512feat,ratio=0.48) C=10.0 inp=0.152 dens=0.167 dt=0.303 g=0.680+/-0.390 e=0.0283 rho=1.39 th_lif=0.1689 th_rf=0.0012
+  -> Test: 9.09+/-0.31%  Train: 9.72%  Gap: 0.6%
+
+Config 31/50: T=100 sf=8(512ch) mode=final(512feat,ratio=0.48) C=0.1 inp=0.031 dens=0.026 dt=0.330 g=0.159+/-0.650 e=0.0074 rho=0.91 th_lif=0.0515 th_rf=0.0228
+  -> Test: 46.21+/-3.51%  Train: 100.00%  Gap: 53.8%
+
+Config 32/50: T=200 sf=16(128ch) mode=final(512feat,ratio=0.48) C=0.001 inp=0.313 dens=0.314 dt=0.426 g=0.059+/-0.894 e=0.0184 rho=0.54 th_lif=0.0925 th_rf=0.0065
+  -> Test: 9.22+/-0.18%  Train: 9.97%  Gap: 0.7%
+
+Config 33/50: T=100 sf=8(512ch) mode=mean(512feat,ratio=0.48) C=10.0 inp=0.346 dens=0.175 dt=0.400 g=0.737+/-0.697 e=0.1378 rho=1.08 th_lif=0.4212 th_rf=0.0651
+  -> Test: 8.84+/-0.18%  Train: 9.69%  Gap: 0.8%
+
+Config 34/50: T=50 sf=16(128ch) mode=mean(512feat,ratio=0.48) C=100.0 inp=1.644 dens=0.023 dt=0.245 g=0.041+/-0.849 e=0.0138 rho=0.60 th_lif=0.2311 th_rf=0.0460
+  -> Test: 22.60+/-0.78%  Train: 84.31%  Gap: 61.7%
+
+Config 35/50: T=200 sf=8(512ch) mode=mean(512feat,ratio=0.48) C=0.01 inp=0.066 dens=0.033 dt=0.211 g=0.011+/-0.857 e=0.0106 rho=1.31 th_lif=0.9262 th_rf=0.0030
+  -> Test: 67.30+/-1.56%  Train: 88.70%  Gap: 21.4%
+
+Config 36/50: T=200 sf=8(512ch) mode=final(512feat,ratio=0.48) C=0.01 inp=0.813 dens=0.129 dt=0.265 g=0.023+/-0.815 e=0.0114 rho=0.80 th_lif=0.5023 th_rf=0.0021
+  -> Test: 9.34+/-0.18%  Train: 10.43%  Gap: 1.1%
+
+Config 37/50: T=200 sf=4(2048ch) mode=final(512feat,ratio=0.48) C=0.1 inp=0.111 dens=0.047 dt=0.102 g=0.010+/-0.115 e=0.0574 rho=1.14 th_lif=0.0171 th_rf=0.0459
+  -> Test: 18.31+/-2.92%  Train: 28.63%  Gap: 10.3%
+
+Config 38/50: T=200 sf=16(128ch) mode=rms_std_final(1536feat,ratio=1.43) C=1.0 inp=0.668 dens=0.064 dt=0.200 g=0.650+/-0.845 e=0.0433 rho=0.94 th_lif=0.0190 th_rf=0.0075
+  -> Test: 17.42+/-0.82%  Train: 65.12%  Gap: 47.7%
+
+Config 39/50: T=50 sf=4(2048ch) mode=mean(512feat,ratio=0.48) C=100.0 inp=0.211 dens=0.333 dt=0.350 g=0.082+/-0.953 e=0.0388 rho=1.25 th_lif=0.1260 th_rf=0.0041
+  -> Test: 8.96+/-0.18%  Train: 9.72%  Gap: 0.8%
+
+Config 40/50: T=30 sf=16(128ch) mode=mean(512feat,ratio=0.48) C=0.01 inp=2.265 dens=0.116 dt=0.174 g=0.011+/-1.000 e=0.0647 rho=0.51 th_lif=0.1252 th_rf=0.0016
+  -> Test: 9.22+/-0.18%  Train: 9.72%  Gap: 0.5%
+
+Config 41/50: T=50 sf=4(2048ch) mode=mean(512feat,ratio=0.48) C=100.0 inp=0.448 dens=0.024 dt=0.108 g=0.231+/-0.393 e=0.0313 rho=1.50 th_lif=0.0283 th_rf=0.0138
+  -> Test: 9.09+/-0.31%  Train: 10.46%  Gap: 1.4%
+
+Config 42/50: T=50 sf=4(2048ch) mode=final(512feat,ratio=0.48) C=0.001 inp=2.305 dens=0.506 dt=0.140 g=0.592+/-0.802 e=0.0607 rho=1.16 th_lif=0.3992 th_rf=0.0421
+  -> Test: 8.96+/-0.18%  Train: 9.72%  Gap: 0.8%
+
+Config 43/50: T=30 sf=4(2048ch) mode=final(512feat,ratio=0.48) C=0.01 inp=0.041 dens=0.169 dt=0.243 g=0.573+/-0.884 e=0.0706 rho=0.60 th_lif=0.8152 th_rf=0.0064
+  -> Test: 13.26+/-2.75%  Train: 19.72%  Gap: 6.5%
+
+Config 44/50: T=100 sf=16(128ch) mode=mean(512feat,ratio=0.48) C=10.0 inp=0.054 dens=0.059 dt=0.273 g=0.050+/-0.077 e=0.0186 rho=0.94 th_lif=0.2285 th_rf=0.0060
+  -> Test: 42.93+/-2.70%  Train: 100.00%  Gap: 57.1%
+
+Config 45/50: T=100 sf=8(512ch) mode=mean(512feat,ratio=0.48) C=0.001 inp=0.023 dens=0.447 dt=0.195 g=0.338+/-0.036 e=0.1021 rho=0.74 th_lif=0.2271 th_rf=0.0027
+  -> Test: 44.07+/-1.43%  Train: 41.13%  Gap: -2.9%
+
+Config 46/50: T=50 sf=8(512ch) mode=rms_std_final(1536feat,ratio=1.43) C=0.001 inp=0.583 dens=0.280 dt=0.184 g=0.016+/-0.244 e=0.1452 rho=1.45 th_lif=0.6048 th_rf=0.0606
+  -> Test: 9.22+/-0.36%  Train: 9.75%  Gap: 0.5%
+
+Config 47/50: T=50 sf=16(128ch) mode=rms_std_final(1536feat,ratio=1.43) C=1.0 inp=0.981 dens=0.084 dt=0.378 g=0.042+/-0.490 e=0.0066 rho=0.65 th_lif=0.0153 th_rf=0.0046
+  -> Test: 10.35+/-1.53%  Train: 13.77%  Gap: 3.4%
+
+Config 48/50: T=50 sf=8(512ch) mode=rms_std_final(1536feat,ratio=1.43) C=1.0 inp=1.287 dens=0.298 dt=0.314 g=0.018+/-0.287 e=0.0327 rho=1.06 th_lif=0.6116 th_rf=0.0187
+  -> Test: 8.96+/-0.18%  Train: 9.78%  Gap: 0.8%
+
+Config 49/50: T=30 sf=4(2048ch) mode=final(512feat,ratio=0.48) C=0.1 inp=0.044 dens=0.035 dt=0.321 g=0.028+/-0.748 e=0.1027 rho=0.54 th_lif=0.1217 th_rf=0.0151
+  -> Test: 9.60+/-0.36%  Train: 11.73%  Gap: 2.1%
+
+Config 50/50: T=30 sf=8(512ch) mode=rms_std_final(1536feat,ratio=1.43) C=0.01 inp=0.087 dens=0.058 dt=0.137 g=0.012+/-0.685 e=0.0640 rho=0.73 th_lif=0.0413 th_rf=0.0015
+  -> Test: 9.34+/-0.89%  Train: 10.49%  Gap: 1.1%
+
+======================================================================
+Completed: 50/50 configs
+Failed:    0/50 configs
+======================================================================
+
+TOP 10 CONFIGURATIONS:
+Rank  Test%          Train%     Gap     T     sf   mode           C       inp     dens    dt     gamma   eps     rho    th_lif   th_rf
+----------------------------------------------------------------------------------------------------------------------------------
+1     67.30+/-1.56  88.7%    21.4%  200   8    mean           0.01    0.066  0.033  0.211 0.011  0.0106 1.31  0.9262  0.0030
+2     63.01+/-0.64  100.0%    37.0%  100   4    final          100.0   0.027  0.023  0.181 0.014  0.0182 0.70  0.3620  0.0194
+3     58.59+/-4.02  100.0%    41.4%  100   8    mean           10.0    0.055  0.049  0.170 0.023  0.1355 0.59  0.1805  0.0161
+4     48.11+/-3.49  100.0%    51.9%  200   16   final          10.0    0.069  0.024  0.124 0.191  0.0646 1.11  0.3157  0.0137
+5     46.21+/-3.51  100.0%    53.8%  100   8    final          0.1     0.031  0.026  0.330 0.159  0.0074 0.91  0.0515  0.0228
+6     44.07+/-1.43  41.1%    -2.9%  100   8    mean           0.001   0.023  0.447  0.195 0.338  0.1021 0.74  0.2271  0.0027
+7     42.93+/-2.63  100.0%    57.1%  50    16   rms_std_final  10.0    0.185  0.048  0.110 0.659  0.0063 1.37  0.3246  0.0040
+8     42.93+/-2.70  100.0%    57.1%  100   16   mean           10.0    0.054  0.059  0.273 0.050  0.0186 0.94  0.2285  0.0060
+9     33.33+/-1.55  93.5%    60.2%  30    8    rms_std_final  10.0    0.036  0.065  0.306 0.010  0.0439 1.11  0.1082  0.0025
+10    26.01+/-1.99  57.8%    31.7%  100   4    rms_std_final  10.0    0.031  0.469  0.464 0.087  0.0051 1.49  0.8591  0.0572
+
+PARAMETER TRENDS (top 10 vs all):
+      inp_scaling: top10=0.0577+/-0.0452  all=0.6172+/-0.7940
+    input_density: top10=0.1242+/-0.1676  all=0.2035+/-0.2181
+               dt: top10=0.2362+/-0.1025  all=0.2427+/-0.1039
+            gamma: top10=0.1541+/-0.1958  all=0.1866+/-0.2549
+          epsilon: top10=0.0412+/-0.0434  all=0.0404+/-0.0400
+              rho: top10=1.0276+/-0.2870  all=0.9828+/-0.2813
+        theta_lif: top10=0.3583+/-0.2826  all=0.2512+/-0.2295
+         theta_rf: top10=0.0147+/-0.0159  all=0.0208+/-0.0222
+
+NUM_STEPS BREAKDOWN:
+  T=30  : n=14, test=11.56+/-6.16%  best=33.33%  avg_gap=5.9%
+  T=50  : n=13, test=13.18+/-9.33%  best=42.93%  avg_gap=10.6%
+  T=100 : n=11, test=30.84+/-19.66%  best=63.01%  avg_gap=22.9%
+  T=200 : n=12, test=19.61+/-17.81%  best=67.30%  avg_gap=12.9%
+
+SPATIAL_FACTOR BREAKDOWN:
+  sf=4   ( 2048 ch): n=21, test=13.82+/-11.75%  best=63.01%  avg_gap=6.4%
+  sf=8   (  512 ch): n=18, test=20.91+/-19.09%  best=67.30%  avg_gap=11.0%
+  sf=16  (  128 ch): n=11, test=21.92+/-14.46%  best=48.11%  avg_gap=26.7%
+
+READOUT MODE BREAKDOWN:
+  final            ( 512 feat): n=14, test=19.82+/-17.60%  best=63.01%  avg_gap=13.0%
+  mean             ( 512 feat): n=18, test=20.57+/-18.42%  best=67.30%  avg_gap=11.8%
+  rms_std_final    (1536 feat): n=18, test=14.45+/-9.46%  best=42.93%  avg_gap=12.9%
+
+REGULARIZATION (C) BREAKDOWN:
+  C=0.001  : n=13, test=12.56+/-9.20%  best=44.07%  avg_gap=1.0%
+  C=0.01   : n=6, test=19.97+/-21.22%  best=67.30%  avg_gap=6.6%
+  C=0.1    : n=5, test=18.48+/-14.30%  best=46.21%  avg_gap=13.5%
+  C=1.0    : n=6, test=10.69+/-3.05%  best=17.42%  avg_gap=8.9%
+  C=10.0   : n=11, test=27.46+/-17.70%  best=58.59%  avg_gap=28.7%
+  C=100.0  : n=9, test=18.46+/-16.34%  best=63.01%  avg_gap=15.2%
+Traceback (most recent call last):
+  File "hyperparam_search_dvs-gesture.py", line 342, in <module>
+    print(f"\nHIGH-ACCURACY CONFIGS (within 5% of best): {len(low_gap)}/{len(final_results)}")
+NameError: name 'low_gap' is not defined
+srun: error: influ3: task 0: Exited with exit code 1
+srun: launch/slurm: _step_signal: Terminating StepId=12249209.0

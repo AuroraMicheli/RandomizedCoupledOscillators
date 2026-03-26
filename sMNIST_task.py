@@ -4,7 +4,7 @@ import random
 import numpy as np
 
 
-SEED = 58
+SEED = 999  #42, 59
 
 random.seed(SEED)
 np.random.seed(SEED)
@@ -160,7 +160,7 @@ if args.esn:
     ys = torch.cat(ys, dim=0).numpy()
     scaler = preprocessing.StandardScaler().fit(activations)
     activations = scaler.transform(activations)
-    classifier = LogisticRegression(max_iter=1000).fit(activations, ys)
+    classifier = LogisticRegression(max_iter=2000).fit(activations, ys)
     valid_acc = test_esn(valid_loader, classifier, scaler)
     test_acc = test_esn(test_loader, classifier, scaler) if args.use_test else 0.0
 else:

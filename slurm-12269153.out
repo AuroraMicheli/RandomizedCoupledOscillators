@@ -1,0 +1,539 @@
+Phase 2 search: 150 configs (120 exploit / 30 explore), seed=0
+Reference best: {'gamma': 0.022124825018135126, 'dt': 0.03767457087824196, 'epsilon': 0.24371246704641245, 'gamma_range': 0.8057386186915503, 'epsilon_range': 0.30215568102010293, 'inp_scaling': 0.013843835724517757, 'rho': 0.5180381501925403, 'theta_lif': 0.03014544609189747, 'theta_rf': 0.2085508689716086, 'tau_filter': 5.6099550220268295}
+======================================================================
+
+🎯 Config 1/150 [exploit]: inp=0.0360 dt=0.010 γ=0.0212±0.45 ε=0.9056±0.504 ρ=0.51 θlif=0.0182 θrf=0.0812 τ=22.7 C=0.01
+   ✅ Test: 29.58%  Train: 31.14%  Gap: 1.6%
+
+🎯 Config 2/150 [exploit]: inp=0.0038 dt=0.056 γ=0.0994±1.11 ε=1.4319±0.542 ρ=0.41 θlif=0.0172 θrf=0.0682 τ=18.2 C=0.01
+   ✅ Test: 25.96%  Train: 30.80%  Gap: 4.8%
+
+🎯 Config 3/150 [exploit]: inp=0.0067 dt=0.017 γ=0.0152±1.46 ε=0.0745±0.162 ρ=0.76 θlif=0.0158 θrf=0.0743 τ=3.2 C=0.01
+   ✅ Test: 28.47%  Train: 31.53%  Gap: 3.1%
+
+🎯 Config 4/150 [exploit]: inp=0.0063 dt=0.024 γ=0.0056±0.96 ε=0.5263±0.323 ρ=0.87 θlif=0.0536 θrf=0.1975 τ=20.2 C=0.1
+   ✅ Test: 26.72%  Train: 30.81%  Gap: 4.1%
+
+🌐 Config 5/150 [explore]: inp=0.0057 dt=0.026 γ=0.3728±1.98 ε=0.2051±0.232 ρ=1.41 θlif=0.1294 θrf=0.0227 τ=19.1 C=0.01
+   ✅ Test: 19.04%  Train: 23.37%  Gap: 4.3%
+
+🌐 Config 6/150 [explore]: inp=0.0198 dt=0.053 γ=0.0729±1.32 ε=0.0169±0.538 ρ=1.10 θlif=0.3440 θrf=0.0027 τ=11.0 C=1.0
+   ✅ Test: 27.72%  Train: 33.33%  Gap: 5.6%
+
+🎯 Config 7/150 [exploit]: inp=0.0061 dt=0.020 γ=0.0522±1.79 ε=1.1042±0.354 ρ=0.43 θlif=0.0198 θrf=0.0684 τ=3.5 C=1.0
+   ⏰ TIMEOUT (>600s)
+
+🎯 Config 8/150 [exploit]: inp=0.0248 dt=0.115 γ=0.0382±1.43 ε=0.8523±0.331 ρ=0.80 θlif=0.0215 θrf=0.1563 τ=5.5 C=0.01
+   ✅ Test: 27.88%  Train: 32.45%  Gap: 4.6%
+
+🎯 Config 9/150 [exploit]: inp=0.0106 dt=0.010 γ=0.0582±1.02 ε=0.1610±0.259 ρ=0.64 θlif=0.0160 θrf=0.0874 τ=28.6 C=0.01
+   ✅ Test: 29.14%  Train: 30.76%  Gap: 1.6%
+
+🎯 Config 10/150 [exploit]: inp=0.0358 dt=0.065 γ=0.1056±0.72 ε=0.8345±0.692 ρ=0.52 θlif=0.0218 θrf=0.3245 τ=4.1 C=0.01
+   ✅ Test: 29.49%  Train: 33.04%  Gap: 3.5%
+
+   💾 Saved top-20 intermediate results (best so far: 29.58% [exploit])
+
+🎯 Config 11/150 [exploit]: inp=0.0053 dt=0.014 γ=0.0184±0.71 ε=0.9983±0.301 ρ=0.84 θlif=0.0304 θrf=0.2037 τ=3.0 C=0.01
+   ✅ Test: 24.79%  Train: 26.69%  Gap: 1.9%
+
+🎯 Config 12/150 [exploit]: inp=0.0061 dt=0.013 γ=0.0127±1.02 ε=0.1264±0.699 ρ=0.69 θlif=0.0325 θrf=0.2878 τ=10.4 C=0.1
+   ✅ Test: 25.97%  Train: 31.29%  Gap: 5.3%
+
+🎯 Config 13/150 [exploit]: inp=0.0066 dt=0.045 γ=0.0108±0.83 ε=1.3237±0.241 ρ=0.49 θlif=0.0080 θrf=0.0509 τ=23.8 C=0.01
+   ✅ Test: 27.51%  Train: 31.76%  Gap: 4.2%
+
+🎯 Config 14/150 [exploit]: inp=0.0367 dt=0.134 γ=0.1469±1.10 ε=0.5950±0.082 ρ=0.82 θlif=0.0181 θrf=0.1671 τ=5.4 C=0.1
+   ✅ Test: 26.53%  Train: 32.51%  Gap: 6.0%
+
+🎯 Config 15/150 [exploit]: inp=0.0174 dt=0.052 γ=0.0086±1.52 ε=0.1680±0.696 ρ=0.75 θlif=0.0094 θrf=0.2259 τ=27.9 C=0.01
+   ✅ Test: 29.66%  Train: 34.10%  Gap: 4.4%
+
+🎯 Config 16/150 [exploit]: inp=0.0348 dt=0.014 γ=0.0140±1.68 ε=0.2872±0.551 ρ=0.60 θlif=0.0093 θrf=0.3037 τ=11.1 C=1.0
+   ✅ Test: 31.77%  Train: 36.28%  Gap: 4.5%
+
+🎯 Config 17/150 [exploit]: inp=0.0145 dt=0.019 γ=0.0410±1.43 ε=0.3914±0.055 ρ=0.69 θlif=0.0296 θrf=0.1860 τ=3.6 C=0.01
+   ✅ Test: 29.12%  Train: 31.20%  Gap: 2.1%
+
+🎯 Config 18/150 [exploit]: inp=0.0348 dt=0.101 γ=0.1497±1.75 ε=0.2856±0.317 ρ=0.67 θlif=0.0685 θrf=0.1892 τ=18.3 C=0.01
+   ✅ Test: 30.00%  Train: 34.47%  Gap: 4.5%
+
+🎯 Config 19/150 [exploit]: inp=0.0095 dt=0.040 γ=0.1495±1.72 ε=0.0522±0.609 ρ=0.51 θlif=0.0173 θrf=0.1430 τ=25.3 C=1.0
+   ✅ Test: 32.52%  Train: 38.01%  Gap: 5.5%
+
+🎯 Config 20/150 [exploit]: inp=0.0077 dt=0.017 γ=0.1481±0.51 ε=0.1354±0.489 ρ=0.52 θlif=0.0122 θrf=0.1986 τ=16.4 C=1.0
+   ✅ Test: 29.33%  Train: 34.54%  Gap: 5.2%
+
+   💾 Saved top-20 intermediate results (best so far: 32.52% [exploit])
+
+🎯 Config 21/150 [exploit]: inp=0.0055 dt=0.042 γ=0.0116±1.56 ε=1.3019±0.065 ρ=0.83 θlif=0.0805 θrf=0.2235 τ=22.4 C=0.01
+   ✅ Test: 26.13%  Train: 29.32%  Gap: 3.2%
+
+🎯 Config 22/150 [exploit]: inp=0.0219 dt=0.104 γ=0.0064±1.14 ε=1.2969±0.450 ρ=0.82 θlif=0.0151 θrf=0.0954 τ=8.4 C=0.1
+   ✅ Test: 27.38%  Train: 33.09%  Gap: 5.7%
+
+🎯 Config 23/150 [exploit]: inp=0.0383 dt=0.025 γ=0.0054±0.87 ε=0.0673±0.344 ρ=0.47 θlif=0.0259 θrf=0.1559 τ=6.3 C=0.01
+   ✅ Test: 32.27%  Train: 34.50%  Gap: 2.2%
+
+🎯 Config 24/150 [exploit]: inp=0.0157 dt=0.045 γ=0.0807±1.62 ε=0.0778±0.569 ρ=0.85 θlif=0.0809 θrf=0.1631 τ=23.3 C=0.1
+   ✅ Test: 30.19%  Train: 35.61%  Gap: 5.4%
+
+🎯 Config 25/150 [exploit]: inp=0.0126 dt=0.068 γ=0.1293±1.30 ε=0.3527±0.256 ρ=0.79 θlif=0.0281 θrf=0.2308 τ=20.2 C=0.01
+   ✅ Test: 28.28%  Train: 33.04%  Gap: 4.8%
+
+🎯 Config 26/150 [exploit]: inp=0.0086 dt=0.016 γ=0.0631±1.40 ε=0.0622±0.272 ρ=0.75 θlif=0.0144 θrf=0.1542 τ=3.6 C=0.01
+   ✅ Test: 29.64%  Train: 32.00%  Gap: 2.4%
+
+🎯 Config 27/150 [exploit]: inp=0.0113 dt=0.132 γ=0.0209±1.51 ε=0.6281±0.118 ρ=0.41 θlif=0.0183 θrf=0.1268 τ=8.1 C=10.0
+   ✅ Test: 27.64%  Train: 33.33%  Gap: 5.7%
+
+🎯 Config 28/150 [exploit]: inp=0.0092 dt=0.033 γ=0.0461±1.65 ε=0.4357±0.587 ρ=0.74 θlif=0.0910 θrf=0.0852 τ=9.3 C=0.01
+   ✅ Test: 27.52%  Train: 31.44%  Gap: 3.9%
+
+🎯 Config 29/150 [exploit]: inp=0.0343 dt=0.089 γ=0.0872±0.32 ε=0.7308±0.343 ρ=0.76 θlif=0.0255 θrf=0.1864 τ=14.3 C=0.1
+   ✅ Test: 25.37%  Train: 31.76%  Gap: 6.4%
+
+🎯 Config 30/150 [exploit]: inp=0.0085 dt=0.063 γ=0.0476±0.56 ε=0.1073±0.441 ρ=0.78 θlif=0.0447 θrf=0.0962 τ=16.7 C=0.01
+   ✅ Test: 26.48%  Train: 32.03%  Gap: 5.5%
+
+   💾 Saved top-20 intermediate results (best so far: 32.52% [exploit])
+
+🎯 Config 31/150 [exploit]: inp=0.0116 dt=0.022 γ=0.0199±0.27 ε=1.2630±0.064 ρ=0.76 θlif=0.0789 θrf=0.4028 τ=9.1 C=10.0
+   ✅ Test: 25.81%  Train: 30.43%  Gap: 4.6%
+
+🎯 Config 32/150 [exploit]: inp=0.0329 dt=0.133 γ=0.0233±0.78 ε=0.6357±0.102 ρ=0.78 θlif=0.0638 θrf=0.2402 τ=4.5 C=0.01
+   ✅ Test: 29.80%  Train: 33.97%  Gap: 4.2%
+
+🎯 Config 33/150 [exploit]: inp=0.0211 dt=0.018 γ=0.0982±0.46 ε=0.0558±0.537 ρ=0.52 θlif=0.0797 θrf=0.0793 τ=9.5 C=0.1
+   ✅ Test: 28.10%  Train: 32.99%  Gap: 4.9%
+
+🎯 Config 34/150 [exploit]: inp=0.0571 dt=0.020 γ=0.0689±1.70 ε=0.4759±0.572 ρ=0.45 θlif=0.0106 θrf=0.2609 τ=6.0 C=0.1
+   ⏰ TIMEOUT (>600s)
+
+🌐 Config 35/150 [explore]: inp=0.0114 dt=0.076 γ=0.0431±1.72 ε=0.0565±0.942 ρ=0.71 θlif=0.5014 θrf=0.0655 τ=11.5 C=0.01
+   ✅ Test: 27.07%  Train: 31.38%  Gap: 4.3%
+
+🎯 Config 36/150 [exploit]: inp=0.0124 dt=0.062 γ=0.0366±0.74 ε=0.5190±0.554 ρ=0.71 θlif=0.0199 θrf=0.2224 τ=3.3 C=0.1
+   ✅ Test: 29.39%  Train: 34.55%  Gap: 5.2%
+
+🎯 Config 37/150 [exploit]: inp=0.0043 dt=0.012 γ=0.0236±1.61 ε=0.6909±0.386 ρ=0.58 θlif=0.0379 θrf=0.0824 τ=4.6 C=0.01
+   ✅ Test: 25.07%  Train: 27.35%  Gap: 2.3%
+
+🎯 Config 38/150 [exploit]: inp=0.0221 dt=0.015 γ=0.0194±1.08 ε=0.1009±0.551 ρ=0.81 θlif=0.0545 θrf=0.3048 τ=25.8 C=0.01
+   ✅ Test: 29.62%  Train: 31.80%  Gap: 2.2%
+
+🎯 Config 39/150 [exploit]: inp=0.0058 dt=0.027 γ=0.0164±1.37 ε=0.0833±0.168 ρ=0.74 θlif=0.0286 θrf=0.4622 τ=8.5 C=0.01
+   ✅ Test: 27.09%  Train: 31.78%  Gap: 4.7%
+
+🎯 Config 40/150 [exploit]: inp=0.0263 dt=0.059 γ=0.0223±1.04 ε=0.9206±0.163 ρ=0.87 θlif=0.0872 θrf=0.0814 τ=4.9 C=0.1
+   ⏰ TIMEOUT (>600s)
+
+   💾 Saved top-20 intermediate results (best so far: 32.52% [exploit])
+
+🎯 Config 41/150 [exploit]: inp=0.0317 dt=0.015 γ=0.0983±0.31 ε=0.0510±0.233 ρ=0.65 θlif=0.0104 θrf=0.2058 τ=29.1 C=0.01
+   ✅ Test: 31.39%  Train: 32.54%  Gap: 1.2%
+
+🌐 Config 42/150 [explore]: inp=0.3182 dt=0.011 γ=0.1898±0.81 ε=0.0196±0.841 ρ=1.46 θlif=0.3152 θrf=0.0096 τ=34.5 C=0.1
+   ✅ Test: 27.74%  Train: 34.18%  Gap: 6.4%
+
+🎯 Config 43/150 [exploit]: inp=0.0030 dt=0.062 γ=0.0087±0.28 ε=0.1184±0.602 ρ=0.55 θlif=0.0122 θrf=0.2137 τ=6.2 C=0.1
+   ✅ Test: 23.18%  Train: 29.18%  Gap: 6.0%
+
+🌐 Config 44/150 [explore]: inp=0.0020 dt=0.040 γ=0.0779±1.60 ε=0.0341±0.736 ρ=0.52 θlif=0.4985 θrf=0.0020 τ=18.8 C=0.01
+   ✅ Test: 10.00%  Train: 10.07%  Gap: 0.1%
+
+🎯 Config 45/150 [exploit]: inp=0.0056 dt=0.011 γ=0.0168±1.10 ε=0.2260±0.342 ρ=0.41 θlif=0.0315 θrf=0.0669 τ=11.9 C=0.1
+   ✅ Test: 26.19%  Train: 30.25%  Gap: 4.1%
+
+🎯 Config 46/150 [exploit]: inp=0.0097 dt=0.063 γ=0.0445±1.35 ε=0.7930±0.325 ρ=0.70 θlif=0.0093 θrf=0.1842 τ=17.8 C=0.01
+   ✅ Test: 27.07%  Train: 32.20%  Gap: 5.1%
+
+🎯 Config 47/150 [exploit]: inp=0.0065 dt=0.013 γ=0.0112±1.20 ε=0.0866±0.326 ρ=0.43 θlif=0.0194 θrf=0.4880 τ=5.3 C=1.0
+   ⏰ TIMEOUT (>600s)
+
+🎯 Config 48/150 [exploit]: inp=0.0049 dt=0.014 γ=0.0364±1.02 ε=0.1650±0.452 ρ=0.48 θlif=0.0126 θrf=0.1469 τ=6.9 C=0.1
+   ✅ Test: 28.49%  Train: 32.80%  Gap: 4.3%
+
+🎯 Config 49/150 [exploit]: inp=0.0095 dt=0.011 γ=0.0054±1.54 ε=0.0989±0.144 ρ=0.76 θlif=0.0258 θrf=0.2249 τ=3.5 C=10.0
+   ⏰ TIMEOUT (>600s)
+
+🎯 Config 50/150 [exploit]: inp=0.0050 dt=0.142 γ=0.0227±1.29 ε=0.1736±0.556 ρ=0.51 θlif=0.0178 θrf=0.3584 τ=10.5 C=10.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+          type_err, msg_dtype if msg_dtype is not None else X.dtype
+      ValueError: Input contains infinity or a value too large for dtype('float32').
+
+   💾 Saved top-20 intermediate results (best so far: 32.52% [exploit])
+
+🎯 Config 51/150 [exploit]: inp=0.0035 dt=0.035 γ=0.0262±0.20 ε=0.0632±0.099 ρ=0.89 θlif=0.0865 θrf=0.1995 τ=8.9 C=0.1
+   ✅ Test: 21.18%  Train: 26.12%  Gap: 4.9%
+
+🌐 Config 52/150 [explore]: inp=0.0011 dt=0.034 γ=0.0554±0.21 ε=0.3860±0.833 ρ=0.52 θlif=0.0147 θrf=0.0284 τ=9.8 C=0.1
+   ✅ Test: 19.31%  Train: 25.76%  Gap: 6.4%
+
+🌐 Config 53/150 [explore]: inp=0.1702 dt=0.033 γ=1.7667±0.75 ε=0.1054±0.716 ρ=1.46 θlif=0.6198 θrf=0.0015 τ=56.0 C=0.01
+   ✅ Test: 25.74%  Train: 30.90%  Gap: 5.2%
+
+🎯 Config 54/150 [exploit]: inp=0.0089 dt=0.121 γ=0.0077±0.68 ε=0.2110±0.678 ρ=0.41 θlif=0.0209 θrf=0.4839 τ=8.4 C=0.01
+   ✅ Test: 27.52%  Train: 32.82%  Gap: 5.3%
+
+🌐 Config 55/150 [explore]: inp=0.4427 dt=0.084 γ=0.0410±1.10 ε=0.0383±0.744 ρ=1.33 θlif=0.7605 θrf=0.0011 τ=88.5 C=0.1
+   ✅ Test: 31.12%  Train: 36.10%  Gap: 5.0%
+
+🎯 Config 56/150 [exploit]: inp=0.0037 dt=0.012 γ=0.1056±0.87 ε=1.4771±0.629 ρ=0.52 θlif=0.0730 θrf=0.0555 τ=6.4 C=0.1
+   ✅ Test: 13.61%  Train: 13.63%  Gap: 0.0%
+
+🎯 Config 57/150 [exploit]: inp=0.0306 dt=0.012 γ=0.0586±1.12 ε=0.0709±0.679 ρ=0.81 θlif=0.0504 θrf=0.1953 τ=15.1 C=0.01
+   ✅ Test: 29.51%  Train: 32.08%  Gap: 2.6%
+
+🎯 Config 58/150 [exploit]: inp=0.0283 dt=0.060 γ=0.0108±1.27 ε=0.1413±0.562 ρ=0.65 θlif=0.0087 θrf=0.1289 τ=26.5 C=0.1
+   ✅ Test: 29.23%  Train: 34.62%  Gap: 5.4%
+
+🌐 Config 59/150 [explore]: inp=0.0011 dt=0.088 γ=0.0273±1.23 ε=0.8435±0.836 ρ=1.21 θlif=0.3370 θrf=0.0046 τ=7.1 C=0.1
+   ✅ Test: 10.00%  Train: 10.02%  Gap: 0.0%
+
+🌐 Config 60/150 [explore]: inp=0.4387 dt=0.013 γ=0.1274±0.36 ε=0.0144±0.852 ρ=1.15 θlif=0.0615 θrf=0.4774 τ=6.4 C=0.1
+   ✅ Test: 31.15%  Train: 33.94%  Gap: 2.8%
+
+   💾 Saved top-20 intermediate results (best so far: 32.52% [exploit])
+
+🌐 Config 61/150 [explore]: inp=0.0013 dt=0.109 γ=0.0889±1.75 ε=0.0481±0.343 ρ=0.74 θlif=0.7112 θrf=0.0245 τ=89.5 C=0.01
+   ✅ Test: 10.00%  Train: 10.05%  Gap: 0.1%
+
+🎯 Config 62/150 [exploit]: inp=0.0199 dt=0.010 γ=0.0062±1.17 ε=0.8062±0.320 ρ=0.42 θlif=0.0534 θrf=0.2564 τ=3.7 C=0.01
+   ✅ Test: 28.29%  Train: 31.01%  Gap: 2.7%
+
+🎯 Config 63/150 [exploit]: inp=0.0498 dt=0.042 γ=0.1029±1.52 ε=0.3062±0.412 ρ=0.60 θlif=0.0272 θrf=0.2905 τ=8.5 C=1.0
+   ✅ Test: 28.98%  Train: 35.32%  Gap: 6.3%
+
+🎯 Config 64/150 [exploit]: inp=0.0536 dt=0.039 γ=0.0292±1.43 ε=0.0962±0.228 ρ=0.78 θlif=0.0117 θrf=0.2333 τ=5.2 C=0.1
+   ✅ Test: 28.59%  Train: 33.23%  Gap: 4.6%
+
+🌐 Config 65/150 [explore]: inp=0.0015 dt=0.194 γ=0.7487±0.44 ε=0.2160±0.603 ρ=0.91 θlif=0.0596 θrf=0.0022 τ=12.4 C=0.01
+   ✅ Test: 14.09%  Train: 21.88%  Gap: 7.8%
+
+🎯 Config 66/150 [exploit]: inp=0.0436 dt=0.010 γ=0.0372±0.62 ε=0.1335±0.324 ρ=0.49 θlif=0.0898 θrf=0.0939 τ=23.1 C=0.01
+   ✅ Test: 27.15%  Train: 31.67%  Gap: 4.5%
+
+🎯 Config 67/150 [exploit]: inp=0.0258 dt=0.057 γ=0.0177±0.27 ε=0.0999±0.410 ρ=0.72 θlif=0.0386 θrf=0.3413 τ=20.1 C=0.01
+   ✅ Test: 31.81%  Train: 35.37%  Gap: 3.6%
+
+🌐 Config 68/150 [explore]: inp=0.0458 dt=0.030 γ=0.2844±0.82 ε=0.0120±0.148 ρ=0.89 θlif=0.1133 θrf=0.0021 τ=66.5 C=0.01
+   ✅ Test: 29.35%  Train: 32.56%  Gap: 3.2%
+
+🎯 Config 69/150 [exploit]: inp=0.0082 dt=0.085 γ=0.0443±1.03 ε=0.9407±0.345 ρ=0.87 θlif=0.0200 θrf=0.2811 τ=5.1 C=0.1
+   ✅ Test: 24.29%  Train: 30.20%  Gap: 5.9%
+
+🌐 Config 70/150 [explore]: inp=0.0063 dt=0.043 γ=1.6277±0.31 ε=0.0170±0.575 ρ=0.77 θlif=0.4043 θrf=0.0246 τ=19.1 C=10.0
+   ✅ Test: 10.31%  Train: 10.97%  Gap: 0.7%
+
+   💾 Saved top-20 intermediate results (best so far: 32.52% [exploit])
+
+🎯 Config 71/150 [exploit]: inp=0.0422 dt=0.051 γ=0.0263±1.09 ε=0.8516±0.309 ρ=0.70 θlif=0.0107 θrf=0.0729 τ=4.7 C=10.0
+   ✅ Test: 28.11%  Train: 34.03%  Gap: 5.9%
+
+🌐 Config 72/150 [explore]: inp=0.0431 dt=0.032 γ=0.2059±0.94 ε=0.2263±0.672 ρ=1.38 θlif=0.0451 θrf=0.0290 τ=45.2 C=10.0
+   ✅ Test: 31.73%  Train: 37.39%  Gap: 5.7%
+
+🎯 Config 73/150 [exploit]: inp=0.0070 dt=0.097 γ=0.0058±0.58 ε=0.0693±0.279 ρ=0.55 θlif=0.0648 θrf=0.3101 τ=3.7 C=0.1
+   ✅ Test: 27.20%  Train: 33.86%  Gap: 6.7%
+
+🎯 Config 74/150 [exploit]: inp=0.0078 dt=0.095 γ=0.0692±0.97 ε=0.0577±0.517 ρ=0.61 θlif=0.0194 θrf=0.1404 τ=4.3 C=0.1
+   ✅ Test: 25.26%  Train: 31.22%  Gap: 6.0%
+
+🎯 Config 75/150 [exploit]: inp=0.0092 dt=0.080 γ=0.0323±1.00 ε=1.1160±0.452 ρ=0.53 θlif=0.0128 θrf=0.2335 τ=15.2 C=0.01
+   ✅ Test: 28.47%  Train: 32.11%  Gap: 3.6%
+
+🎯 Config 76/150 [exploit]: inp=0.0528 dt=0.105 γ=0.0063±0.88 ε=0.2094±0.658 ρ=0.86 θlif=0.0228 θrf=0.0861 τ=3.4 C=0.01
+   ✅ Test: 26.05%  Train: 30.78%  Gap: 4.7%
+
+🎯 Config 77/150 [exploit]: inp=0.0231 dt=0.139 γ=0.1124±0.68 ε=0.4433±0.276 ρ=0.64 θlif=0.0160 θrf=0.2979 τ=28.7 C=0.01
+   ✅ Test: 26.39%  Train: 31.32%  Gap: 4.9%
+
+🌐 Config 78/150 [explore]: inp=0.1077 dt=0.014 γ=1.2993±0.84 ε=0.1490±0.747 ρ=0.55 θlif=0.0529 θrf=0.1500 τ=25.5 C=0.01
+   ✅ Test: 28.07%  Train: 32.84%  Gap: 4.8%
+
+🌐 Config 79/150 [explore]: inp=0.0036 dt=0.176 γ=0.0216±0.52 ε=0.0334±0.847 ρ=1.47 θlif=0.3444 θrf=0.2992 τ=10.0 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+          type_err, msg_dtype if msg_dtype is not None else X.dtype
+      ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🎯 Config 80/150 [exploit]: inp=0.0540 dt=0.126 γ=0.1377±1.14 ε=0.5272±0.425 ρ=0.86 θlif=0.0860 θrf=0.1594 τ=29.4 C=0.01
+   ✅ Test: 28.39%  Train: 33.30%  Gap: 4.9%
+
+   💾 Saved top-20 intermediate results (best so far: 32.52% [exploit])
+
+🌐 Config 81/150 [explore]: inp=0.0022 dt=0.011 γ=1.9203±0.47 ε=0.0533±0.671 ρ=0.54 θlif=0.4342 θrf=0.0583 τ=28.2 C=1.0
+   ✅ Test: 10.00%  Train: 10.04%  Gap: 0.0%
+
+🎯 Config 82/150 [exploit]: inp=0.0261 dt=0.027 γ=0.0181±1.35 ε=0.9120±0.088 ρ=0.60 θlif=0.0156 θrf=0.4601 τ=28.4 C=0.1
+   ✅ Test: 32.25%  Train: 35.65%  Gap: 3.4%
+
+🎯 Config 83/150 [exploit]: inp=0.0095 dt=0.058 γ=0.0334±1.01 ε=0.2960±0.580 ρ=0.87 θlif=0.0771 θrf=0.2980 τ=19.4 C=0.01
+   ✅ Test: 28.55%  Train: 33.18%  Gap: 4.6%
+
+🌐 Config 84/150 [explore]: inp=0.3707 dt=0.188 γ=1.4144±1.49 ε=0.0778±0.426 ρ=0.73 θlif=0.0137 θrf=0.0418 τ=5.3 C=0.01
+   ✅ Test: 19.32%  Train: 25.94%  Gap: 6.6%
+
+🌐 Config 85/150 [explore]: inp=0.1700 dt=0.118 γ=0.0100±0.74 ε=0.0260±0.760 ρ=1.25 θlif=0.0141 θrf=0.0316 τ=8.3 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+          type_err, msg_dtype if msg_dtype is not None else X.dtype
+      ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🎯 Config 86/150 [exploit]: inp=0.0099 dt=0.012 γ=0.0334±0.95 ε=0.0800±0.608 ρ=0.82 θlif=0.0929 θrf=0.0603 τ=3.6 C=0.1
+   ✅ Test: 24.68%  Train: 29.54%  Gap: 4.9%
+
+🎯 Config 87/150 [exploit]: inp=0.0104 dt=0.023 γ=0.0352±0.57 ε=0.9608±0.523 ρ=0.41 θlif=0.0618 θrf=0.1024 τ=6.1 C=0.1
+   ✅ Test: 27.58%  Train: 31.13%  Gap: 3.5%
+
+🎯 Config 88/150 [exploit]: inp=0.0250 dt=0.012 γ=0.0149±0.21 ε=0.1578±0.315 ρ=0.44 θlif=0.0779 θrf=0.3894 τ=16.8 C=10.0
+   ✅ Test: 27.15%  Train: 33.38%  Gap: 6.2%
+
+🎯 Config 89/150 [exploit]: inp=0.0567 dt=0.091 γ=0.1473±1.04 ε=0.2293±0.139 ρ=0.68 θlif=0.0120 θrf=0.4837 τ=6.6 C=0.1
+   ✅ Test: 23.96%  Train: 30.88%  Gap: 6.9%
+
+🎯 Config 90/150 [exploit]: inp=0.0071 dt=0.138 γ=0.0330±1.14 ε=0.5284±0.167 ρ=0.58 θlif=0.0175 θrf=0.0641 τ=15.4 C=0.01
+   ✅ Test: 22.67%  Train: 28.79%  Gap: 6.1%
+
+   💾 Saved top-20 intermediate results (best so far: 32.52% [exploit])
+
+🎯 Config 91/150 [exploit]: inp=0.0222 dt=0.016 γ=0.0113±1.23 ε=0.0511±0.071 ρ=0.76 θlif=0.0235 θrf=0.1088 τ=5.8 C=0.01
+   ✅ Test: 30.50%  Train: 32.53%  Gap: 2.0%
+
+🎯 Config 92/150 [exploit]: inp=0.0058 dt=0.080 γ=0.1235±1.47 ε=0.8933±0.533 ρ=0.44 θlif=0.0147 θrf=0.2482 τ=10.0 C=0.01
+   ✅ Test: 26.39%  Train: 31.94%  Gap: 5.5%
+
+🎯 Config 93/150 [exploit]: inp=0.0452 dt=0.046 γ=0.0661±1.63 ε=0.4963±0.119 ρ=0.46 θlif=0.0296 θrf=0.4035 τ=3.9 C=0.1
+   ✅ Test: 29.83%  Train: 34.41%  Gap: 4.6%
+
+🎯 Config 94/150 [exploit]: inp=0.0333 dt=0.030 γ=0.0950±1.10 ε=0.0796±0.441 ρ=0.74 θlif=0.0124 θrf=0.2013 τ=4.0 C=0.01
+   ✅ Test: 29.82%  Train: 33.49%  Gap: 3.7%
+
+🌐 Config 95/150 [explore]: inp=0.0988 dt=0.178 γ=0.4689±0.56 ε=0.0768±0.661 ρ=1.20 θlif=0.8913 θrf=0.0149 τ=24.7 C=0.01
+   ✅ Test: 30.03%  Train: 35.29%  Gap: 5.3%
+
+🎯 Config 96/150 [exploit]: inp=0.0084 dt=0.021 γ=0.0245±0.34 ε=0.0930±0.137 ρ=0.66 θlif=0.0242 θrf=0.0721 τ=11.6 C=0.01
+   ✅ Test: 27.98%  Train: 30.81%  Gap: 2.8%
+
+🌐 Config 97/150 [explore]: inp=0.0360 dt=0.028 γ=0.7254±1.88 ε=0.0121±0.081 ρ=0.58 θlif=0.1650 θrf=0.2389 τ=6.4 C=0.01
+   ✅ Test: 25.82%  Train: 31.60%  Gap: 5.8%
+
+🎯 Config 98/150 [exploit]: inp=0.0100 dt=0.029 γ=0.0059±1.06 ε=0.0925±0.517 ρ=0.77 θlif=0.0732 θrf=0.0573 τ=17.8 C=0.01
+   ✅ Test: 28.19%  Train: 31.59%  Gap: 3.4%
+
+🎯 Config 99/150 [exploit]: inp=0.0477 dt=0.014 γ=0.0243±0.66 ε=0.3231±0.489 ρ=0.65 θlif=0.0618 θrf=0.2074 τ=18.4 C=1.0
+   ✅ Test: 29.59%  Train: 34.98%  Gap: 5.4%
+
+🎯 Config 100/150 [exploit]: inp=0.0160 dt=0.012 γ=0.0288±1.20 ε=0.8973±0.147 ρ=0.73 θlif=0.0125 θrf=0.0753 τ=26.8 C=0.1
+   ✅ Test: 30.73%  Train: 32.84%  Gap: 2.1%
+
+   💾 Saved top-20 intermediate results (best so far: 32.52% [exploit])
+
+🎯 Config 101/150 [exploit]: inp=0.0373 dt=0.020 γ=0.0103±1.14 ε=0.4496±0.117 ρ=0.42 θlif=0.0674 θrf=0.4102 τ=5.6 C=0.01
+   ✅ Test: 30.11%  Train: 32.43%  Gap: 2.3%
+
+🎯 Config 102/150 [exploit]: inp=0.0069 dt=0.071 γ=0.0308±1.57 ε=0.1287±0.496 ρ=0.68 θlif=0.0124 θrf=0.0750 τ=7.9 C=0.001
+   ✅ Test: 24.67%  Train: 28.46%  Gap: 3.8%
+
+🎯 Config 103/150 [exploit]: inp=0.0038 dt=0.012 γ=0.0148±0.78 ε=0.1944±0.554 ρ=0.76 θlif=0.0347 θrf=0.2848 τ=5.3 C=0.01
+   ✅ Test: 23.70%  Train: 25.90%  Gap: 2.2%
+
+🎯 Config 104/150 [exploit]: inp=0.0491 dt=0.011 γ=0.1015±0.22 ε=1.2475±0.696 ρ=0.51 θlif=0.0277 θrf=0.2227 τ=3.9 C=0.01
+   ✅ Test: 28.58%  Train: 31.25%  Gap: 2.7%
+
+🎯 Config 105/150 [exploit]: inp=0.0044 dt=0.044 γ=0.0093±1.12 ε=0.5702±0.660 ρ=0.47 θlif=0.0216 θrf=0.0849 τ=6.8 C=0.01
+   ✅ Test: 28.21%  Train: 32.23%  Gap: 4.0%
+
+🎯 Config 106/150 [exploit]: inp=0.0426 dt=0.046 γ=0.0089±0.71 ε=0.9162±0.657 ρ=0.75 θlif=0.0908 θrf=0.4713 τ=4.2 C=0.1
+   ✅ Test: 31.54%  Train: 35.25%  Gap: 3.7%
+
+🎯 Config 107/150 [exploit]: inp=0.0398 dt=0.022 γ=0.0849±0.49 ε=0.1749±0.650 ρ=0.58 θlif=0.0236 θrf=0.0981 τ=16.8 C=1.0
+   ✅ Test: 32.73%  Train: 37.73%  Gap: 5.0%
+
+🌐 Config 108/150 [explore]: inp=0.0583 dt=0.055 γ=0.1152±1.42 ε=0.1779±0.963 ρ=1.47 θlif=0.1242 θrf=0.1535 τ=67.0 C=1.0
+   ✅ Test: 33.57%  Train: 39.11%  Gap: 5.5%
+
+🎯 Config 109/150 [exploit]: inp=0.0121 dt=0.013 γ=0.1022±0.50 ε=0.0700±0.502 ρ=0.41 θlif=0.0373 θrf=0.2327 τ=6.2 C=0.01
+   ✅ Test: 27.94%  Train: 30.83%  Gap: 2.9%
+
+🎯 Config 110/150 [exploit]: inp=0.0258 dt=0.028 γ=0.0215±1.77 ε=0.6369±0.608 ρ=0.75 θlif=0.0262 θrf=0.0603 τ=28.7 C=0.01
+   ✅ Test: 31.75%  Train: 33.97%  Gap: 2.2%
+
+   💾 Saved top-20 intermediate results (best so far: 33.57% [explore])
+
+🎯 Config 111/150 [exploit]: inp=0.0037 dt=0.022 γ=0.0686±1.80 ε=0.1529±0.363 ρ=0.66 θlif=0.0347 θrf=0.1013 τ=15.5 C=0.01
+   ✅ Test: 26.33%  Train: 30.03%  Gap: 3.7%
+
+🎯 Config 112/150 [exploit]: inp=0.0118 dt=0.117 γ=0.0130±1.20 ε=0.1715±0.210 ρ=0.43 θlif=0.0232 θrf=0.0850 τ=5.0 C=0.01
+   ✅ Test: 27.77%  Train: 32.45%  Gap: 4.7%
+
+🌐 Config 113/150 [explore]: inp=0.1053 dt=0.042 γ=0.8551±1.62 ε=0.5664±0.157 ρ=0.68 θlif=0.0238 θrf=0.0858 τ=8.9 C=0.1
+   ✅ Test: 22.51%  Train: 28.48%  Gap: 6.0%
+
+🎯 Config 114/150 [exploit]: inp=0.0265 dt=0.014 γ=0.1484±0.79 ε=0.3682±0.309 ρ=0.65 θlif=0.0101 θrf=0.2895 τ=5.3 C=0.01
+   ✅ Test: 31.54%  Train: 31.86%  Gap: 0.3%
+
+🎯 Config 115/150 [exploit]: inp=0.0038 dt=0.025 γ=0.0113±0.39 ε=0.9865±0.516 ρ=0.55 θlif=0.0278 θrf=0.4318 τ=28.9 C=0.01
+   ✅ Test: 25.07%  Train: 27.07%  Gap: 2.0%
+
+🎯 Config 116/150 [exploit]: inp=0.0487 dt=0.031 γ=0.0509±0.65 ε=0.7081±0.111 ρ=0.78 θlif=0.0233 θrf=0.0569 τ=3.1 C=0.1
+   ✅ Test: 31.21%  Train: 35.52%  Gap: 4.3%
+
+🌐 Config 117/150 [explore]: inp=0.1547 dt=0.035 γ=1.9849±1.22 ε=0.0273±0.782 ρ=0.95 θlif=0.2670 θrf=0.2079 τ=14.9 C=0.01
+   ✅ Test: 28.03%  Train: 33.53%  Gap: 5.5%
+
+🎯 Config 118/150 [exploit]: inp=0.0217 dt=0.028 γ=0.0539±1.74 ε=0.3757±0.216 ρ=0.76 θlif=0.0308 θrf=0.0793 τ=26.4 C=0.01
+   ✅ Test: 30.63%  Train: 33.57%  Gap: 2.9%
+
+🎯 Config 119/150 [exploit]: inp=0.0338 dt=0.067 γ=0.0078±1.02 ε=1.2482±0.358 ρ=0.79 θlif=0.0197 θrf=0.0525 τ=12.1 C=10.0
+   ✅ Test: 29.63%  Train: 35.61%  Gap: 6.0%
+
+🎯 Config 120/150 [exploit]: inp=0.0533 dt=0.043 γ=0.0496±0.31 ε=0.4835±0.469 ρ=0.71 θlif=0.0147 θrf=0.1909 τ=24.8 C=0.01
+   ✅ Test: 27.19%  Train: 31.04%  Gap: 3.8%
+
+   💾 Saved top-20 intermediate results (best so far: 33.57% [explore])
+
+🎯 Config 121/150 [exploit]: inp=0.0460 dt=0.084 γ=0.0713±0.78 ε=0.0623±0.477 ρ=0.77 θlif=0.0300 θrf=0.0900 τ=4.6 C=0.01
+   ✅ Test: 29.22%  Train: 33.63%  Gap: 4.4%
+
+🎯 Config 122/150 [exploit]: inp=0.0130 dt=0.046 γ=0.0059±1.52 ε=0.5138±0.305 ρ=0.58 θlif=0.0344 θrf=0.4844 τ=10.3 C=0.01
+   ✅ Test: 31.17%  Train: 34.07%  Gap: 2.9%
+
+🎯 Config 123/150 [exploit]: inp=0.0155 dt=0.085 γ=0.1493±0.32 ε=0.7653±0.517 ρ=0.56 θlif=0.0256 θrf=0.1543 τ=8.4 C=0.01
+   ✅ Test: 18.85%  Train: 23.93%  Gap: 5.1%
+
+🌐 Config 124/150 [explore]: inp=0.0069 dt=0.015 γ=0.3791±1.32 ε=0.0608±0.779 ρ=0.87 θlif=0.0145 θrf=0.0176 τ=15.4 C=0.01
+   ✅ Test: 28.49%  Train: 31.01%  Gap: 2.5%
+
+🎯 Config 125/150 [exploit]: inp=0.0279 dt=0.053 γ=0.0703±1.26 ε=0.9038±0.123 ρ=0.62 θlif=0.0391 θrf=0.0771 τ=17.0 C=0.01
+   ✅ Test: 31.76%  Train: 34.80%  Gap: 3.0%
+
+🎯 Config 126/150 [exploit]: inp=0.0104 dt=0.012 γ=0.1416±0.54 ε=0.3352±0.258 ρ=0.86 θlif=0.0120 θrf=0.1100 τ=22.1 C=1.0
+   ✅ Test: 28.86%  Train: 33.19%  Gap: 4.3%
+
+🎯 Config 127/150 [exploit]: inp=0.0314 dt=0.127 γ=0.0600±1.21 ε=1.1583±0.454 ρ=0.73 θlif=0.0566 θrf=0.4143 τ=10.9 C=0.01
+   ✅ Test: 29.29%  Train: 33.61%  Gap: 4.3%
+
+🎯 Config 128/150 [exploit]: inp=0.0378 dt=0.031 γ=0.1382±0.99 ε=0.2898±0.646 ρ=0.70 θlif=0.0258 θrf=0.0895 τ=3.5 C=0.1
+   ✅ Test: 32.22%  Train: 37.11%  Gap: 4.9%
+
+🎯 Config 129/150 [exploit]: inp=0.0599 dt=0.080 γ=0.0091±0.41 ε=0.5402±0.512 ρ=0.55 θlif=0.0443 θrf=0.4417 τ=6.7 C=0.1
+   ✅ Test: 28.45%  Train: 33.29%  Gap: 4.8%
+
+🎯 Config 130/150 [exploit]: inp=0.0120 dt=0.016 γ=0.0271±1.16 ε=0.1027±0.100 ρ=0.53 θlif=0.0631 θrf=0.0750 τ=27.7 C=1.0
+   ✅ Test: 26.38%  Train: 32.71%  Gap: 6.3%
+
+   💾 Saved top-20 intermediate results (best so far: 33.57% [explore])
+
+🎯 Config 131/150 [exploit]: inp=0.0082 dt=0.075 γ=0.0201±0.75 ε=1.3544±0.226 ρ=0.87 θlif=0.0203 θrf=0.0624 τ=16.6 C=1.0
+   ✅ Test: 21.56%  Train: 28.53%  Gap: 7.0%
+
+🎯 Config 132/150 [exploit]: inp=0.0386 dt=0.046 γ=0.1370±0.30 ε=0.6872±0.616 ρ=0.52 θlif=0.0593 θrf=0.1030 τ=13.6 C=0.01
+   ✅ Test: 27.61%  Train: 30.13%  Gap: 2.5%
+
+🌐 Config 133/150 [explore]: inp=0.4420 dt=0.138 γ=0.2425±0.47 ε=0.0496±0.662 ρ=0.58 θlif=0.3251 θrf=0.0500 τ=12.6 C=1.0
+   ✅ Test: 26.37%  Train: 32.85%  Gap: 6.5%
+
+🎯 Config 134/150 [exploit]: inp=0.0513 dt=0.107 γ=0.0095±0.97 ε=0.6022±0.508 ρ=0.86 θlif=0.0206 θrf=0.2628 τ=14.0 C=0.1
+   ✅ Test: 26.95%  Train: 33.30%  Gap: 6.4%
+
+🎯 Config 135/150 [exploit]: inp=0.0056 dt=0.058 γ=0.0065±1.28 ε=0.0688±0.479 ρ=0.46 θlif=0.0791 θrf=0.0793 τ=3.4 C=0.01
+   ✅ Test: 28.67%  Train: 33.31%  Gap: 4.6%
+
+🌐 Config 136/150 [explore]: inp=0.0012 dt=0.056 γ=0.1020±1.87 ε=0.0613±0.373 ρ=1.34 θlif=0.0566 θrf=0.0303 τ=51.7 C=0.01
+   ✅ Test: 16.50%  Train: 20.21%  Gap: 3.7%
+
+🎯 Config 137/150 [exploit]: inp=0.0085 dt=0.016 γ=0.0203±0.60 ε=0.1283±0.120 ρ=0.81 θlif=0.0480 θrf=0.1858 τ=20.6 C=0.1
+   ✅ Test: 27.24%  Train: 32.51%  Gap: 5.3%
+
+🎯 Config 138/150 [exploit]: inp=0.0142 dt=0.143 γ=0.0112±1.56 ε=0.3020±0.292 ρ=0.58 θlif=0.0131 θrf=0.3820 τ=20.1 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+          type_err, msg_dtype if msg_dtype is not None else X.dtype
+      ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🎯 Config 139/150 [exploit]: inp=0.0250 dt=0.010 γ=0.0068±0.51 ε=0.1285±0.382 ρ=0.53 θlif=0.0455 θrf=0.0528 τ=10.1 C=0.01
+   ✅ Test: 27.31%  Train: 30.83%  Gap: 3.5%
+
+🌐 Config 140/150 [explore]: inp=0.3797 dt=0.094 γ=0.9903±0.50 ε=0.0846±0.264 ρ=0.63 θlif=0.0171 θrf=0.0044 τ=23.4 C=0.01
+   ✅ Test: 23.70%  Train: 28.90%  Gap: 5.2%
+
+   💾 Saved top-20 intermediate results (best so far: 33.57% [explore])
+
+🎯 Config 141/150 [exploit]: inp=0.0048 dt=0.017 γ=0.0104±1.41 ε=1.2878±0.168 ρ=0.54 θlif=0.0368 θrf=0.2209 τ=13.8 C=0.01
+   ✅ Test: 25.08%  Train: 27.60%  Gap: 2.5%
+
+🎯 Config 142/150 [exploit]: inp=0.0216 dt=0.017 γ=0.0056±0.59 ε=0.2227±0.361 ρ=0.77 θlif=0.0821 θrf=0.0530 τ=9.4 C=0.01
+   ✅ Test: 28.24%  Train: 30.87%  Gap: 2.6%
+
+🎯 Config 143/150 [exploit]: inp=0.0104 dt=0.128 γ=0.0525±1.80 ε=0.4123±0.199 ρ=0.44 θlif=0.0275 θrf=0.0752 τ=14.7 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+          type_err, msg_dtype if msg_dtype is not None else X.dtype
+      ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🎯 Config 144/150 [exploit]: inp=0.0104 dt=0.023 γ=0.0267±1.55 ε=0.9820±0.527 ρ=0.55 θlif=0.0088 θrf=0.1388 τ=9.1 C=0.01
+   ✅ Test: 31.63%  Train: 33.43%  Gap: 1.8%
+
+🎯 Config 145/150 [exploit]: inp=0.0040 dt=0.144 γ=0.0715±1.46 ε=0.2856±0.544 ρ=0.81 θlif=0.0945 θrf=0.0790 τ=6.4 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+          type_err, msg_dtype if msg_dtype is not None else X.dtype
+      ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🎯 Config 146/150 [exploit]: inp=0.0302 dt=0.121 γ=0.0590±0.65 ε=0.2788±0.347 ρ=0.88 θlif=0.0648 θrf=0.4389 τ=6.6 C=0.1
+   ✅ Test: 29.69%  Train: 35.00%  Gap: 5.3%
+
+🎯 Config 147/150 [exploit]: inp=0.0195 dt=0.093 γ=0.0315±0.91 ε=0.4671±0.071 ρ=0.58 θlif=0.0087 θrf=0.2553 τ=12.2 C=0.01
+   ✅ Test: 28.38%  Train: 31.70%  Gap: 3.3%
+
+🌐 Config 148/150 [explore]: inp=0.0052 dt=0.058 γ=1.6162±1.62 ε=0.0649±0.422 ρ=0.59 θlif=0.5294 θrf=0.2360 τ=7.0 C=0.01
+   ✅ Test: 10.00%  Train: 10.04%  Gap: 0.0%
+
+🎯 Config 149/150 [exploit]: inp=0.0112 dt=0.015 γ=0.0445±0.66 ε=0.1228±0.240 ρ=0.71 θlif=0.0499 θrf=0.0986 τ=6.3 C=1.0
+   ✅ Test: 27.34%  Train: 33.13%  Gap: 5.8%
+
+🎯 Config 150/150 [exploit]: inp=0.0031 dt=0.022 γ=0.0129±0.34 ε=0.1584±0.257 ρ=0.72 θlif=0.0544 θrf=0.4866 τ=3.6 C=10.0
+   ✅ Test: 22.40%  Train: 27.98%  Gap: 5.6%
+
+   💾 Saved top-20 intermediate results (best so far: 33.57% [explore])
+
+======================================================================
+✅ Completed: 139/150 configs successful
+❌ Failed:    11/150 configs
+🎯 Exploit best: 32.73%  (mean: 27.87%)
+🌐 Explore best: 33.57%  (mean: 22.38%)
+======================================================================
+
+🏆 TOP 10 CONFIGURATIONS:
+Rank  Test%      Train%     Gap     Type      inp_scl   C       dt      gamma    eps      rho    τ      θlif     θrf    
+------------------------------------------------------------------------------------------------------------------------
+1     33.57%     39.11%     5.5%   explore   0.0583   1.0    0.055  0.1152  0.1779  1.47  67.0  0.1242  0.1535 
+2     32.73%     37.73%     5.0%   exploit   0.0398   1.0    0.022  0.0849  0.1749  0.58  16.8  0.0236  0.0981 
+3     32.52%     38.01%     5.5%   exploit   0.0095   1.0    0.040  0.1495  0.0522  0.51  25.3  0.0173  0.1430 
+4     32.27%     34.50%     2.2%   exploit   0.0383   0.01   0.025  0.0054  0.0673  0.47  6.3   0.0259  0.1559 
+5     32.25%     35.65%     3.4%   exploit   0.0261   0.1    0.027  0.0181  0.9120  0.60  28.4  0.0156  0.4601 
+6     32.22%     37.11%     4.9%   exploit   0.0378   0.1    0.031  0.1382  0.2898  0.70  3.5   0.0258  0.0895 
+7     31.81%     35.37%     3.6%   exploit   0.0258   0.01   0.057  0.0177  0.0999  0.72  20.1  0.0386  0.3413 
+8     31.77%     36.28%     4.5%   exploit   0.0348   1.0    0.014  0.0140  0.2872  0.60  11.1  0.0093  0.3037 
+9     31.76%     34.80%     3.0%   exploit   0.0279   0.01   0.053  0.0703  0.9038  0.62  17.0  0.0391  0.0771 
+10    31.75%     33.97%     2.2%   exploit   0.0258   0.01   0.028  0.0215  0.6369  0.75  28.7  0.0262  0.0603 
+
+📊 PARAMETER TRENDS (top 10 vs all):
+      inp_scaling: top10=0.0324±0.0121  all=0.0405±0.0809
+               dt: top10=0.0352±0.0145  all=0.0515±0.0414
+            gamma: top10=0.0635±0.0528  all=0.1670±0.3783
+          epsilon: top10=0.3602±0.3167  all=0.4055±0.3946
+              rho: top10=0.7029±0.2677  all=0.7133±0.2260
+       tau_filter: top10=22.4197±16.9882  all=15.6554±14.6248
+        theta_lif: top10=0.0346±0.0312  all=0.0852±0.1516
+         theta_rf: top10=0.1882±0.1271  all=0.1709±0.1311
+
+📊 REGULARIZATION (C) BREAKDOWN:
+  C=0.001  : n=1, test=24.67±0.00%, gap=3.8%
+  C=0.01   : n=79, test=26.85±4.69%, gap=3.6%
+  C=0.1    : n=37, test=26.62±4.67%, gap=4.8%
+  C=1.0    : n=14, test=27.62±5.75%, gap=5.2%
+  C=10.0   : n=8, test=25.35±6.23%, gap=5.0%

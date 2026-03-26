@@ -1,0 +1,173 @@
+[
+  {
+    "config_id": 0,
+    "params": {
+      "gamma": 0.05404737039523433,
+      "dt": 0.27341020091315515,
+      "epsilon": 0.053108602417447325,
+      "gamma_range": 0.37017815561788486,
+      "epsilon_range": 0.04908672492490837,
+      "rho": 0.7314767901116079,
+      "input_scaling": 0.1780271056909225,
+      "input_density": 0.4463056596877665,
+      "theta_lif": 0.05462976546253935,
+      "theta_rf": 0.008578071404013813,
+      "readout_C": 10.0,
+      "num_steps": 50,
+      "spatial_factor": 1,
+      "readout_mode": "rms_std_final"
+    }
+  },
+  {
+    "config_id": 4,
+    "params": {
+      "gamma": 0.03124161874012887,
+      "dt": 0.13900433608941137,
+      "epsilon": 0.058359597393467064,
+      "gamma_range": 0.14846183799663937,
+      "epsilon_range": 0.04225398384783773,
+      "rho": 0.7568710693943608,
+      "input_scaling": 0.06794033556108948,
+      "input_density": 0.16012267366102437,
+      "theta_lif": 0.07037380333622385,
+      "theta_rf": 0.00413250491088391,
+      "readout_C": 10.0,
+      "num_steps": 30,
+      "spatial_factor": 1,
+      "readout_mode": "rms_std_final"
+    }
+  },
+  {
+    "config_id": 19,
+    "params": {
+      "gamma": 0.10912025115490757,
+      "dt": 0.3955710277936625,
+      "epsilon": 0.01818332821915111,
+      "gamma_range": 0.7607236857793682,
+      "epsilon_range": 0.03133679405315255,
+      "rho": 0.918745062540126,
+      "input_scaling": 0.2757201376989739,
+      "input_density": 0.2585465124168205,
+      "theta_lif": 0.012518019648149265,
+      "theta_rf": 0.01208165980527174,
+      "readout_C": 1.0,
+      "num_steps": 30,
+      "spatial_factor": 2,
+      "readout_mode": "rms_std_final"
+    }
+  },
+  {
+    "config_id": 21,
+    "params": {
+      "gamma": 0.011656286748361713,
+      "dt": 0.15654424435561662,
+      "epsilon": 0.03025144806723687,
+      "gamma_range": 0.1261533549875193,
+      "epsilon_range": 0.0037449109328003497,
+      "rho": 0.5994441369168109,
+      "input_scaling": 0.5541976404677016,
+      "input_density": 0.22639411134241197,
+      "theta_lif": 0.02327223918122453,
+      "theta_rf": 0.03551915674357668,
+      "readout_C": 10.0,
+      "num_steps": 20,
+      "spatial_factor": 2,
+      "readout_mode": "rms_std_final"
+    }
+  },
+  {
+    "config_id": 24,
+    "params": {
+      "gamma": 0.014858116626849308,
+      "dt": 0.23173142957700754,
+      "epsilon": 0.07753628612737787,
+      "gamma_range": 0.1756989135652235,
+      "epsilon_range": 0.012651836735824075,
+      "rho": 1.3861025507920415,
+      "input_scaling": 0.12884299600987506,
+      "input_density": 0.23704064648102852,
+      "theta_lif": 0.04873595041182216,
+      "theta_rf": 0.03501275859301883,
+      "readout_C": 10.0,
+      "num_steps": 50,
+      "spatial_factor": 2,
+      "readout_mode": "rms_std_final"
+    }
+  },
+  {
+    "config_id": 33,
+    "params": {
+      "gamma": 0.010127894955272991,
+      "dt": 0.2523364166206517,
+      "epsilon": 0.0809766601416179,
+      "gamma_range": 0.6244700841334225,
+      "epsilon_range": 0.05902842131693538,
+      "rho": 1.2834818597702866,
+      "input_scaling": 0.324680718285543,
+      "input_density": 0.26779345666301674,
+      "theta_lif": 0.0803569289938559,
+      "theta_rf": 0.0014428126440763956,
+      "readout_C": 10.0,
+      "num_steps": 20,
+      "spatial_factor": 2,
+      "readout_mode": "rms_std_final"
+    }
+  },
+  {
+    "config_id": 49,
+    "params": {
+      "gamma": 0.45087974974062306,
+      "dt": 0.47815463558864113,
+      "epsilon": 0.0804020356030108,
+      "gamma_range": 0.4217991395669441,
+      "epsilon_range": 0.03265445066342898,
+      "rho": 0.800054837125316,
+      "input_scaling": 0.1670616367860225,
+      "input_density": 0.12501846677323877,
+      "theta_lif": 0.1373252747267183,
+      "theta_rf": 0.02247364040603354,
+      "readout_C": 1.0,
+      "num_steps": 20,
+      "spatial_factor": 1,
+      "readout_mode": "rms_std_final"
+    }
+  },
+  {
+    "config_id": 50,
+    "params": {
+      "gamma": 0.4783403498395537,
+      "dt": 0.244651049478644,
+      "epsilon": 0.029924265419695208,
+      "gamma_range": 0.6315932783633842,
+      "epsilon_range": 0.036854863214698566,
+      "rho": 1.1853818217331993,
+      "input_scaling": 0.343767280733971,
+      "input_density": 0.4455975635811114,
+      "theta_lif": 0.09836215106253414,
+      "theta_rf": 0.029182186375197035,
+      "readout_C": 1.0,
+      "num_steps": 50,
+      "spatial_factor": 1,
+      "readout_mode": "rms_std_final"
+    }
+  },
+  {
+    "config_id": 53,
+    "params": {
+      "gamma": 0.1826159465118917,
+      "dt": 0.40752223339312765,
+      "epsilon": 0.03311810763590447,
+      "gamma_range": 0.18071717346317667,
+      "epsilon_range": 0.0030297484633742713,
+      "rho": 0.6097276139475781,
+      "input_scaling": 0.24529897806144882,
+      "input_density": 0.0713499739154095,
+      "theta_lif": 0.16497634342396683,
+      "theta_rf": 0.002471656993478339,
+      "readout_C": 10.0,
+      "num_steps": 20,
+      "spatial_factor": 2,
+      "readout_mode": "rms_std_final"
+    }
+  }
+]

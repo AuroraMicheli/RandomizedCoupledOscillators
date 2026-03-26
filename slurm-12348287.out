@@ -1,0 +1,922 @@
+sMNIST phase 2 search (readout=final): 150 configs (120 exploit / 30 explore), seed=42
+Reference best: {'dt': 0.042, 'gamma': 2.7, 'epsilon': 0.08, 'gamma_range': 2.0, 'epsilon_range': 1.0, 'inp_scaling': 2.0, 'rho': 0.99, 'theta_lif': 0.05, 'theta_rf': 0.005, 'tau_filter': 20.0}
+======================================================================
+
+🌐 Config 1/150 [explore]: inp=0.2521 dt=0.006 γ=2.9042±3.21 ε=0.0787±0.209 ρ=0.75 θlif=0.0262 θrf=0.0120 τ=99.1 C=1.0
+   ⏰ TIMEOUT (>300s)
+
+🎯 Config 2/150 [exploit]: inp=1.7297 dt=0.012 γ=3.7183±1.16 ε=0.1747±0.366 ρ=0.88 θlif=0.0436 θrf=0.0026 τ=9.2 C=0.1
+   ⏰ TIMEOUT (>300s)
+
+🎯 Config 3/150 [exploit]: inp=0.8234 dt=0.012 γ=1.1121±2.95 ε=0.1623±1.028 ρ=0.99 θlif=0.0150 θrf=0.0266 τ=31.9 C=1.0
+   ⏰ TIMEOUT (>300s)
+
+🎯 Config 4/150 [exploit]: inp=0.8376 dt=0.114 γ=2.3412±0.99 ε=0.1960±0.528 ρ=1.00 θlif=0.0790 θrf=0.0071 τ=42.7 C=0.01
+   ✅ Test: 74.59%  Train: 76.88%  Gap: 2.3%
+
+🎯 Config 5/150 [exploit]: inp=2.3060 dt=0.011 γ=1.2556±3.19 ε=0.0253±0.781 ρ=0.87 θlif=0.0100 θrf=0.0012 τ=6.3 C=1.0
+   ⏰ TIMEOUT (>300s)
+
+🎯 Config 6/150 [exploit]: inp=2.7203 dt=0.081 γ=1.0901±0.93 ε=0.0425±0.605 ρ=0.94 θlif=0.0156 θrf=0.0067 τ=6.2 C=0.1
+   ✅ Test: 81.96%  Train: 84.93%  Gap: 3.0%
+
+🎯 Config 7/150 [exploit]: inp=4.2109 dt=0.078 γ=1.0120±2.68 ε=0.0733±0.210 ρ=0.95 θlif=0.0299 θrf=0.0381 τ=27.2 C=0.01
+   ✅ Test: 84.53%  Train: 85.97%  Gap: 1.4%
+
+🌐 Config 8/150 [explore]: inp=1.1815 dt=0.128 γ=0.4761±2.94 ε=0.7089±0.731 ρ=1.00 θlif=0.0628 θrf=0.0011 τ=1.7 C=0.1
+   ⏰ TIMEOUT (>300s)
+
+🎯 Config 9/150 [exploit]: inp=0.6939 dt=0.023 γ=2.6271±3.43 ε=0.0376±1.466 ρ=0.93 θlif=0.0136 θrf=0.0354 τ=45.7 C=0.01
+   ✅ Test: 89.84%  Train: 90.84%  Gap: 1.0%
+
+🎯 Config 10/150 [exploit]: inp=1.4345 dt=0.016 γ=4.5367±0.89 ε=0.2544±1.407 ρ=0.87 θlif=0.0116 θrf=0.0117 τ=17.0 C=0.1
+   ⏰ TIMEOUT (>300s)
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🌐 Config 11/150 [explore]: inp=4.0914 dt=0.128 γ=1.3529±0.36 ε=0.0094±1.098 ρ=1.01 θlif=0.9104 θrf=0.0998 τ=4.2 C=0.1
+   ✅ Test: 79.57%  Train: 83.46%  Gap: 3.9%
+
+🌐 Config 12/150 [explore]: inp=0.5670 dt=0.018 γ=0.4569±2.03 ε=0.0100±0.520 ρ=0.94 θlif=0.0104 θrf=0.0014 τ=44.2 C=0.1
+   ⏰ TIMEOUT (>300s)
+
+🎯 Config 13/150 [exploit]: inp=2.5137 dt=0.011 γ=1.2818±1.48 ε=0.1207±1.170 ρ=1.05 θlif=0.1716 θrf=0.0033 τ=13.7 C=0.1
+   ⏰ TIMEOUT (>300s)
+
+🌐 Config 14/150 [explore]: inp=8.1903 dt=0.019 γ=1.3682±2.97 ε=0.0735±1.371 ρ=0.98 θlif=0.4562 θrf=0.0148 τ=18.7 C=0.1
+   ⏰ TIMEOUT (>300s)
+
+🌐 Config 15/150 [explore]: inp=2.8225 dt=0.006 γ=0.5058±2.85 ε=0.0309±1.099 ρ=0.70 θlif=0.0439 θrf=0.0008 τ=31.9 C=1.0
+   ⏰ TIMEOUT (>300s)
+
+🎯 Config 16/150 [exploit]: inp=2.5423 dt=0.029 γ=2.7833±3.04 ε=0.1435±0.966 ρ=0.99 θlif=0.0100 θrf=0.0019 τ=14.3 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-28531-332_a06g'
+
+🎯 Config 17/150 [exploit]: inp=0.6638 dt=0.020 γ=3.3400±2.01 ε=0.1387±0.840 ρ=0.99 θlif=0.0179 θrf=0.0405 τ=11.5 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-28727-wt6iw4b3'
+
+🎯 Config 18/150 [exploit]: inp=1.6626 dt=0.020 γ=2.4261±2.53 ε=0.2515±1.417 ρ=0.92 θlif=0.0599 θrf=0.0017 τ=21.2 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-29021-yvith6f8'
+
+🎯 Config 19/150 [exploit]: inp=2.1679 dt=0.038 γ=3.0373±2.77 ε=0.0298±1.324 ρ=1.01 θlif=0.1820 θrf=0.0139 τ=46.7 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-29206-bcbk6k4u'
+
+🌐 Config 20/150 [explore]: inp=5.8557 dt=0.050 γ=2.6895±2.61 ε=0.2114±0.363 ρ=0.86 θlif=0.0086 θrf=0.0080 τ=2.1 C=1.0
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9)}
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🎯 Config 21/150 [exploit]: inp=0.5335 dt=0.129 γ=1.1151±0.89 ε=0.0358±0.735 ρ=0.95 θlif=0.1112 θrf=0.0059 τ=15.7 C=0.1
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9)}
+
+🎯 Config 22/150 [exploit]: inp=0.9977 dt=0.112 γ=2.3581±2.68 ε=0.0315±0.806 ρ=1.03 θlif=0.0599 θrf=0.0107 τ=29.5 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-29998-p9kwlf08'
+
+🎯 Config 23/150 [exploit]: inp=4.4814 dt=0.088 γ=1.6531±1.98 ε=0.0663±0.245 ρ=1.01 θlif=0.1201 θrf=0.0099 τ=22.9 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-30352-u05fc5f_'
+
+🌐 Config 24/150 [explore]: inp=0.1318 dt=0.110 γ=8.3238±3.36 ε=0.1981±1.755 ρ=0.77 θlif=0.0093 θrf=0.0012 τ=4.9 C=1.0
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9)}
+
+🎯 Config 25/150 [exploit]: inp=0.7732 dt=0.011 γ=2.8020±2.19 ε=0.0715±0.284 ρ=0.98 θlif=0.0976 θrf=0.0198 τ=5.7 C=0.01
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9)}
+
+🌐 Config 26/150 [explore]: inp=0.1025 dt=0.101 γ=6.2097±4.34 ε=0.0105±0.360 ρ=0.96 θlif=0.0087 θrf=0.0061 τ=11.8 C=0.1
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9)}
+
+🌐 Config 27/150 [explore]: inp=1.0109 dt=0.018 γ=2.9615±3.12 ε=0.3416±0.554 ρ=0.96 θlif=0.0482 θrf=0.0023 τ=1.2 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-31430-1279v2ld'
+
+🌐 Config 28/150 [explore]: inp=0.4186 dt=0.269 γ=0.7534±2.25 ε=0.6135±1.282 ρ=0.98 θlif=0.0094 θrf=0.0263 τ=22.8 C=10.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+          type_err, msg_dtype if msg_dtype is not None else X.dtype
+      ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🎯 Config 29/150 [exploit]: inp=1.7830 dt=0.063 γ=2.0536±2.34 ε=0.0246±1.342 ρ=0.99 θlif=0.1150 θrf=0.0058 τ=11.6 C=10.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-31960-h8d35uzv'
+
+🎯 Config 30/150 [exploit]: inp=1.5957 dt=0.100 γ=1.9997±0.56 ε=0.0539±0.749 ρ=0.86 θlif=0.0727 θrf=0.0044 τ=35.3 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-32169-bny_xbdj'
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🌐 Config 31/150 [explore]: inp=1.2744 dt=0.037 γ=0.6530±2.26 ε=0.0223±0.980 ρ=0.82 θlif=0.0082 θrf=0.0239 τ=8.0 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-32384-rxjl6emr'
+
+🎯 Config 32/150 [exploit]: inp=3.1662 dt=0.031 γ=4.7825±2.85 ε=0.2073±1.072 ρ=0.90 θlif=0.0939 θrf=0.0094 τ=9.6 C=0.001
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-32695-0fay76g4'
+
+🎯 Config 33/150 [exploit]: inp=0.9226 dt=0.116 γ=1.5602±3.01 ε=0.0759±0.842 ρ=0.90 θlif=0.0523 θrf=0.0027 τ=8.1 C=1.0
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9)}
+
+🎯 Config 34/150 [exploit]: inp=4.4101 dt=0.088 γ=2.7502±1.71 ε=0.1628±1.187 ρ=1.00 θlif=0.0135 θrf=0.0045 τ=7.5 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-33234-xu5a2q4w'
+
+🎯 Config 35/150 [exploit]: inp=1.3637 dt=0.024 γ=1.6386±0.93 ε=0.0571±0.283 ρ=0.88 θlif=0.0117 θrf=0.0035 τ=14.8 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-33475-3bv3mee2'
+
+🎯 Config 36/150 [exploit]: inp=1.3149 dt=0.139 γ=1.6450±2.53 ε=0.0861±0.920 ρ=0.93 θlif=0.1343 θrf=0.0124 τ=31.6 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-33788-rg649g7n'
+
+🎯 Config 37/150 [exploit]: inp=0.9580 dt=0.013 γ=1.1275±2.30 ε=0.0958±0.555 ρ=0.95 θlif=0.1833 θrf=0.0120 τ=16.6 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-34037-nyojk2u4'
+
+🌐 Config 38/150 [explore]: inp=0.1290 dt=0.212 γ=0.4187±3.67 ε=0.2121±0.434 ρ=0.82 θlif=0.0056 θrf=0.0047 τ=4.6 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+          type_err, msg_dtype if msg_dtype is not None else X.dtype
+      ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🎯 Config 39/150 [exploit]: inp=0.5574 dt=0.025 γ=2.1288±3.42 ε=0.2339±1.474 ρ=0.99 θlif=0.0288 θrf=0.0073 τ=27.7 C=0.01
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9)}
+
+🎯 Config 40/150 [exploit]: inp=4.4877 dt=0.021 γ=3.0236±3.29 ε=0.0857±0.876 ρ=0.91 θlif=0.0138 θrf=0.0014 τ=33.7 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-34656-x9bt98b6'
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🎯 Config 41/150 [exploit]: inp=1.4101 dt=0.037 γ=1.9182±3.20 ε=0.1830±0.372 ρ=1.03 θlif=0.0127 θrf=0.0025 τ=8.3 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-34922-y0ed8tsk'
+
+🎯 Config 42/150 [exploit]: inp=0.9020 dt=0.022 γ=2.2105±0.93 ε=0.1919±1.209 ρ=1.00 θlif=0.0988 θrf=0.0011 τ=18.5 C=0.1
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9)}
+
+🎯 Config 43/150 [exploit]: inp=0.5260 dt=0.140 γ=4.4729±2.83 ε=0.1408±0.795 ρ=0.86 θlif=0.0463 θrf=0.0055 τ=9.3 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-35365-1hii1gmz'
+
+🎯 Config 44/150 [exploit]: inp=1.1146 dt=0.014 γ=2.5404±0.78 ε=0.2671±0.167 ρ=0.86 θlif=0.0941 θrf=0.0018 τ=10.9 C=0.01
+   ❌ FAILED
+        File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+        File "<frozen importlib._bootstrap>", line 963, in _find_and_load_unlocked
+        File "<frozen importlib._bootstrap>", line 906, in _find_spec
+
+🎯 Config 45/150 [exploit]: inp=0.9384 dt=0.035 γ=3.0257±1.33 ε=0.0242±0.890 ρ=0.94 θlif=0.0398 θrf=0.0033 τ=6.0 C=0.01
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9), SIGKILL(-9), SIGKILL(-9)}
+
+🎯 Config 46/150 [exploit]: inp=2.6687 dt=0.021 γ=1.1475±3.02 ε=0.2789±0.486 ρ=1.04 θlif=0.0836 θrf=0.0027 τ=24.2 C=0.1
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9)}
+
+🎯 Config 47/150 [exploit]: inp=0.5403 dt=0.107 γ=2.8071±1.86 ε=0.2072±0.758 ρ=0.98 θlif=0.0809 θrf=0.0023 τ=12.6 C=0.1
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9)}
+
+🎯 Config 48/150 [exploit]: inp=0.5929 dt=0.020 γ=1.3217±1.55 ε=0.2384±1.102 ρ=0.96 θlif=0.0111 θrf=0.0017 τ=40.9 C=10.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-36551-q_cjytsr'
+
+🎯 Config 49/150 [exploit]: inp=3.3127 dt=0.012 γ=1.2706±2.74 ε=0.0208±0.432 ρ=0.87 θlif=0.0523 θrf=0.0017 τ=20.3 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-36690-xa1s05n1'
+
+🎯 Config 50/150 [exploit]: inp=0.8435 dt=0.147 γ=1.0819±0.80 ε=0.0398±1.417 ρ=0.99 θlif=0.0158 θrf=0.0012 τ=22.1 C=10.0
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.68it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.68it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.68it/s]
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🌐 Config 51/150 [explore]: inp=0.7905 dt=0.279 γ=4.2590±3.22 ε=0.2903±0.032 ρ=1.06 θlif=0.2699 θrf=0.0806 τ=6.8 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-37081-a3fd1ig0'
+
+🎯 Config 52/150 [exploit]: inp=0.8742 dt=0.073 γ=1.1431±0.89 ε=0.0871±1.230 ρ=0.92 θlif=0.0503 θrf=0.0013 τ=40.2 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.78it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.77it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.77it/s]
+
+🎯 Config 53/150 [exploit]: inp=0.7126 dt=0.013 γ=4.4007±1.07 ε=0.2130±0.806 ρ=0.97 θlif=0.0961 θrf=0.0053 τ=11.4 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-37446-_nw0gdoo'
+
+🎯 Config 54/150 [exploit]: inp=1.9713 dt=0.018 γ=1.6886±2.72 ε=0.0579±0.875 ρ=0.95 θlif=0.1276 θrf=0.0137 τ=6.7 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-37672-nan26sks'
+
+🎯 Config 55/150 [exploit]: inp=2.0534 dt=0.013 γ=2.5749±1.15 ε=0.0338±1.443 ρ=0.97 θlif=0.0343 θrf=0.0184 τ=14.1 C=0.01
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.72it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.73it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.74it/s]
+
+🎯 Config 56/150 [exploit]: inp=1.2141 dt=0.028 γ=1.7447±1.33 ε=0.2184±1.265 ρ=0.87 θlif=0.1818 θrf=0.0013 τ=40.8 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-37935-69peeg1n'
+
+🌐 Config 57/150 [explore]: inp=0.1550 dt=0.061 γ=3.1252±3.14 ε=0.0939±1.398 ρ=0.94 θlif=0.2601 θrf=0.0065 τ=53.1 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-38154-6gvq6_nz'
+
+🎯 Config 58/150 [exploit]: inp=1.7389 dt=0.020 γ=1.1653±1.63 ε=0.0331±1.058 ρ=0.87 θlif=0.0509 θrf=0.0091 τ=45.7 C=10.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-38459-vxsqsrwr'
+
+🎯 Config 59/150 [exploit]: inp=0.8732 dt=0.076 γ=4.8116±2.50 ε=0.2905±1.440 ρ=1.04 θlif=0.0228 θrf=0.0014 τ=32.7 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-38794-7fp8935d'
+
+🎯 Config 60/150 [exploit]: inp=0.7223 dt=0.012 γ=1.3034±1.96 ε=0.0558±0.493 ρ=0.98 θlif=0.0847 θrf=0.0270 τ=48.9 C=0.01
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.75it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.77it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.76it/s]
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🎯 Config 61/150 [exploit]: inp=4.9220 dt=0.028 γ=2.9695±0.73 ε=0.0202±1.325 ρ=0.94 θlif=0.0311 θrf=0.0199 τ=33.8 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-41599-cp4v4lhd'
+
+🎯 Config 62/150 [exploit]: inp=0.7990 dt=0.045 γ=2.5999±2.51 ε=0.0237±0.462 ρ=1.05 θlif=0.0385 θrf=0.0115 τ=6.0 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-43094-0813qmp4'
+
+🎯 Config 63/150 [exploit]: inp=1.3768 dt=0.090 γ=2.0809±0.92 ε=0.2790±0.231 ρ=0.94 θlif=0.0211 θrf=0.0154 τ=39.7 C=0.001
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-44638-_7_ci7fx'
+
+🎯 Config 64/150 [exploit]: inp=2.5649 dt=0.048 γ=2.2804±1.55 ε=0.0261±0.567 ρ=0.92 θlif=0.0299 θrf=0.0111 τ=41.7 C=0.001
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGSEGV(-11), SIGKILL(-9)}
+
+🎯 Config 65/150 [exploit]: inp=0.6211 dt=0.059 γ=1.3446±2.01 ε=0.0376±1.015 ρ=0.87 θlif=0.1337 θrf=0.0211 τ=5.5 C=0.01
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9)}
+
+🎯 Config 66/150 [exploit]: inp=1.1748 dt=0.020 γ=1.8403±0.83 ε=0.0351±0.199 ρ=1.03 θlif=0.0158 θrf=0.0040 τ=36.2 C=0.001
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.80it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.80it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.82it/s]
+
+🎯 Config 67/150 [exploit]: inp=3.0790 dt=0.039 γ=2.1319±1.19 ε=0.0291±0.969 ρ=1.01 θlif=0.0128 θrf=0.0035 τ=17.2 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-50634-g6aj5ie2'
+
+🎯 Config 68/150 [exploit]: inp=0.5677 dt=0.010 γ=4.6194±2.36 ε=0.0279±1.109 ρ=1.02 θlif=0.0162 θrf=0.0047 τ=15.7 C=0.01
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.79it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.79it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.79it/s]
+
+🌐 Config 69/150 [explore]: inp=0.5817 dt=0.025 γ=1.0375±2.15 ε=0.7111±1.298 ρ=0.73 θlif=0.0330 θrf=0.0586 τ=48.8 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-53643-y0f2lyl_'
+
+🎯 Config 70/150 [exploit]: inp=1.5605 dt=0.013 γ=1.2840±0.66 ε=0.0304±0.373 ρ=0.91 θlif=0.0522 θrf=0.0011 τ=13.0 C=10.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-55155-e27c22ys'
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🌐 Config 71/150 [explore]: inp=4.2596 dt=0.021 γ=7.0642±0.33 ε=0.3207±0.589 ρ=0.86 θlif=0.4047 θrf=0.0018 τ=56.1 C=0.01
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.70it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.71it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.69it/s]
+
+🎯 Config 72/150 [exploit]: inp=0.9353 dt=0.117 γ=3.0711±1.94 ε=0.0496±1.131 ρ=0.89 θlif=0.0126 θrf=0.0089 τ=10.7 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-58088-jtejp3jf'
+
+🎯 Config 73/150 [exploit]: inp=3.8763 dt=0.010 γ=1.3377±3.07 ε=0.0373±1.292 ρ=0.99 θlif=0.0961 θrf=0.0057 τ=7.3 C=0.001
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-59653-jm1hqs2i'
+
+🎯 Config 74/150 [exploit]: inp=4.0835 dt=0.103 γ=1.6578±2.02 ε=0.0208±0.140 ρ=1.01 θlif=0.0824 θrf=0.0026 τ=40.5 C=0.01
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.76it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.77it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.77it/s]
+
+🎯 Config 75/150 [exploit]: inp=4.4289 dt=0.012 γ=1.6163±3.18 ε=0.0613±0.661 ρ=1.02 θlif=0.0610 θrf=0.0033 τ=12.1 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-62647-99_63pwy'
+
+🎯 Config 76/150 [exploit]: inp=1.1935 dt=0.013 γ=2.7830±2.20 ε=0.2246±0.376 ρ=0.94 θlif=0.0484 θrf=0.0154 τ=6.5 C=10.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-64100-1q6_oitg'
+
+🎯 Config 77/150 [exploit]: inp=2.8388 dt=0.014 γ=1.4666±1.66 ε=0.0774±0.427 ρ=0.99 θlif=0.1453 θrf=0.0021 τ=12.6 C=0.01
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.78it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.78it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.77it/s]
+
+🎯 Config 78/150 [exploit]: inp=4.9164 dt=0.059 γ=1.1615±2.15 ε=0.2368±1.424 ρ=0.88 θlif=0.0564 θrf=0.0327 τ=7.2 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.76it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.76it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.78it/s]
+
+🎯 Config 79/150 [exploit]: inp=1.4331 dt=0.129 γ=3.6356±2.69 ε=0.0582±1.168 ρ=1.01 θlif=0.1103 θrf=0.0030 τ=5.4 C=0.01
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9)}
+
+🎯 Config 80/150 [exploit]: inp=1.0869 dt=0.017 γ=1.0735±2.85 ε=0.1684±0.973 ρ=0.92 θlif=0.0142 θrf=0.0012 τ=33.1 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-5113-1ceuhvk3'
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🌐 Config 81/150 [explore]: inp=1.3048 dt=0.114 γ=0.4828±4.17 ε=0.0131±0.989 ρ=0.74 θlif=0.6354 θrf=0.0715 τ=6.2 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/sklearn/utils/validation.py", line 116, in _assert_all_finite
+          type_err, msg_dtype if msg_dtype is not None else X.dtype
+      ValueError: Input contains infinity or a value too large for dtype('float32').
+
+🌐 Config 82/150 [explore]: inp=1.3397 dt=0.117 γ=0.7449±1.35 ε=0.0058±0.377 ρ=0.77 θlif=0.0087 θrf=0.0091 τ=11.6 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-8099-x377ragg'
+
+🎯 Config 83/150 [exploit]: inp=1.1287 dt=0.061 γ=1.7723±1.88 ε=0.2460±0.132 ρ=0.90 θlif=0.0211 θrf=0.0025 τ=16.6 C=10.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-9561-oqvi1evi'
+
+🎯 Config 84/150 [exploit]: inp=1.7190 dt=0.031 γ=4.8806±3.21 ε=0.0235±0.870 ρ=0.89 θlif=0.1416 θrf=0.0266 τ=5.7 C=0.01
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGSEGV(-11)}
+
+🎯 Config 85/150 [exploit]: inp=0.9421 dt=0.015 γ=3.4916±3.43 ε=0.2457±1.493 ρ=0.87 θlif=0.0159 θrf=0.0449 τ=41.6 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.72it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.72it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.72it/s]
+
+🎯 Config 86/150 [exploit]: inp=2.0835 dt=0.035 γ=1.9085±3.21 ε=0.0853±0.796 ρ=1.05 θlif=0.0463 θrf=0.0010 τ=8.4 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-14132-kdv1sc7_'
+
+🎯 Config 87/150 [exploit]: inp=0.6493 dt=0.038 γ=1.5290±1.39 ε=0.2369±1.399 ρ=0.91 θlif=0.0762 θrf=0.0107 τ=10.1 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-15710-60yv55ed'
+
+🎯 Config 88/150 [exploit]: inp=1.1733 dt=0.109 γ=1.2485±2.04 ε=0.1052±1.390 ρ=1.04 θlif=0.0162 θrf=0.0471 τ=47.9 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-17198-9p1bicvm'
+
+🎯 Config 89/150 [exploit]: inp=0.7852 dt=0.014 γ=1.1225±3.07 ε=0.0339±0.534 ρ=0.92 θlif=0.0250 θrf=0.0033 τ=46.5 C=0.01
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:37<00:00,  2.77it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.77it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.67it/s]
+
+🎯 Config 90/150 [exploit]: inp=0.5613 dt=0.013 γ=1.9983±3.27 ε=0.2987±1.490 ρ=0.86 θlif=0.0930 θrf=0.0031 τ=12.5 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-20235-xn4_lada'
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🎯 Config 91/150 [exploit]: inp=1.3124 dt=0.065 γ=4.0792±2.82 ε=0.1413±1.327 ρ=0.93 θlif=0.0748 θrf=0.0036 τ=21.3 C=0.001
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-21860-97iy2ik5'
+
+🎯 Config 92/150 [exploit]: inp=0.6225 dt=0.023 γ=4.0265±0.82 ε=0.1364±0.185 ρ=0.86 θlif=0.0104 θrf=0.0234 τ=24.4 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-23383-i5_5xiex'
+
+🎯 Config 93/150 [exploit]: inp=1.1157 dt=0.014 γ=4.8898±1.10 ε=0.0608±1.188 ρ=1.05 θlif=0.0179 θrf=0.0067 τ=6.3 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-24841-ar511p88'
+
+🎯 Config 94/150 [exploit]: inp=4.5807 dt=0.041 γ=1.6042±1.20 ε=0.0594±0.509 ρ=1.04 θlif=0.0340 θrf=0.0028 τ=26.2 C=1.0
+   ❌ FAILED
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.73it/s]
+      /home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py:114: UserWarning: resource_tracker: process died unexpectedly, relaunching.  Some folders/sempahores might leak.
+        "resource_tracker: process died unexpectedly, "
+
+🌐 Config 95/150 [explore]: inp=3.3341 dt=0.125 γ=0.7720±1.30 ε=0.1962±0.773 ρ=0.97 θlif=0.5461 θrf=0.0050 τ=1.1 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-27895-m8gj92nv'
+
+🎯 Config 96/150 [exploit]: inp=0.8819 dt=0.013 γ=1.8268±3.10 ε=0.0254±1.324 ρ=0.93 θlif=0.1178 θrf=0.0290 τ=27.2 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/parallel.py", line 754, in _return_or_raise
+          raise self._result
+      _pickle.PicklingError: Could not pickle the task to send it to the workers.
+
+🎯 Config 97/150 [exploit]: inp=3.9283 dt=0.100 γ=4.6274±1.77 ε=0.0413±0.376 ρ=0.89 θlif=0.0607 θrf=0.0011 τ=20.3 C=0.01
+   ❌ FAILED
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.68it/s]
+      /home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py:114: UserWarning: resource_tracker: process died unexpectedly, relaunching.  Some folders/sempahores might leak.
+        "resource_tracker: process died unexpectedly, "
+
+🌐 Config 98/150 [explore]: inp=0.5740 dt=0.125 γ=6.2630±3.39 ε=0.0606±1.133 ρ=0.78 θlif=0.8626 θrf=0.0489 τ=94.2 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-32610-5cuk2gzh'
+
+🎯 Config 99/150 [exploit]: inp=2.7314 dt=0.026 γ=2.2121±2.76 ε=0.0523±0.962 ρ=0.95 θlif=0.1125 θrf=0.0015 τ=12.8 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.74it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.74it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.72it/s]
+
+🎯 Config 100/150 [exploit]: inp=2.8496 dt=0.139 γ=4.6950±3.06 ε=0.0219±0.653 ρ=1.00 θlif=0.0391 θrf=0.0249 τ=14.8 C=1.0
+   ❌ FAILED
+        File "<frozen importlib._bootstrap_external>", line 1368, in find_spec
+        File "<frozen importlib._bootstrap_external>", line 1408, in _fill_cache
+      OSError: [Errno 12] Cannot allocate memory: '/tudelft.net/staff-bulk/ewi/insy/VisionLab/amicheli/envs/pytorch/lib/python3.7'
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🎯 Config 101/150 [exploit]: inp=0.7270 dt=0.011 γ=1.7893±1.11 ε=0.1694±1.269 ρ=1.01 θlif=0.0274 θrf=0.0051 τ=5.6 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-37148-azc8ov95'
+
+🌐 Config 102/150 [explore]: inp=0.9534 dt=0.119 γ=0.4241±0.47 ε=0.0110±1.768 ρ=0.78 θlif=0.0164 θrf=0.0401 τ=33.1 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-38657-5iobz2ub'
+
+🎯 Config 103/150 [exploit]: inp=0.5158 dt=0.013 γ=3.1828±0.83 ε=0.1627±1.292 ρ=0.98 θlif=0.0341 θrf=0.0032 τ=18.2 C=1.0
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.70it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.70it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.70it/s]
+
+🌐 Config 104/150 [explore]: inp=3.4851 dt=0.023 γ=6.8014±3.75 ε=0.9030±1.932 ρ=0.88 θlif=0.4031 θrf=0.0005 τ=4.7 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/dev/shm/joblib_memmapping_folder_41742_dbb445b6aca4453fb7c244ce9b2e1e7e_01c2d83a385d4bfd977652d0a5540685'
+
+🎯 Config 105/150 [exploit]: inp=4.0154 dt=0.043 γ=3.7701±0.94 ε=0.2405±0.979 ρ=0.89 θlif=0.0980 θrf=0.0033 τ=10.2 C=1.0
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.73it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.73it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.69it/s]
+
+🎯 Config 106/150 [exploit]: inp=0.8605 dt=0.015 γ=1.3567±2.21 ε=0.0330±1.445 ρ=0.94 θlif=0.1878 θrf=0.0061 τ=32.8 C=0.001
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.76it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.76it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.79it/s]
+
+🎯 Config 107/150 [exploit]: inp=0.9773 dt=0.115 γ=1.4883±1.93 ε=0.0901±0.745 ρ=0.95 θlif=0.0145 θrf=0.0169 τ=22.7 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-46368-ypk0lzhu'
+
+🎯 Config 108/150 [exploit]: inp=0.9573 dt=0.029 γ=4.0593±2.54 ε=0.0350±1.348 ρ=0.98 θlif=0.0360 θrf=0.0218 τ=6.8 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-47857-qh15sgn_'
+
+🎯 Config 109/150 [exploit]: inp=4.6266 dt=0.028 γ=2.3615±2.37 ε=0.0298±0.900 ρ=0.88 θlif=0.0263 θrf=0.0225 τ=6.0 C=0.01
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.71it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.71it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.70it/s]
+
+🎯 Config 110/150 [exploit]: inp=4.5055 dt=0.083 γ=1.3418±1.70 ε=0.0647±1.352 ρ=0.98 θlif=0.0517 θrf=0.0161 τ=9.9 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/dev/shm/joblib_memmapping_folder_50908_67d74d31094644fdaf1f05d7493b18af_af52e2ff916e4f7086d91cf75357972f'
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🎯 Config 111/150 [exploit]: inp=2.6280 dt=0.049 γ=1.0065±2.24 ε=0.0448±0.293 ρ=1.03 θlif=0.0157 θrf=0.0224 τ=38.0 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-52384-sjbs3hm3'
+
+🎯 Config 112/150 [exploit]: inp=2.4889 dt=0.119 γ=1.0972±2.97 ε=0.0328±1.152 ρ=0.92 θlif=0.0428 θrf=0.0056 τ=16.0 C=0.1
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9), SIGSEGV(-11), SIGKILL(-9)}
+
+🎯 Config 113/150 [exploit]: inp=3.1355 dt=0.123 γ=1.4244±1.34 ε=0.1911±0.513 ρ=0.96 θlif=0.0107 θrf=0.0079 τ=25.0 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-55402-4t1cw0wh'
+
+🎯 Config 114/150 [exploit]: inp=2.3428 dt=0.067 γ=1.8362±3.14 ε=0.0327±0.372 ρ=1.01 θlif=0.0226 θrf=0.0110 τ=11.1 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-57014-0pch9_iy'
+
+🎯 Config 115/150 [exploit]: inp=4.1483 dt=0.093 γ=2.1424±1.10 ε=0.0298±0.926 ρ=1.02 θlif=0.0528 θrf=0.0018 τ=13.3 C=1.0
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.77it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.77it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.78it/s]
+
+🎯 Config 116/150 [exploit]: inp=0.6033 dt=0.031 γ=1.1430±2.62 ε=0.0653±0.442 ρ=1.04 θlif=0.1824 θrf=0.0232 τ=29.1 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.73it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.73it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.75it/s]
+
+🎯 Config 117/150 [exploit]: inp=0.5938 dt=0.015 γ=1.4923±2.14 ε=0.1266±1.069 ρ=0.94 θlif=0.0355 θrf=0.0040 τ=43.6 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.75it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.75it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.76it/s]
+
+🎯 Config 118/150 [exploit]: inp=0.7721 dt=0.128 γ=2.0231±0.54 ε=0.1669±0.535 ρ=0.88 θlif=0.1445 θrf=0.0061 τ=20.7 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.62it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.66it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.77it/s]
+
+🎯 Config 119/150 [exploit]: inp=0.7083 dt=0.034 γ=3.0445±0.81 ε=0.0458±0.357 ρ=1.04 θlif=0.0355 θrf=0.0030 τ=8.9 C=1.0
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.64it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.68it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.76it/s]
+
+🎯 Config 120/150 [exploit]: inp=0.5859 dt=0.027 γ=1.0866±1.67 ε=0.0485±0.269 ρ=0.97 θlif=0.0389 θrf=0.0020 τ=43.8 C=0.01
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.71it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.71it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.72it/s]
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🌐 Config 121/150 [explore]: inp=0.5890 dt=0.242 γ=8.5057±2.51 ε=0.0074±0.411 ρ=0.91 θlif=0.0066 θrf=0.0007 τ=1.4 C=0.01
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGSEGV(-11)}
+
+🎯 Config 122/150 [exploit]: inp=3.6293 dt=0.067 γ=3.5317±1.71 ε=0.0941±0.161 ρ=0.97 θlif=0.0104 θrf=0.0011 τ=8.8 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-4070-qkbbuo4w'
+
+🌐 Config 123/150 [explore]: inp=0.1141 dt=0.190 γ=1.8215±0.47 ε=0.1506±0.447 ρ=0.88 θlif=0.0117 θrf=0.0016 τ=59.1 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-5614-mwqvwldr'
+
+🎯 Config 124/150 [exploit]: inp=0.6766 dt=0.117 γ=2.4311±2.19 ε=0.0446±0.268 ρ=0.91 θlif=0.0155 θrf=0.0115 τ=7.3 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.78it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.78it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.79it/s]
+
+🎯 Config 125/150 [exploit]: inp=0.9875 dt=0.069 γ=2.5146±0.91 ε=0.0590±1.005 ρ=0.99 θlif=0.1750 θrf=0.0016 τ=23.6 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.80it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.80it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.80it/s]
+
+🌐 Config 126/150 [explore]: inp=1.0476 dt=0.140 γ=2.0867±0.64 ε=0.0088±1.681 ρ=0.90 θlif=0.0268 θrf=0.0054 τ=6.7 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-11552-3qx1wefx'
+
+🎯 Config 127/150 [exploit]: inp=1.5592 dt=0.040 γ=1.3181±2.25 ε=0.0898±0.666 ρ=0.88 θlif=0.0189 θrf=0.0081 τ=24.8 C=0.01
+   ❌ FAILED
+      Fatal Python error: initfsencoding: Unable to get the locale encoding
+      Traceback (most recent call last):
+        File "<frozen importlib._bootstrap>", line 983, in _find_and_load
+
+🌐 Config 128/150 [explore]: inp=1.8555 dt=0.025 γ=1.2514±2.86 ε=0.1329±1.219 ρ=0.99 θlif=0.0817 θrf=0.0045 τ=99.2 C=10.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-15308-r_ru28bf'
+
+🎯 Config 129/150 [exploit]: inp=2.2225 dt=0.069 γ=3.1084±1.69 ε=0.1199±1.067 ρ=0.93 θlif=0.0351 θrf=0.0128 τ=11.5 C=1.0
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.72it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.71it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.70it/s]
+
+🎯 Config 130/150 [exploit]: inp=4.0070 dt=0.056 γ=3.7954±1.73 ε=0.1763±0.768 ρ=0.91 θlif=0.0166 θrf=0.0017 τ=29.7 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.71it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.71it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.72it/s]
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🎯 Config 131/150 [exploit]: inp=0.8672 dt=0.031 γ=2.1454±2.98 ε=0.0276±0.915 ρ=0.94 θlif=0.0143 θrf=0.0024 τ=29.6 C=0.001
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.72it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.72it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:37<00:00,  2.70it/s]
+
+🎯 Config 132/150 [exploit]: inp=2.0845 dt=0.061 γ=1.1250±0.90 ε=0.0225±1.098 ρ=0.87 θlif=0.1850 θrf=0.0330 τ=12.5 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-22727-zs1_vw12'
+
+🌐 Config 133/150 [explore]: inp=8.2493 dt=0.009 γ=3.2567±4.49 ε=0.0269±1.085 ρ=0.84 θlif=0.6290 θrf=0.0319 τ=62.9 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.81it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.81it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.81it/s]
+
+🎯 Config 134/150 [exploit]: inp=1.1868 dt=0.058 γ=1.0475±2.47 ε=0.0602±0.462 ρ=1.00 θlif=0.0116 θrf=0.0310 τ=11.7 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-26401-4ct05l87'
+
+🎯 Config 135/150 [exploit]: inp=2.2114 dt=0.019 γ=1.4491±2.16 ε=0.0221±0.495 ρ=0.97 θlif=0.0318 θrf=0.0228 τ=5.1 C=10.0
+   ❌ FAILED
+      joblib.externals.loky.process_executor.TerminatedWorkerError: A worker process managed by the executor was unexpectedly terminated. This could be caused by a segmentation fault while calling the function or by an excessive memory usage causing the Operating System to kill the worker.
+      
+      The exit codes of the workers are {SIGKILL(-9), SIGSEGV(-11)}
+
+🎯 Config 136/150 [exploit]: inp=0.5169 dt=0.092 γ=2.1320±1.01 ε=0.1682±1.209 ρ=0.98 θlif=0.0897 θrf=0.0092 τ=5.0 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-28720-c8k73i80'
+
+🌐 Config 137/150 [explore]: inp=0.1716 dt=0.020 γ=0.4712±3.09 ε=0.0126±1.639 ρ=0.83 θlif=0.0088 θrf=0.0009 τ=7.9 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-30274-43g121tx'
+
+🎯 Config 138/150 [exploit]: inp=0.9592 dt=0.020 γ=2.2246±3.30 ε=0.2318±0.849 ρ=0.90 θlif=0.0163 θrf=0.0300 τ=18.9 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/parallel.py", line 754, in _return_or_raise
+          raise self._result
+      _pickle.PicklingError: Could not pickle the task to send it to the workers.
+
+🎯 Config 139/150 [exploit]: inp=2.0734 dt=0.062 γ=3.1066±3.05 ε=0.0265±1.010 ρ=0.95 θlif=0.0979 θrf=0.0419 τ=6.4 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/dev/shm/joblib_memmapping_folder_33219_26540837a0544b7cb43f7a7ebf5a2b52_2afd65556dcc4da9bc17aebb93199dd5'
+
+🎯 Config 140/150 [exploit]: inp=0.5216 dt=0.013 γ=1.7515±3.12 ε=0.1935±1.202 ρ=1.05 θlif=0.0285 θrf=0.0014 τ=6.1 C=0.01
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.75it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.68it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.76it/s]
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+🎯 Config 141/150 [exploit]: inp=0.7082 dt=0.055 γ=1.3784±2.18 ε=0.2294±0.170 ρ=1.04 θlif=0.0742 θrf=0.0055 τ=12.7 C=0.01
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.75it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.72it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.73it/s]
+
+🎯 Config 142/150 [exploit]: inp=3.3408 dt=0.126 γ=1.7683±0.81 ε=0.0356±1.051 ρ=1.05 θlif=0.0754 θrf=0.0028 τ=11.6 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:35<00:00,  2.78it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.79it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:35<00:00,  2.79it/s]
+
+🎯 Config 143/150 [exploit]: inp=0.5454 dt=0.057 γ=1.3554±2.18 ε=0.1844±0.343 ρ=0.99 θlif=0.0188 θrf=0.0011 τ=33.2 C=0.01
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-39392-q8k3i7ku'
+
+🎯 Config 144/150 [exploit]: inp=2.8841 dt=0.093 γ=4.1371±2.61 ε=0.0384±0.428 ρ=0.87 θlif=0.0100 θrf=0.0051 τ=6.5 C=0.1
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.69it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.70it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.74it/s]
+
+🎯 Config 145/150 [exploit]: inp=3.9517 dt=0.078 γ=1.6778±1.46 ε=0.0323±1.143 ρ=0.94 θlif=0.1604 θrf=0.0042 τ=15.8 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-42458-9amv6fox'
+
+🎯 Config 146/150 [exploit]: inp=4.1889 dt=0.017 γ=4.9360±0.61 ε=0.0246±0.469 ρ=0.95 θlif=0.1949 θrf=0.0033 τ=14.8 C=1.0
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.61it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.65it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.74it/s]
+
+🎯 Config 147/150 [exploit]: inp=2.4826 dt=0.037 γ=1.2848±3.32 ε=0.1546±0.173 ρ=0.86 θlif=0.0916 θrf=0.0100 τ=8.5 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-45578-7r53wcgg'
+
+🌐 Config 148/150 [explore]: inp=0.4545 dt=0.214 γ=8.9551±2.29 ε=0.0801±1.412 ρ=0.98 θlif=0.0135 θrf=0.0052 τ=18.2 C=1.0
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-47078-h4p3pyog'
+
+🎯 Config 149/150 [exploit]: inp=1.3614 dt=0.013 γ=1.0534±3.22 ε=0.0275±1.124 ρ=0.86 θlif=0.0976 θrf=0.0029 τ=46.4 C=0.1
+   ❌ FAILED
+        File "/home/nfs/amicheli/.local/lib/python3.7/site-packages/joblib/externals/loky/backend/resource_tracker.py", line 274, in main
+          del registry[rtype][name]
+      KeyError: '/loky-48633-0c2_7u91'
+
+🎯 Config 150/150 [exploit]: inp=1.1346 dt=0.133 γ=1.3605±1.90 ε=0.0553±0.417 ρ=0.90 θlif=0.0423 θrf=0.0042 τ=8.4 C=10.0
+   ❌ FAILED
+      Extracting features:  99%|████████████████████▊| 99/100 [00:36<00:00,  2.70it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.72it/s]
+      Extracting features: 100%|████████████████████| 100/100 [00:36<00:00,  2.74it/s]
+
+   💾 Saved top-20 intermediate results (best so far: 89.84% [exploit])
+
+======================================================================
+✅ Completed: 5/150 configs successful
+❌ Failed:    145/150 configs
+🎯 Exploit best: 89.84%  (mean: 82.73%)
+🌐 Explore best: 79.57%  (mean: 79.57%)
+======================================================================
+
+🏆 TOP 10 CONFIGURATIONS:
+Rank  Test%      Train%     Gap     Type      inp_scl   C       dt      gamma    eps      rho    τ      θlif     θrf    
+------------------------------------------------------------------------------------------------------------------------
+1     89.84%     90.84%     1.0%   exploit   0.6939   0.01   0.023  2.6271  0.0376  0.93  45.7  0.0136  0.0354 
+2     84.53%     85.97%     1.4%   exploit   4.2109   0.01   0.078  1.0120  0.0733  0.95  27.2  0.0299  0.0381 
+3     81.96%     84.93%     3.0%   exploit   2.7203   0.1    0.081  1.0901  0.0425  0.94  6.2   0.0156  0.0067 
+4     79.57%     83.46%     3.9%   explore   4.0914   0.1    0.128  1.3529  0.0094  1.01  4.2   0.9104  0.0998 
+5     74.59%     76.88%     2.3%   exploit   0.8376   0.01   0.114  2.3412  0.1960  1.00  42.7  0.0790  0.0071 
+
+📊 PARAMETER TRENDS (top 10 vs all):
+      inp_scaling: top10=2.5108±1.5188  all=2.5108±1.5188
+               dt: top10=0.0845±0.0364  all=0.0845±0.0364
+            gamma: top10=1.6847±0.6686  all=1.6847±0.6686
+          epsilon: top10=0.0718±0.0653  all=0.0718±0.0653
+              rho: top10=0.9679±0.0334  all=0.9679±0.0334
+       tau_filter: top10=25.2190±17.5058  all=25.2190±17.5058
+        theta_lif: top10=0.2097±0.3512  all=0.2097±0.3512
+         theta_rf: top10=0.0374±0.0339  all=0.0374±0.0339
+
+📊 REGULARIZATION (C) BREAKDOWN:
+  C=0.01   : n=3, test=82.99±6.32%, gap=1.6%
+  C=0.1    : n=2, test=80.76±1.20%, gap=3.4%
+slurmstepd: error: Detected 6771 oom-kill event(s) in StepId=12348287.0. Some of your processes may have been killed by the cgroup out-of-memory handler.
+srun: error: gpu21: task 0: Out Of Memory
+srun: launch/slurm: _step_signal: Terminating StepId=12348287.0
+slurmstepd: error: Detected 6771 oom-kill event(s) in StepId=12348287.batch. Some of your processes may have been killed by the cgroup out-of-memory handler.

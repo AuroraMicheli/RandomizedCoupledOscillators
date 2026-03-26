@@ -368,3 +368,45 @@ Mean test accuracy: 63.8485, Std test accuracy: 11.7102
 **************
 
 
+n_hid: 100, epochs: 120, batch: 120, lr: 0.0021, dt: 0.2, gamma: 1.0, epsilon: 5.0, gamma_range: 1.0, epsilon_range: 10.0, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 0.1, rho: 0.9, leaky: 1.0, use_test: True, test_trials: 5, lstm: False, trained_ron: False, valid: 0.0, test: 0.6652
+**************
+
+
+n_hid: 100, epochs: 120, batch: 120, lr: 0.0021, dt: 0.2, gamma: 1.0, epsilon: 5.0, gamma_range: 1.0, epsilon_range: 10.0, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 0.1, rho: 0.9, leaky: 1.0, use_test: True, test_trials: 5, lstm: False, trained_ron: False, valid: 0.0, test: 0.7432
+**************
+
+
+n_hid: 100, epochs: 120, batch: 120, lr: 0.0021, dt: 0.2, gamma: 1.0, epsilon: 5.0, gamma_range: 1.0, epsilon_range: 10.0, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 0.1, rho: 0.9, leaky: 1.0, use_test: True, test_trials: 5, lstm: False, trained_ron: False, valid: 0.0, test: 0.6667
+**************
+
+
+n_hid: 100, epochs: 120, batch: 120, lr: 0.0021, dt: 0.2, gamma: 1.0, epsilon: 5.0, gamma_range: 1.0, epsilon_range: 10.0, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 0.1, rho: 0.9, leaky: 1.0, use_test: True, test_trials: 5, lstm: False, trained_ron: False, valid: 0.0, test: 0.6295
+**************
+
+
+n_hid: 100, epochs: 120, batch: 120, lr: 0.0021, dt: 0.2, gamma: 1.0, epsilon: 5.0, gamma_range: 1.0, epsilon_range: 10.0, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 0.1, rho: 0.9, leaky: 1.0, use_test: True, test_trials: 5, lstm: False, trained_ron: False, valid: 0.0, test: 0.6364
+**************
+
+
+List of maximum test accuracies: [66.51515151515152, 74.31818181818181, 66.66666666666666, 62.95454545454545, 63.63636363636363]
+Mean test accuracy: 66.8182, Std test accuracy: 4.0353
+**************
+
+
+n_hid: 800, epochs: 120, batch: 120, lr: 0.0021, dt: 0.2, gamma: 1.0, epsilon: 5.0, gamma_range: 1.0, epsilon_range: 10.0, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 0.1, rho: 0.9, leaky: 1.0, use_test: True, test_trials: 3, lstm: False, trained_ron: False, valid: 0.0, test: 0.6068
+**************
+
+
+n_hid: 800, epochs: 120, batch: 120, lr: 0.0021, dt: 0.2, gamma: 1.0, epsilon: 5.0, gamma_range: 1.0, epsilon_range: 10.0, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 0.1, rho: 0.9, leaky: 1.0, use_test: True, test_trials: 3, lstm: False, trained_ron: False, valid: 0.0, test: 0.6742
+**************
+
+
+n_hid: 800, epochs: 120, batch: 120, lr: 0.0021, dt: 0.2, gamma: 1.0, epsilon: 5.0, gamma_range: 1.0, epsilon_range: 10.0, cpu: False, check: False, no_friction: True, esn: True, inp_scaling: 0.1, rho: 0.9, leaky: 1.0, use_test: True, test_trials: 3, lstm: False, trained_ron: False, valid: 0.0, test: 0.7924
+**************
+
+
+List of maximum test accuracies: [60.68181818181818, 67.42424242424242, 79.24242424242425]
+Mean test accuracy: 69.1162, Std test accuracy: 7.6712
+**************
+
+

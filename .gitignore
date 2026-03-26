@@ -7,4 +7,5 @@ MNIST/
 .sbatch/
 .sh/
 .out
+.png
 data/
