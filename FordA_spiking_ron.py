@@ -84,7 +84,7 @@ def main():
     # Training options
     parser.add_argument('--cpu',         action="store_true")
     parser.add_argument('--use_test',    action="store_true")
-    parser.add_argument('--seed',        type=int, default=0)
+    parser.add_argument('--seed',        type=int, default=42)
     parser.add_argument('--test_trials', type=int, default=3)
     parser.add_argument('--data_dir',    type=str, default='data')
 

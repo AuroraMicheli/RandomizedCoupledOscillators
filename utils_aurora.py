@@ -13,7 +13,230 @@ import argparse
 from pathlib import Path
 from esn import spectral_norm_scaling
 
+class spiking_LIF_reservoir(nn.Module):
+    """
+    LIF-only ablation of spiking_coESN_rescaled_II.
 
+    Architecture (identical topology to s-RON):
+      - Layer 1: encoder LIF neurons  (fixed, identical to s-RON)
+                 receive external input x, emit spikes lif_s
+      - Layer 2: reservoir LIF neurons (replaces HRF in s-RON)
+                 receive encoder spikes via lif2res (was lif2hrf)
+                 recurrent connections via h2h (was hrf->hrf)
+                 emit spikes res_s
+
+    Heterogeneous reservoir LIF parameters (per-neuron, drawn from distributions):
+      - tau_m   : membrane time constant, log-uniform in
+                  (tau_m   - tau_m_range/2,   tau_m   + tau_m_range/2)
+      - theta_res: firing threshold, log-uniform in
+                  (theta_res - theta_res_range/2, theta_res + theta_res_range/2)
+
+    All weight matrices, sparsity, readout modes, and energy tracking are
+    identical to spiking_coESN_rescaled_II so results are directly comparable.
+
+    Naming note:
+      - lif2hrf  -> lif2res  (encoder -> reservoir)
+      - hrf2lif  -> res2enc  (reservoir -> encoder, controls h2h sparsity)
+      - theta_rf -> theta_res (reservoir threshold, now heterogeneous)
+      - gamma/epsilon -> tau_m/theta_res (reservoir neuron params)
+    """
+
+    def __init__(self, n_inp, n_hid, dt, tau_m, tau_m_range,
+                 theta_res, theta_res_range,
+                 rho, input_scaling,
+                 theta_lif,           # encoder LIF threshold (fixed scalar)
+                 tau_filter,
+                 count_lif_spikes=False,
+                 sparse_lif2res=True, connectivity_lif2res=0.1,
+                 sparse_res2enc=True, connectivity_res2enc=0.1,
+                 device='cpu', fading=False,
+                 readout_mode='final'):
+        super().__init__()
+
+        self.n_hid      = n_hid
+        self.device     = device
+        self.fading     = fading
+        self.dt         = dt
+        self.theta_lif  = theta_lif   # encoder threshold — fixed scalar
+        self.tau_filter = tau_filter
+        self.count_lif_spikes  = count_lif_spikes
+        self.sparse_lif2res    = sparse_lif2res
+        self.connectivity_lif2res = connectivity_lif2res
+        self.sparse_res2enc    = sparse_res2enc
+        self.connectivity_res2enc = connectivity_res2enc
+
+        _valid_modes = ("final", "mean", "rms_std_final")
+        assert readout_mode in _valid_modes, \
+            f"readout_mode must be one of {_valid_modes}, got '{readout_mode}'"
+        self.readout_mode = readout_mode
+
+        # ── Heterogeneous reservoir LIF parameters ────────────────────────────
+        # tau_m: log-uniform sampling so equal density across scales
+        # Clamp to strictly positive values (analogous to gamma/epsilon clamp)
+        tau_lo  = max(tau_m  - tau_m_range  / 2., 1e-3)
+        tau_hi  = tau_m  + tau_m_range  / 2.
+        tres_lo = max(theta_res - theta_res_range / 2., 1e-6)
+        tres_hi = theta_res + theta_res_range / 2.
+
+        # Log-uniform: sample uniformly in log space then exponentiate
+        self.tau_m_vec    = torch.exp(
+            torch.FloatTensor(n_hid).uniform_(np.log(tau_lo), np.log(tau_hi))
+        ).to(device)
+        self.theta_res_vec = torch.exp(
+            torch.FloatTensor(n_hid).uniform_(np.log(tres_lo), np.log(tres_hi))
+        ).to(device)
+
+        # ── Recurrent weight matrix h2h (reservoir LIF -> reservoir LIF) ─────
+        h2h = 2 * (2 * torch.rand(n_hid, n_hid) - 1)
+        h2h = spectral_norm_scaling(h2h, rho)
+
+        if sparse_res2enc:
+            h2h  = h2h.to(device)
+            mask = (torch.rand(n_hid, n_hid, device=device) < connectivity_res2enc).float()
+            h2h  = h2h * mask
+            self.n_res2enc_connections = int(mask.sum().item())
+            print(f"Res->Enc sparse recurrent: "
+                  f"{self.n_res2enc_connections}/{n_hid**2} "
+                  f"({connectivity_res2enc*100:.1f}%)")
+        else:
+            h2h = h2h.to(device)
+            self.n_res2enc_connections = n_hid ** 2
+            print(f"Res->Enc dense recurrent: {n_hid**2}/{n_hid**2} (100%)")
+
+        self.h2h = nn.Parameter(h2h, requires_grad=False)
+
+        # ── Input weights (always dense, same as s-RON) ───────────────────────
+        x2h  = torch.rand(n_inp, n_hid) * input_scaling
+        bias = (torch.rand(n_hid) * 2 - 1) * input_scaling
+        self.x2h  = nn.Parameter(x2h,  requires_grad=False)
+        self.bias = nn.Parameter(bias, requires_grad=False)
+
+        # ── Encoder -> Reservoir weights (lif2res, potentially sparse) ────────
+        if sparse_lif2res:
+            lif2res_full = (torch.rand(n_hid, n_hid, device=device) * 2 - 1) * 2.0
+            mask_l2r     = (torch.rand(n_hid, n_hid, device=device) < connectivity_lif2res).float()
+            lif2res      = lif2res_full * mask_l2r
+            self.n_lif2res_connections = int(mask_l2r.sum().item())
+            print(f"Enc->Res sparse: "
+                  f"{self.n_lif2res_connections}/{n_hid**2} "
+                  f"({connectivity_lif2res*100:.1f}%)")
+        else:
+            lif2res = (torch.rand(n_hid, n_hid, device=device) * 2 - 1) * 2.0
+            self.n_lif2res_connections = n_hid ** 2
+            print(f"Enc->Res dense: {n_hid**2}/{n_hid**2} (100%)")
+
+        self.lif2res = nn.Parameter(lif2res, requires_grad=False)
+
+        # kept for API compatibility with energy estimator
+        self.n_lif2hrf_connections = self.n_lif2res_connections
+        self.n_hrf2lif_connections = self.n_res2enc_connections
+
+        self.spike_gain = nn.Parameter(torch.tensor(1.0, device=device),
+                                       requires_grad=False)
+
+    # ── Single timestep update ────────────────────────────────────────────────
+    def bio_cell(self, x, res_v, res_s, lif_v, ref_period=None):
+        """
+        x       : (B, n_inp)   — input at this timestep
+        res_v   : (B, n_hid)   — reservoir LIF membrane voltage
+        res_s   : (B, n_hid)   — reservoir LIF spikes (previous step)
+        lif_v   : (B, n_hid)   — encoder LIF membrane voltage
+        ref_period: (B, n_hid) — refractory period tracker (unused for LIF,
+                                  kept for signature compatibility)
+        """
+        dt        = self.dt
+        device    = self.device
+        theta_lif = self.theta_lif   # encoder: fixed scalar
+
+        # ── Encoder LIF (identical to s-RON) ─────────────────────────────────
+        lif_tau_m    = 20.0           # encoder time constant fixed
+        input_current = (torch.matmul(x, self.x2h)
+                         + torch.matmul(res_s, self.h2h)
+                         + self.bias)
+
+        lif_v  = lif_v + dt * (-lif_v / lif_tau_m + input_current)
+        lif_s  = (lif_v > theta_lif).float()
+        lif_v  = lif_v - lif_s * theta_lif   # soft reset
+
+        # ── Reservoir LIF (heterogeneous tau_m and theta_res) ─────────────────
+        # drive from encoder spikes through lif2res
+        drive  = torch.matmul(lif_s, self.lif2res)
+
+        # per-neuron leak: -v / tau_m_vec
+        res_v  = res_v + dt * (-res_v / self.tau_m_vec + drive)
+
+        # per-neuron threshold
+        res_s  = (res_v > self.theta_res_vec).float()
+        res_v  = res_v - res_s * self.theta_res_vec   # soft reset
+
+        if self.fading:
+            res_v = res_v - dt * res_v
+
+        return res_v, res_s, lif_v, lif_s
+
+    # ── Full forward pass ─────────────────────────────────────────────────────
+    def forward(self, x):
+        """
+        Output shape matches spiking_coESN_rescaled_II:
+          "final"         -> (B, n_hid)
+          "mean"          -> (B, n_hid)
+          "rms_std_final" -> (B, 3*n_hid)
+        """
+        B, L, _ = x.shape
+        n_hid   = self.n_hid
+        device  = self.device
+
+        res_v      = torch.zeros(B, n_hid, device=device)
+        res_s      = torch.zeros(B, n_hid, device=device)
+        lif_v      = torch.zeros(B, n_hid, device=device)
+
+        need_stats = self.readout_mode in ("mean", "rms_std_final")
+        if need_stats:
+            res_sum    = torch.zeros(B, n_hid, device=device)
+            res_sq_sum = torch.zeros(B, n_hid, device=device)
+
+        total_res_spikes = 0.0
+        total_lif_spikes = 0.0
+
+        for t in range(L):
+            res_v, res_s, lif_v, lif_s = self.bio_cell(
+                x[:, t], res_v, res_s, lif_v
+            )
+            if need_stats:
+                res_sum    += res_v
+                res_sq_sum += res_v ** 2
+
+            total_res_spikes += res_s.sum()
+            total_lif_spikes += lif_s.sum()
+
+        # ── Readout features (res_v plays the role of hy in s-RON) ───────────
+        if self.readout_mode == "final":
+            features = res_v
+
+        elif self.readout_mode == "mean":
+            features = res_sum / L
+
+        elif self.readout_mode == "rms_std_final":
+            res_mean = res_sum / L
+            res_rms  = torch.sqrt(res_sq_sum / L + 1e-8)
+            res_std  = torch.sqrt(torch.clamp(
+                res_sq_sum / L - res_mean ** 2, min=1e-8))
+            features = torch.cat([res_rms, res_std, res_v], dim=1)
+
+        # ── Firing rates (compatible with energy estimator API) ───────────────
+        r_res   = total_res_spikes / (B * L * n_hid)
+        r_lif   = total_lif_spikes / (B * L * n_hid)
+        r_total = (r_res + r_lif) if self.count_lif_spikes else r_res
+
+        return features, {
+            "r_total": r_total.detach(),
+            "r_hrf":   r_res.detach(),    # kept as r_hrf for API compatibility
+            "r_lif":   r_lif.detach(),
+        }
+
+
+
+        
 class spiking_coESN_rescaled_II(nn.Module):
     """
     Spiking reservoir-only version (no trainable readout).

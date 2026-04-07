@@ -192,19 +192,19 @@ def main():
                         help='Batch size (DVS Gesture has only 1077 training samples)')
 
     # Oscillator parameters
-    parser.add_argument('--dt',            type=float, default=0.2)
-    parser.add_argument('--gamma',         type=float, default=0.011) #new tried 1.0
-    parser.add_argument('--epsilon',       type=float, default=0.01)
-    parser.add_argument('--gamma_range',   type=float, default=2.64)
-    parser.add_argument('--epsilon_range', type=float, default=0.068)
+    parser.add_argument('--dt',            type=float, default=0.259)
+    parser.add_argument('--gamma',         type=float, default=0.0456)
+    parser.add_argument('--epsilon',       type=float, default=0.0354)
+    parser.add_argument('--gamma_range',   type=float, default=0.1304)
+    parser.add_argument('--epsilon_range', type=float, default=0.0989)
 
     # Input/Reservoir parameters
-    parser.add_argument('--inp_scaling', type=float, default=0.06)
-    parser.add_argument('--rho',         type=float, default=1.3) #new tried 0.99
+    parser.add_argument('--inp_scaling', type=float, default=0.1129)
+    parser.add_argument('--rho',         type=float, default=1.581)
 
     # LIF/HRF parameters
-    parser.add_argument('--theta_lif',  type=float, default=0.9)
-    parser.add_argument('--theta_rf',   type=float, default=0.003)
+    parser.add_argument('--theta_lif',  type=float, default=2.9678)
+    parser.add_argument('--theta_rf',   type=float, default=0.03628)
     parser.add_argument('--tau_filter', type=float, default=20.0)
 
     # Sparse connectivity
@@ -214,7 +214,7 @@ def main():
                         help="Fraction of HRF->LIF recurrent connections (0-1)")
 
     # Sparse input projection
-    parser.add_argument('--input_density', type=float, default=0.03,
+    parser.add_argument('--input_density', type=float, default=0.0306,
                         help="Fraction of input connections per neuron (0-1). "
                              "Default 0.1 with spatial_factor=8 -> 512 channels, "
                              "each neuron sees ~51 channels.")
@@ -238,7 +238,7 @@ def main():
     # Readout
     parser.add_argument('--readout_C', type=float, default=0.01,
                         help="Inverse regularization for logistic regression.")
-    parser.add_argument('--readout_mode', type=str, default='final',
+    parser.add_argument('--readout_mode', type=str, default='mean',
                         choices=['final', 'mean', 'rms_std_final'],
                         help="Reservoir readout strategy: "
                              "'final' (last hy, n_hid features), "
