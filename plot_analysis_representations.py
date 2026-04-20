@@ -40,6 +40,20 @@ Usage:
     python plot_repr_analysis.py --results_dir /path/to/analysis_results --out_dir /path/to/figures
 """
 
+"""
+Generate publication-quality figures for the representational analysis.
+
+Produces:
+  figures/cka_all_datasets.pdf/png
+  figures/freq_selectivity_all.pdf/png
+  figures/repr_analysis_combined.pdf/png
+
+Usage:
+    python plot_repr_analysis.py
+    python plot_repr_analysis.py --cka_feature rms
+    python plot_repr_analysis.py --results_dir /path/to/analysis_results --out_dir /path/to/figures
+"""
+
 import argparse
 import json
 import os
@@ -106,26 +120,16 @@ DATASET_LABELS_SHORT = {
 # =============================================================================
 
 def load_results(results_dir, cka_feature='mean'):
-    """
-    Load per-dataset JSON summaries.
-    Tries the filename with the cka_feature suffix first
-    (analysis_summary_{ds}_{cka_feature}.json), then falls back to the
-    old filename without the suffix (analysis_summary_{ds}.json).
-    Prints a clear message so you always know which file was loaded.
-    """
     data = {}
     for ds in DATASETS:
-        # Primary: new filename with feature suffix
         path_new = os.path.join(
             results_dir, ds,
             f'analysis_summary_{ds}_{cka_feature}.json'
         )
-        # Fallback: old filename without suffix
         path_old = os.path.join(
             results_dir, ds,
             f'analysis_summary_{ds}.json'
         )
-
         if os.path.exists(path_new):
             with open(path_new) as f:
                 data[ds] = json.load(f)
@@ -135,8 +139,7 @@ def load_results(results_dir, cka_feature='mean'):
                 data[ds] = json.load(f)
             print(f"  Loaded [{ds}]: {path_old}  (old filename, no feature suffix)")
         else:
-            print(f"  WARNING [{ds}]: neither {path_new} nor {path_old} found — skipping")
-
+            print(f"  WARNING [{ds}]: neither found — skipping")
     return data
 
 
@@ -146,10 +149,10 @@ def load_results(results_dir, cka_feature='mean'):
 
 def _shared_freq_range(data, ds_present):
     """
-    Use f_min / f_max stored in each result JSON if available (set by the
-    analysis script).  Falls back to distribution percentiles if missing.
-    Using the stored sweep range is more reliable than percentiles because
-    the distributions can be heavily skewed.
+    Use f_min / f_max stored in the JSON (written by the analysis script).
+    Falls back to distribution percentiles if the keys are absent.
+    Extends the left boundary by half a decade to avoid data falling
+    on the very edge of the axis.
     """
     f_mins, f_maxs = [], []
     for ds in ds_present:
@@ -158,13 +161,21 @@ def _shared_freq_range(data, ds_present):
             f_mins.append(r['f_min'])
             f_maxs.append(r['f_max'])
         else:
-            # fallback: use distribution values
             vals = np.array(
                 r['pref_freq_hrf_array'] + r['pref_freq_lif_array']
             )
             f_mins.append(np.percentile(vals, 1) * 0.5)
             f_maxs.append(np.percentile(vals, 99) * 2.0)
-    return min(f_mins), max(f_maxs)
+
+    f_min = min(f_mins)
+    f_max = max(f_maxs)
+
+    # Extend left boundary by half a decade so the leftmost bars
+    # are not flush against the axis edge
+    f_min_plot = f_min / 3.0
+    f_max_plot = f_max
+
+    return f_min, f_max, f_min_plot, f_max_plot
 
 
 # =============================================================================
@@ -190,7 +201,7 @@ def plot_cka(data, out_dir=None, style='paper', ax=None):
     cka_lif = [data[ds]['cka']['cka_lif'] for ds in ds_present]
 
     ax.bar(x - width/2, cka_hrf, width,
-           color=HRF_COLOR, label='s-RON (HRF)',
+           color=HRF_COLOR, label='s-RON',
            edgecolor='white', linewidth=0.5)
     ax.bar(x + width/2, cka_lif, width,
            color=LIF_COLOR,  label='LIF-RC',
@@ -202,8 +213,6 @@ def plot_cka(data, out_dir=None, style='paper', ax=None):
     ax.set_ylim(0, max(max(cka_hrf), max(cka_lif)) * 1.35)
     ax.legend(frameon=False)
     ax.grid(axis='y', alpha=0.25)
-
-    # Panel letter — visible in both standalone and combined modes
     ax.text(-0.18, 1.05, 'A',
             transform=ax.transAxes, fontsize=11, fontweight='bold')
 
@@ -219,11 +228,12 @@ def plot_cka(data, out_dir=None, style='paper', ax=None):
 # Panel B: Frequency selectivity histograms
 # =============================================================================
 
-def _draw_freq_panels(axes, data, ds_list, bins, xmin, xmax,
-                      add_panel_letter=False):
+def _draw_freq_panels(axes, data, ds_list, bins, f_min_plot, f_max_plot,
+                      add_panel_letter=False, add_xlabel=True):
     """
     Draw frequency histograms into a list of axes, one per dataset.
-    Shared logic used by both the standalone and combined figure functions.
+    No per-subplot x labels — caller adds a single shared label if needed.
+    No mean dashed lines.
     """
     for i, (ax, ds) in enumerate(zip(axes, ds_list)):
         if ds not in data or 'freq_selectivity' not in data[ds]:
@@ -237,21 +247,16 @@ def _draw_freq_panels(axes, data, ds_list, bins, xmin, xmax,
         w_hrf = np.ones_like(hrf) / len(hrf)
         w_lif = np.ones_like(lif) / len(lif)
 
-        # Filled bars
         ax.hist(hrf, bins=bins, weights=w_hrf, color=HRF_COLOR, alpha=0.40)
         ax.hist(lif, bins=bins, weights=w_lif, color=LIF_COLOR, alpha=0.40)
-        # Outlines
         ax.hist(hrf, bins=bins, weights=w_hrf, histtype='step', color=HRF_COLOR)
         ax.hist(lif, bins=bins, weights=w_lif, histtype='step', color=LIF_COLOR)
-        # Mean lines
-        ax.axvline(r['pref_freq_hrf_mean'], color=HRF_COLOR, linestyle='--', lw=1.0)
-        ax.axvline(r['pref_freq_lif_mean'], color=LIF_COLOR, linestyle='--', lw=1.0)
 
         ax.set_xscale('log')
-        ax.set_xlim(xmin, xmax)
+        ax.set_xlim(f_min_plot, f_max_plot)
         ax.set_title(DATASET_LABELS_SHORT[ds])
         ax.set_yticks([])
-        ax.set_xlabel('Pref. freq. (Hz)')
+        # No individual x labels — handled by a single shared label outside
 
         if i == 0:
             ax.set_ylabel('Fraction of neurons')
@@ -259,9 +264,8 @@ def _draw_freq_panels(axes, data, ds_list, bins, xmin, xmax,
                 ax.text(-0.35, 1.05, 'B',
                         transform=ax.transAxes, fontsize=11, fontweight='bold')
 
-    # Legend on last visible axis
     legend_els = [
-        Patch(facecolor=HRF_COLOR, alpha=0.7, label='s-RON (HRF)'),
+        Patch(facecolor=HRF_COLOR, alpha=0.7, label='s-RON'),
         Patch(facecolor=LIF_COLOR, alpha=0.7, label='LIF-RC'),
     ]
     axes[-1].legend(handles=legend_els, loc='upper right', frameon=False)
@@ -274,19 +278,24 @@ def plot_freq_selectivity(data, out_dir, style='paper'):
         print("  WARNING: no freq_selectivity data found, skipping panel B")
         return
 
-    f_min, f_max = _shared_freq_range(data, ds_present)
+    f_min, f_max, f_min_plot, f_max_plot = _shared_freq_range(data, ds_present)
     bins = np.logspace(np.log10(f_min), np.log10(f_max), 30)
 
     fig, axes = plt.subplots(
         1, len(ds_present),
-        figsize=(6.5, 1.7),
-        constrained_layout=True
+        figsize=(6.5, 1.9),
+        constrained_layout=False
     )
     if len(ds_present) == 1:
         axes = [axes]
 
-    _draw_freq_panels(axes, data, ds_present, bins, f_min, f_max,
+    plt.subplots_adjust(bottom=0.22, wspace=0.10)
+
+    _draw_freq_panels(axes, data, ds_present, bins, f_min_plot, f_max_plot,
                       add_panel_letter=True)
+
+    # Single shared x-axis label
+    fig.text(0.55, 0.02, 'Preferred frequency (Hz)', ha='center')
 
     for ext in ['pdf', 'png']:
         plt.savefig(os.path.join(out_dir, f'freq_selectivity_all.{ext}'))
@@ -314,13 +323,15 @@ def plot_combined(data, out_dir, style='paper'):
     axes = [fig.add_subplot(gsB[0, i]) for i in range(4)]
 
     if ds_present_freq:
-        f_min, f_max = _shared_freq_range(data, ds_present_freq)
+        f_min, f_max, f_min_plot, f_max_plot = _shared_freq_range(
+            data, ds_present_freq)
         bins = np.logspace(np.log10(f_min), np.log10(f_max), 30)
-        _draw_freq_panels(axes, data, DATASETS, bins, f_min, f_max,
+        _draw_freq_panels(axes, data, DATASETS, bins, f_min_plot, f_max_plot,
                           add_panel_letter=True)
 
-    # Shared x-axis label for panel B
-    fig.text(0.63, -0.02, 'Preferred frequency (Hz)', ha='center')
+    # Single shared x-axis label for panel B
+    # Positioned relative to the right half of the figure
+    fig.text(0.63, -0.04, 'Preferred frequency (Hz)', ha='center')
 
     for ext in ['pdf', 'png']:
         plt.savefig(os.path.join(out_dir, f'repr_analysis_combined.{ext}'))
@@ -334,16 +345,12 @@ def plot_combined(data, out_dir, style='paper'):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--results_dir', default=None,
-                        help='Path to analysis_results/ directory. '
-                             'Defaults to analysis_results/ next to this script.')
-    parser.add_argument('--out_dir', default=None,
-                        help='Output directory. Defaults to figures/ next to this script.')
+    parser.add_argument('--results_dir', default=None)
+    parser.add_argument('--out_dir', default=None)
     parser.add_argument('--style', default='paper', choices=['paper', 'slides'])
     parser.add_argument('--cka_feature', default='mean',
                         choices=['mean', 'rms', 'final'],
-                        help='Which CKA feature variant to load '
-                             '(must match what was used when running the analysis).')
+                        help='Which CKA feature variant to load.')
     args = parser.parse_args()
 
     script_dir  = os.path.dirname(os.path.abspath(__file__))
@@ -371,8 +378,6 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
     
 
 '''

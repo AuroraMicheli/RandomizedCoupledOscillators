@@ -8,6 +8,7 @@ from pathlib import Path
 import numpy as np
 import random
 import json
+
 import os
 
 from esn import spectral_norm_scaling

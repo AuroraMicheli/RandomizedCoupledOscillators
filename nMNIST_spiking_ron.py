@@ -29,6 +29,7 @@ import numpy as np
 import random
 import json
 import os
+import time
 
 import tonic
 import tonic.transforms as transforms
@@ -42,19 +43,6 @@ from esn import spectral_norm_scaling
 
 def get_NMNIST_data(batch_train, batch_test, data_dir='data/NMNIST',
                     num_steps=20, spatial_factor=1):
-    """
-    Load N-MNIST using Tonic, bin events into frames of shape (T, C*H*W).
-
-    Args:
-        batch_train: training batch size
-        batch_test:  test batch size
-        data_dir:    root directory for dataset cache
-        num_steps:   number of time bins T
-        spatial_factor: downsampling factor for spatial dims (1 = full 34x34)
-
-    Returns:
-        train_loader, test_loader  (no validation split — use train for val if needed)
-    """
     sensor_size = tonic.datasets.NMNIST.sensor_size  # (34, 34, 2)
     H, W, C = sensor_size[1], sensor_size[0], sensor_size[2]
 
@@ -65,7 +53,6 @@ def get_NMNIST_data(batch_train, batch_test, data_dir='data/NMNIST',
     frame_transform = transforms.ToFrame(sensor_size=sensor_size, n_time_bins=num_steps)
 
     def collate_fn(batch):
-        """Convert frames (T, C, H, W) -> downsample -> (T, C*H_ds*W_ds), binarise."""
         import torch.nn.functional as F
         xs, ys = [], []
         for frames, label in batch:
@@ -170,64 +157,31 @@ def set_seed(seed):
 def main():
     parser = argparse.ArgumentParser(description='Spiking RON on N-MNIST Dataset')
 
-    # Model architecture
     parser.add_argument('--n_hid', type=int, default=800)
     parser.add_argument('--batch', type=int, default=128)
-
-    # Oscillator parameters
     parser.add_argument('--dt',            type=float, default=0.109)
     parser.add_argument('--gamma',         type=float, default=0.109)
     parser.add_argument('--epsilon',       type=float, default=0.0208)
     parser.add_argument('--gamma_range',   type=float, default=2.64)
     parser.add_argument('--epsilon_range', type=float, default=0.068)
-
-    # Input/Reservoir parameters
     parser.add_argument('--inp_scaling', type=float, default=0.218)
     parser.add_argument('--rho',         type=float, default=1.21)
-
-    # LIF/HRF parameters
     parser.add_argument('--theta_lif',  type=float, default=0.189)
     parser.add_argument('--theta_rf',   type=float, default=0.045)
     parser.add_argument('--tau_filter', type=float, default=20.0)
-
-    # Sparse connectivity
-    parser.add_argument('--connectivity_lif2hrf', type=float, default=1.0,
-                        help="Fraction of LIF->HRF connections (0-1)")
-    parser.add_argument('--connectivity_hrf2lif', type=float, default=1.0,
-                        help="Fraction of HRF->LIF recurrent connections (0-1)")
-
-    # Sparse input projection
-    parser.add_argument('--input_density', type=float, default=0.063,
-                        help="Fraction of input connections per neuron (0-1). "
-                             "Default 0.1: each neuron sees ~231/2312 channels. "
-                             "Set to 1.0 for dense (very expensive for 2312 inputs).")
-
-    # N-MNIST specific
-    parser.add_argument('--num_steps', type=int, default=30,
-                        help='Number of time bins for event binning')
-    parser.add_argument('--spatial_factor', type=int, default=2,
-                        help='Spatial downsampling factor (1=full 34x34, 2=17x17)')
-
-    # Training options
+    parser.add_argument('--connectivity_lif2hrf', type=float, default=1.0)
+    parser.add_argument('--connectivity_hrf2lif', type=float, default=1.0)
+    parser.add_argument('--input_density', type=float, default=0.063)
+    parser.add_argument('--num_steps', type=int, default=30)
+    parser.add_argument('--spatial_factor', type=int, default=2)
     parser.add_argument('--cpu',         action='store_true')
-    parser.add_argument('--use_test',    action='store_true',
-                        help="Evaluate on test set")
+    parser.add_argument('--use_test',    action='store_true')
     parser.add_argument('--seed',        type=int, default=42)
     parser.add_argument('--test_trials', type=int, default=5)
     parser.add_argument('--data_dir',    type=str, default='data/NMNIST')
-
-    # Readout
-    parser.add_argument('--readout_C', type=float, default=0.1,
-                        help="Inverse regularization for logistic regression")
-    # NEW: reservoir readout strategy
+    parser.add_argument('--readout_C', type=float, default=0.1)
     parser.add_argument('--readout_mode', type=str, default='final',
-                        choices=['final', 'mean', 'rms_std_final'],
-                        help="Reservoir readout strategy: "
-                             "'final' (last hy, n_hid features), "
-                             "'mean' (temporal mean, n_hid features), "
-                             "'rms_std_final' (RMS+Std+Final, 3*n_hid features)")
-
-    # Results
+                        choices=['final', 'mean', 'rms_std_final'])
     parser.add_argument('--results_dir', type=str, default='results_nmnist')
 
     args = parser.parse_args()
@@ -263,12 +217,14 @@ def main():
     print(f"   Sample shape: {sample_x.shape}  (batch, time, channels)")
 
     all_test_accs, all_train_accs, all_energies = [], [], []
-    all_sops, all_sops_hrf, all_sops_lif = [], [], []          # SOPs
+    all_sops, all_sops_hrf, all_sops_lif = [], [], []
     all_r_hrf, all_r_lif, all_r_total = [], [], []
     all_n_input_connections = []
 
     for trial in range(args.test_trials):
         print(f"\n{'='*70}\nTRIAL {trial + 1}/{args.test_trials}\n{'='*70}")
+
+        set_seed(args.seed + trial)
 
         print("\n=== Building Spiking RON ===")
         model = spiking_coESN_rescaled_II(
@@ -282,7 +238,7 @@ def main():
             sparse_hrf2lif=use_sparse_hrf2lif,
             connectivity_hrf2lif=args.connectivity_hrf2lif,
             device=device,
-            readout_mode=args.readout_mode,                    # NEW
+            readout_mode=args.readout_mode,
         ).to(device)
 
         n_input_connections = apply_sparse_input_projection(
@@ -291,17 +247,22 @@ def main():
         all_n_input_connections.append(n_input_connections)
         print(f"Model created -- readout_mode='{args.readout_mode}'")
 
+        # ── TIMED: feature extraction ──────────────────────────────────────
         print("\n=== Extracting Reservoir Features ===")
+        t0 = time.time()
         train_feats, train_labels, r_tot_train, r_hrf_train, r_lif_train = extract_features(
             train_loader, model, device
         )
-        print(f"Training features: {train_feats.shape}")
+        print(f"  Train feature extraction: {time.time()-t0:.1f}s")
+        print(f"  Training features: {train_feats.shape}")
 
         if args.use_test:
+            t0 = time.time()
             test_feats, test_labels, r_tot_test, r_hrf_test, r_lif_test = extract_features(
                 test_loader, model, device
             )
-            print(f"Test features: {test_feats.shape}")
+            print(f"  Test feature extraction:  {time.time()-t0:.1f}s")
+            print(f"  Test features: {test_feats.shape}")
         else:
             test_feats, test_labels = train_feats, train_labels
 
@@ -309,12 +270,21 @@ def main():
         train_feats = scaler.transform(train_feats)
         test_feats  = scaler.transform(test_feats)
 
+        # ── TIMED: logistic regression ─────────────────────────────────────
         print("\n=== Training Logistic Regression Readout ===")
+        t0 = time.time()
+        #clf = LogisticRegression(
+            #max_iter=1000, verbose=0, n_jobs=1,
+            #multi_class='multinomial', solver='lbfgs',
+            #C=args.readout_C
+        #).fit(train_feats, train_labels)
+
         clf = LogisticRegression(
-            max_iter=2000, verbose=0, n_jobs=-1,
-            multi_class='multinomial', solver='lbfgs',
+            max_iter=1000, verbose=0, n_jobs=1,
+            solver='liblinear',
             C=args.readout_C
-        ).fit(train_feats, train_labels)
+            ).fit(train_feats, train_labels)
+        print(f"  LR fit time: {time.time()-t0:.1f}s")
 
         train_acc = clf.score(train_feats, train_labels) * 100
         test_acc  = clf.score(test_feats,  test_labels)  * 100
@@ -336,9 +306,9 @@ def main():
         all_test_accs.append(test_acc)
         all_train_accs.append(train_acc)
         all_energies.append(snn_energy['Energy_J'])
-        all_sops.append(snn_energy['SOPs'])                    # SOPs
-        all_sops_hrf.append(snn_energy['HRF_SOPs'])            # SOPs
-        all_sops_lif.append(snn_energy['LIF_SOPs'])            # SOPs
+        all_sops.append(snn_energy['SOPs'])
+        all_sops_hrf.append(snn_energy['HRF_SOPs'])
+        all_sops_lif.append(snn_energy['LIF_SOPs'])
         all_r_hrf.append(r_hrf_train)
         all_r_lif.append(r_lif_train)
         all_r_total.append(r_tot_train)
@@ -349,9 +319,9 @@ def main():
     std_train_acc  = np.std(all_train_accs)
     mean_energy    = np.mean(all_energies)
     std_energy     = np.std(all_energies)
-    mean_sops      = np.mean(all_sops)                         # SOPs
-    mean_sops_hrf  = np.mean(all_sops_hrf)                     # SOPs
-    mean_sops_lif  = np.mean(all_sops_lif)                     # SOPs
+    mean_sops      = np.mean(all_sops)
+    mean_sops_hrf  = np.mean(all_sops_hrf)
+    mean_sops_lif  = np.mean(all_sops_lif)
 
     print(f"\n{'='*70}")
     print("FINAL RESULTS SUMMARY")
@@ -365,7 +335,7 @@ def main():
     print(f"Test accuracy:  {mean_test_acc:.2f}%  +/- {std_test_acc:.2f}%")
     print(f"Per-trial test: {[f'{a:.2f}' for a in all_test_accs]}")
     print(f"Energy:         {mean_energy:.3e} +/- {std_energy:.3e} J")
-    print(f"SOPs (total):   {mean_sops:.3e}  "               # SOPs
+    print(f"SOPs (total):   {mean_sops:.3e}  "
           f"(HRF: {mean_sops_hrf:.3e}, LIF: {mean_sops_lif:.3e})")
     print(f"{'='*70}")
 
@@ -377,7 +347,7 @@ def main():
         'n_out': n_out,
         'num_steps': args.num_steps,
         'spatial_factor': args.spatial_factor,
-        'readout_mode': args.readout_mode,                     # NEW
+        'readout_mode': args.readout_mode,
         'input_density': float(args.input_density),
         'readout_C': float(args.readout_C),
         'n_input_connections_mean': float(np.mean(all_n_input_connections)),
@@ -391,9 +361,9 @@ def main():
         'r_tot_mean':     float(np.mean(all_r_total)),
         'energy_J_mean':  float(mean_energy),
         'energy_J_std':   float(std_energy),
-        'sops_mean':      float(mean_sops),                    # SOPs
-        'sops_hrf_mean':  float(mean_sops_hrf),                # SOPs
-        'sops_lif_mean':  float(mean_sops_lif),                # SOPs
+        'sops_mean':      float(mean_sops),
+        'sops_hrf_mean':  float(mean_sops_hrf),
+        'sops_lif_mean':  float(mean_sops_lif),
         'n_lif2hrf_connections': int(model.n_lif2hrf_connections),
         'n_hrf2lif_connections': int(model.n_hrf2lif_connections),
         'connectivity_lif2hrf': float(args.connectivity_lif2hrf),
@@ -410,7 +380,7 @@ def main():
     results_filename = (
         f"results_nmnist_nhid{args.n_hid}_steps{args.num_steps}"
         f"_{inp_str}_{conn_lif_str}_{conn_hrf_str}"
-        f"_{args.readout_mode}"                                # NEW: mode in filename
+        f"_{args.readout_mode}"
         f"_trials{args.test_trials}_seed{args.seed}.json"
     )
     results_path = os.path.join(args.results_dir, results_filename)

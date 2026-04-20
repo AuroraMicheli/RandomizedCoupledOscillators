@@ -60,6 +60,8 @@ def extract_features(loader, model, device, rand_pad):
         torch.stack(r_hrf).mean().item(),
         torch.stack(r_lif).mean().item()
     )
+
+'''
 class spiking_coESN_rescaled_II(nn.Module):
     """
     Spiking reservoir-only version (no trainable readout).
@@ -298,6 +300,7 @@ class spiking_coESN_rescaled_II(nn.Module):
             "r_lif":   r_lif.detach()
         }
 
+'''
 
 def main():
     parser = argparse.ArgumentParser(description='Spiking RON on npCIFAR-10')
@@ -318,7 +321,7 @@ def main():
     parser.add_argument('--rho',         type=float, default=0.518)
 
     # LIF/HRF parameters
-    parser.add_argument('--theta_lif',  type=float, default=0.03)
+    parser.add_argument('--theta_lif',  type=float, default=0.03) 
     parser.add_argument('--theta_rf',   type=float, default=0.208)
     parser.add_argument('--tau_filter', type=float, default=5.60)
 

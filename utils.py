@@ -799,3 +799,5 @@ def get_Adiac_data(bs_train,bs_test, whole_train=False, RC=True):
     mytestloader = data.DataLoader(mytestdata,
                 batch_size=bs_test, shuffle=False, drop_last=True)
     return mytrainloader, myvaloader, mytestloader
+
+    
