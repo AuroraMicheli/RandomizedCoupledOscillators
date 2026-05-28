@@ -235,198 +235,611 @@ class spiking_LIF_reservoir(nn.Module):
         }
 
 
+"""
+HRF-HRF reservoir network: both encoder and reservoir use HRF (Harmonic
+Resonator Function / Resonate-and-Fire) neurons.
 
-'''
-class spiking_coESN_rescaled_II(nn.Module):
+Architecture
+------------
+  - Layer 1: encoder HRF neurons  (fixed random weights, heterogeneous gamma/epsilon)
+             receive external input x,  emit spikes enc_s  (hy > theta_enc)
+  - Layer 2: reservoir HRF neurons (fixed random weights, heterogeneous gamma/epsilon)
+             receive encoder spikes via enc2res,
+             recurrent feedback via h2h (reservoir -> reservoir),
+             emit spikes res_s  (hy > theta_rf)
+
+Readout features are extracted from the *reservoir* HRF population only
+(hy, the continuous membrane oscillation state), matching s-RON exactly.
+
+Design decisions
+----------------
+- Encoder HRF spikes (not membrane hy) drive the reservoir.  This keeps the
+  encoder->reservoir interface identical to s-RON (LIF spikes -> reservoir),
+  making the comparison clean: only the *dynamics* of the encoder change.
+- Encoder HRF params (gamma_enc, epsilon_enc, theta_enc) are tuned separately.
+- Reservoir HRF params (gamma, epsilon, theta_rf) are reused from s-RON best
+  configs -- they perform the same job.
+- Connectivity structure mirrors s-RON: enc->res can be sparse, res->res dense.
+- All readout modes of s-RON are preserved, including the new spike-readout
+  mode added for the membrane-vs-spikes ablation.
+
+Readout modes (reservoir HRF signals)
+--------------------------------------
+  "final"          - hy at last timestep                      (B, n_hid)
+  "mean"           - temporal mean of hy                      (B, n_hid)
+  "rms"            - RMS of hy                                (B, n_hid)
+  "std"            - temporal std of hy                       (B, n_hid)
+  "rms_std_final"  - concat [RMS | Std | Final] of hy         (B, 3*n_hid)
+  "spikes_mean"    - mean spike rate per neuron over time      (B, n_hid)
+  "spikes_rms_std_final" - concat [spike_RMS | spike_Std | spike_Final]
+                                                               (B, 3*n_hid)
+The last two modes allow comparing membrane-based vs spike-based readout
+on the same forward pass, both for s-RON and for this HRF-HRF variant.
+"""
+
+
+class spiking_HRF_HRF(nn.Module):
     """
-    Spiking reservoir-only version (no trainable readout).
-    Batch-first input (B, L, I)
-    Adds customizable LIF/HRF thresholds and feature options, including filtered spikes.
-    
-    READOUT STRATEGY: controlled by readout_mode argument
-    -------------------------------------------------------
-    "final"         - hy at the last time step only          -> (B, n_hid)
-    "mean"          - temporal mean of hy                    -> (B, n_hid)
-    "rms_std_final" - concatenation of RMS, Std, Final state -> (B, 3*n_hid)
-                        . RMS   captures oscillation amplitude (energy)
-                        . Std   captures temporal variability (dynamics)
-                        . Final captures endpoint phase
+    HRF encoder + HRF reservoir ablation of s-RON.
 
-    Default: "final"
-
-    ENERGY OPTIMIZATION: Sparse connectivity
-    - Sparse LIF->HRF connectivity (reduces LIF-driven synaptic operations)
-    - Sparse HRF->HRF recurrent connectivity (reduces recurrent operations)
-    - Both reduce synaptic operations while maintaining representational capacity
+    Parameters
+    ----------
+    n_inp : int
+    n_hid : int
+        Size of each population (encoder and reservoir have the same size,
+        matching s-RON convention).
+    dt : float
+    # ---- Encoder HRF parameters (tuned) ------------------------------------
+    gamma_enc : float or tuple(float, float)
+        Damping coefficient for encoder HRF neurons.
+        Scalar -> all neurons share the same value.
+        Tuple (min, max) -> uniform sampling per neuron.
+    epsilon_enc : float or tuple(float, float)
+        Decay/frequency parameter for encoder HRF neurons.
+    theta_enc : float
+        Spike threshold for encoder HRF neurons.
+    # ---- Reservoir HRF parameters (fixed from s-RON best config) -----------
+    gamma : float or tuple(float, float)
+        Damping coefficient for reservoir HRF neurons.
+    epsilon : float or tuple(float, float)
+        Decay/frequency parameter for reservoir HRF neurons.
+    theta_rf : float
+        Spike threshold for reservoir HRF neurons.
+    # ---- Shared -------------------------------------------------------
+    rho : float
+        Spectral radius of reservoir recurrent weight matrix.
+    input_scaling : float
+    tau_filter : float   (kept for API compatibility, not used)
+    sparse_enc2res : bool
+    connectivity_enc2res : float   fraction of enc->res connections kept
+    sparse_res2res : bool
+    connectivity_res2res : float   fraction of res->res connections kept
+    readout_mode : str
     """
-    def __init__(self, n_inp, n_hid, dt, gamma, epsilon, rho, input_scaling,
-                 theta_lif, theta_rf, tau_filter, count_lif_spikes=False,
-                 sparse_lif2hrf=True, connectivity_lif2hrf=0.1,
-                 sparse_hrf2lif=True, connectivity_hrf2lif=0.1,
-                 device='cpu', fading=False,
-                 readout_mode='final'):          # NEW: controls what forward() returns
+
+    def __init__(
+        self,
+        n_inp, n_hid, dt,
+        # encoder HRF (tunable)
+        gamma_enc, epsilon_enc, theta_enc,
+        # reservoir HRF (fixed from s-RON)
+        gamma, epsilon, theta_rf,
+        # shared
+        rho, input_scaling,
+        tau_filter=20.0,          # API compat
+        count_enc_spikes=False,
+        sparse_enc2res=True,  connectivity_enc2res=0.2,
+        sparse_res2res=False, connectivity_res2res=1.0,
+        device='cpu', fading=False,
+        readout_mode='final',
+    ):
         super().__init__()
-        self.n_hid = n_hid
-        self.device = device
-        self.fading = fading
-        self.dt = dt
-        self.theta_lif = theta_lif
-        self.theta_rf = theta_rf
-        self.tau_filter = tau_filter
-        self.count_lif_spikes = count_lif_spikes
-        self.sparse_lif2hrf = sparse_lif2hrf
-        self.connectivity_lif2hrf = connectivity_lif2hrf
-        self.sparse_hrf2lif = sparse_hrf2lif
-        self.connectivity_hrf2lif = connectivity_hrf2lif
+        self.n_hid             = n_hid
+        self.device            = device
+        self.fading            = fading
+        self.dt                = dt
+        self.theta_enc         = theta_enc
+        self.theta_rf          = theta_rf
+        self.tau_filter        = tau_filter
+        self.count_enc_spikes  = count_enc_spikes
+        self.sparse_enc2res    = sparse_enc2res
+        self.connectivity_enc2res = connectivity_enc2res
+        self.sparse_res2res    = sparse_res2res
+        self.connectivity_res2res = connectivity_res2res
 
-        # NEW: validate and store readout mode
-        _valid_modes = ("final", "mean", "rms_std_final")
-        assert readout_mode in _valid_modes, \
+        _valid_modes = (
+            "final", "mean", "rms", "std", "rms_std_final",
+            "spikes_mean", "spikes_rms_std_final",
+        )
+        assert readout_mode in _valid_modes, (
             f"readout_mode must be one of {_valid_modes}, got '{readout_mode}'"
+        )
         self.readout_mode = readout_mode
 
-        # Parameters (same as before)
+        # ── Encoder HRF parameters (heterogeneous, per-neuron) ───────────────
+        self.gamma_enc   = self._make_param_vec(gamma_enc,   n_hid, device)
+        self.epsilon_enc = self._make_param_vec(epsilon_enc, n_hid, device)
+
+        # ── Reservoir HRF parameters (heterogeneous, per-neuron) ────────────
+        self.gamma   = self._make_param_vec(gamma,   n_hid, device)
+        self.epsilon = self._make_param_vec(epsilon, n_hid, device)
+
+        # ── Reservoir recurrent weights h2h (res HRF -> res HRF) ─────────────
+        h2h = 2 * (2 * torch.rand(n_hid, n_hid) - 1)
+        h2h = spectral_norm_scaling(h2h, rho)
+
+        if sparse_res2res:
+            h2h  = h2h.to(device)
+            mask = (torch.rand(n_hid, n_hid, device=device) < connectivity_res2res).float()
+            h2h  = h2h * mask
+            self.n_res2res_connections = int(mask.sum().item())
+            print(f"Res->Res sparse recurrent: "
+                  f"{self.n_res2res_connections}/{n_hid**2} "
+                  f"({connectivity_res2res*100:.1f}%)")
+        else:
+            h2h = h2h.to(device)
+            self.n_res2res_connections = n_hid ** 2
+            print(f"Res->Res dense recurrent: {n_hid**2}/{n_hid**2} (100%)")
+
+        self.h2h = nn.Parameter(h2h, requires_grad=False)
+
+        # ── Input weights (enc HRF receives external input, always dense) ────
+        x2h  = torch.rand(n_inp, n_hid) * input_scaling
+        bias = (torch.rand(n_hid) * 2 - 1) * input_scaling
+        self.x2h  = nn.Parameter(x2h,  requires_grad=False)
+        self.bias = nn.Parameter(bias, requires_grad=False)
+
+        # ── Encoder HRF -> Reservoir HRF weights (enc2res, sparse) ──────────
+        if sparse_enc2res:
+            enc2res_full = (torch.rand(n_hid, n_hid, device=device) * 2 - 1) * 2.0
+            mask_e2r     = (torch.rand(n_hid, n_hid, device=device) < connectivity_enc2res).float()
+            enc2res      = enc2res_full * mask_e2r
+            self.n_enc2res_connections = int(mask_e2r.sum().item())
+            print(f"Enc->Res sparse: "
+                  f"{self.n_enc2res_connections}/{n_hid**2} "
+                  f"({connectivity_enc2res*100:.1f}%)")
+        else:
+            enc2res = (torch.rand(n_hid, n_hid, device=device) * 2 - 1) * 2.0
+            self.n_enc2res_connections = n_hid ** 2
+            print(f"Enc->Res dense: {n_hid**2}/{n_hid**2} (100%)")
+
+        self.enc2res = nn.Parameter(enc2res, requires_grad=False)
+
+        # API aliases used by energy estimator (matches s-RON naming)
+        self.n_lif2hrf_connections = self.n_enc2res_connections
+        self.n_hrf2lif_connections = self.n_res2res_connections
+
+        self.spike_gain = nn.Parameter(
+            torch.tensor(1.0, device=device), requires_grad=False
+        )
+
+    # ── Helpers ──────────────────────────────────────────────────────────────
+
+    @staticmethod
+    def _make_param_vec(val, n_hid, device):
+        """Return a per-neuron tensor from a scalar or (min, max) tuple."""
+        if isinstance(val, (tuple, list)):
+            lo, hi = float(val[0]), float(val[1])
+            v = torch.rand(n_hid) * (hi - lo) + lo
+        else:
+            v = torch.full((n_hid,), float(val))
+        return v.to(device)
+
+    # ── Single timestep ──────────────────────────────────────────────────────
+
+    def bio_cell(
+        self,
+        x,
+        # encoder state
+        enc_hy, enc_hz, enc_ref,
+        # reservoir state
+        res_hy, res_hz, res_s, res_ref,
+    ):
+        """
+        One timestep update for both HRF populations.
+
+        Encoder HRF
+        -----------
+        - Receives external input x via x2h
+        - Receives reservoir feedback (res_s) via h2h  [same topology as s-RON]
+        - Emits spikes enc_s when enc_hy > theta_enc
+
+        Reservoir HRF
+        -------------
+        - Receives encoder spikes enc_s via enc2res
+        - No external input  (all input is funnelled through encoder)
+        - Emits spikes res_s when res_hy > theta_rf
+        """
+        dt = self.dt
+
+        # ── Encoder HRF ───────────────────────────────────────────────────────
+        input_current = (
+            torch.matmul(x,     self.x2h)
+            + torch.matmul(res_s, self.h2h)   # reservoir feedback, same as s-RON
+            + self.bias
+        )
+        enc_hz = enc_hz + dt * (input_current
+                                - self.gamma_enc * enc_hy
+                                - self.epsilon_enc * enc_hz)
+        enc_hy = enc_hy + dt * enc_hz
+        if self.fading:
+            enc_hz = enc_hz - dt * enc_hz
+            enc_hy = enc_hy - dt * enc_hy
+
+        # Encoder spike + refractory
+        enc_s = (enc_hy - self.theta_enc - enc_ref > 0).float()
+        tau_ref  = 0.25
+        ref_decay = torch.exp(torch.tensor(-dt / tau_ref, device=self.device))
+        enc_ref = enc_ref * ref_decay + enc_s
+
+        # ── Reservoir HRF ─────────────────────────────────────────────────────
+        drive  = torch.matmul(enc_s, self.enc2res)
+        res_hz = res_hz + dt * (drive
+                                - self.gamma   * res_hy
+                                - self.epsilon * res_hz)
+        res_hy = res_hy + dt * res_hz
+        if self.fading:
+            res_hz = res_hz - dt * res_hz
+            res_hy = res_hy - dt * res_hy
+
+        # Reservoir spike + refractory
+        res_s = (res_hy - self.theta_rf - res_ref > 0).float()
+        res_ref = res_ref * ref_decay + res_s
+
+        return enc_hy, enc_hz, enc_s, enc_ref, res_hy, res_hz, res_s, res_ref
+
+    # ── Full forward pass ────────────────────────────────────────────────────
+
+    def forward(self, x):
+        """
+        Returns (features, rate_dict).
+
+        features shape depends on readout_mode:
+          membrane-based modes  -> same as s-RON (hy stats)
+          spike-based modes     -> same shape but computed from res_s
+        """
+        B, L, _ = x.shape
+        n_hid   = self.n_hid
+        device  = self.device
+
+        # States
+        enc_hy  = torch.zeros(B, n_hid, device=device)
+        enc_hz  = torch.zeros(B, n_hid, device=device)
+        enc_ref = torch.zeros(B, n_hid, device=device)
+        res_hy  = torch.zeros(B, n_hid, device=device)
+        res_hz  = torch.zeros(B, n_hid, device=device)
+        res_s   = torch.zeros(B, n_hid, device=device)
+        res_ref = torch.zeros(B, n_hid, device=device)
+
+        # Accumulators
+        membrane_mode = self.readout_mode in (
+            "mean", "rms", "std", "rms_std_final"
+        )
+        spike_mode = self.readout_mode in (
+            "spikes_mean", "spikes_rms_std_final"
+        )
+
+        need_hy_sum = self.readout_mode in ("mean", "std", "rms_std_final")
+        need_hy_sq  = self.readout_mode in ("rms",  "std", "rms_std_final")
+        need_sp_sum = self.readout_mode in ("spikes_mean", "spikes_rms_std_final")
+        need_sp_sq  = self.readout_mode in ("spikes_rms_std_final",)
+
+        if need_hy_sum: hy_sum    = torch.zeros(B, n_hid, device=device)
+        if need_hy_sq:  hy_sq_sum = torch.zeros(B, n_hid, device=device)
+        if need_sp_sum: sp_sum    = torch.zeros(B, n_hid, device=device)
+        if need_sp_sq:  sp_sq_sum = torch.zeros(B, n_hid, device=device)
+
+        total_res_spikes = 0.0
+        total_enc_spikes = 0.0
+
+        for t in range(L):
+            (enc_hy, enc_hz, enc_s, enc_ref,
+             res_hy, res_hz, res_s, res_ref) = self.bio_cell(
+                x[:, t],
+                enc_hy, enc_hz, enc_ref,
+                res_hy, res_hz, res_s, res_ref,
+            )
+            if need_hy_sum: hy_sum    += res_hy
+            if need_hy_sq:  hy_sq_sum += res_hy ** 2
+            if need_sp_sum: sp_sum    += res_s
+            if need_sp_sq:  sp_sq_sum += res_s ** 2
+
+            total_res_spikes += res_s.sum()
+            total_enc_spikes += enc_s.sum()
+
+        # ── Build features ────────────────────────────────────────────────────
+        if self.readout_mode == "final":
+            features = res_hy
+
+        elif self.readout_mode == "mean":
+            features = hy_sum / L
+
+        elif self.readout_mode == "rms":
+            features = torch.sqrt(hy_sq_sum / L + 1e-8)
+
+        elif self.readout_mode == "std":
+            hy_mean  = hy_sum / L
+            features = torch.sqrt(
+                torch.clamp(hy_sq_sum / L - hy_mean ** 2, min=1e-8)
+            )
+
+        elif self.readout_mode == "rms_std_final":
+            hy_mean = hy_sum / L
+            hy_rms  = torch.sqrt(hy_sq_sum / L + 1e-8)
+            hy_std  = torch.sqrt(
+                torch.clamp(hy_sq_sum / L - hy_mean ** 2, min=1e-8)
+            )
+            features = torch.cat([hy_rms, hy_std, res_hy], dim=1)
+
+        elif self.readout_mode == "spikes_mean":
+            features = sp_sum / L     # mean spike rate per neuron
+
+        elif self.readout_mode == "spikes_rms_std_final":
+            sp_mean = sp_sum / L
+            sp_rms  = torch.sqrt(sp_sq_sum / L + 1e-8)
+            sp_std  = torch.sqrt(
+                torch.clamp(sp_sq_sum / L - sp_mean ** 2, min=1e-8)
+            )
+            # "final" for spikes = spike at last step (essentially 0 or 1)
+            features = torch.cat([sp_rms, sp_std, res_s], dim=1)
+
+        # ── Firing rates (energy estimator API) ───────────────────────────────
+        r_res   = total_res_spikes / (B * L * n_hid)
+        r_enc   = total_enc_spikes / (B * L * n_hid)
+        r_total = (r_res + r_enc) if self.count_enc_spikes else r_res
+
+        return features, {
+            "r_total": r_total.detach(),
+            "r_hrf":   r_res.detach(),   # r_hrf = reservoir rate (API compat)
+            "r_lif":   r_enc.detach(),   # r_lif = encoder rate  (API compat)
+        }
+
+
+"""
+s-RON: Spiking Random Oscillators Network  (LIF encoder + HRF reservoir).
+
+This is an updated version of spiking_coESN_rescaled_II that adds two
+spike-based readout modes to enable the membrane-vs-spikes ablation study:
+
+  "spikes_mean"          - mean spike rate per reservoir HRF neuron     (B, n_hid)
+  "spikes_rms_std_final" - concat [spike_RMS | spike_Std | spike_Final] (B, 3*n_hid)
+
+These modes extract features from the *binary spike trains* emitted by the
+reservoir HRF neurons (s, already computed during the forward pass) rather
+than from the continuous membrane oscillation state (hy).  Everything else
+-- architecture, weights, connectivity, energy tracking -- is unchanged.
+
+All pre-existing readout modes are preserved exactly:
+  "final"         (B, n_hid)
+  "mean"          (B, n_hid)
+  "rms"           (B, n_hid)
+  "std"           (B, n_hid)
+  "rms_std_final" (B, 3*n_hid)
+
+Usage
+-----
+To run the membrane ablation:
+    model = spiking_coESN_rescaled_II(..., readout_mode="rms_std_final")
+
+To run the spikes ablation:
+    model = spiking_coESN_rescaled_II(..., readout_mode="spikes_rms_std_final")
+
+The two readout modes produce the same feature dimension and identical
+parameter counts in the logistic regression readout, so the comparison
+is fair.
+"""
+
+import numpy as np
+import torch
+import torch.nn as nn
+
+from esn import spectral_norm_scaling
+
+
+class spiking_coESN_rescaled_II(nn.Module):
+    """
+    LIF encoder + HRF reservoir (s-RON).
+
+    Readout modes
+    -------------
+    Membrane-based (original):
+      "final"              hy at last timestep              (B, n_hid)
+      "mean"               temporal mean of hy              (B, n_hid)
+      "rms"                RMS of hy over time              (B, n_hid)
+      "std"                temporal std of hy               (B, n_hid)
+      "rms_std_final"      concat [RMS | Std | Final] hy    (B, 3*n_hid)
+
+    Spike-based (new — for membrane-vs-spikes ablation):
+      "spikes_mean"              mean spike rate per neuron      (B, n_hid)
+      "spikes_rms_std_final"     concat [RMS | Std | Final] of
+                                 reservoir spike trains          (B, 3*n_hid)
+
+    Notes
+    -----
+    - Spike-based features use the binary spike tensor s (0/1 per neuron per
+      timestep) already emitted during the forward pass — no extra computation.
+    - "spikes_rms_std_final" final component is res_s at the last timestep
+      (mostly 0, but preserves shape parity with rms_std_final).
+    - Both new modes produce the same feature dimension as their membrane
+      counterparts, keeping readout parameter counts identical.
+    """
+
+    def __init__(
+        self,
+        n_inp, n_hid, dt,
+        gamma, epsilon,
+        rho, input_scaling,
+        theta_lif, theta_rf,
+        tau_filter,
+        count_lif_spikes=False,
+        sparse_lif2hrf=True,  connectivity_lif2hrf=0.1,
+        sparse_hrf2lif=True,  connectivity_hrf2lif=0.1,
+        device='cpu', fading=False,
+        readout_mode='final',
+    ):
+        super().__init__()
+        self.n_hid            = n_hid
+        self.device           = device
+        self.fading           = fading
+        self.dt               = dt
+        self.theta_lif        = theta_lif
+        self.theta_rf         = theta_rf
+        self.tau_filter       = tau_filter
+        self.count_lif_spikes = count_lif_spikes
+        self.sparse_lif2hrf   = sparse_lif2hrf
+        self.connectivity_lif2hrf = connectivity_lif2hrf
+        self.sparse_hrf2lif   = sparse_hrf2lif
+        self.connectivity_hrf2lif = connectivity_hrf2lif
+
+        _valid_modes = (
+            "final", "mean", "rms", "std", "rms_std_final",
+            "spikes_mean", "spikes_rms_std_final",          # new
+        )
+        assert readout_mode in _valid_modes, (
+            f"readout_mode must be one of {_valid_modes}, got '{readout_mode}'"
+        )
+        self.readout_mode = readout_mode
+
+        # ── HRF parameters ────────────────────────────────────────────────────
         if isinstance(gamma, tuple):
             gamma_min, gamma_max = gamma
-            self.gamma = torch.rand(n_hid, device=device) * (gamma_max - gamma_min) + gamma_min
+            self.gamma = (
+                torch.rand(n_hid, device=device) * (gamma_max - gamma_min)
+                + gamma_min
+            )
         else:
             self.gamma = torch.tensor(gamma, device=device)
             gamma_min = gamma_max = gamma
 
         if isinstance(epsilon, tuple):
             eps_min, eps_max = epsilon
-            self.epsilon = torch.rand(n_hid, device=device) * (eps_max - eps_min) + eps_min
+            self.epsilon = (
+                torch.rand(n_hid, device=device) * (eps_max - eps_min)
+                + eps_min
+            )
         else:
             self.epsilon = torch.tensor(epsilon, device=device)
             eps_min = eps_max = epsilon
 
-        # ===== HRF->HRF Recurrent Weights (POTENTIALLY SPARSE) =====
+        # ── HRF->LIF recurrent weights h2h ───────────────────────────────────
         h2h = 2 * (2 * torch.rand(n_hid, n_hid) - 1)
 
         if gamma_min == gamma_max and eps_min == eps_max and gamma_max == 1:
-            leaky = dt**2
-            I = torch.eye(n_hid)
-            h2h = h2h * leaky + (I * (1 - leaky))
-            h2h = spectral_norm_scaling(h2h, rho)
-            h2h = (h2h + I * (leaky - 1)) * (1 / leaky)
+            leaky = dt ** 2
+            I     = torch.eye(n_hid)
+            h2h   = h2h * leaky + (I * (1 - leaky))
+            h2h   = spectral_norm_scaling(h2h, rho)
+            h2h   = (h2h + I * (leaky - 1)) * (1 / leaky)
         else:
             h2h = spectral_norm_scaling(h2h, rho)
 
         if sparse_hrf2lif:
-            h2h = h2h.to(device)
-            mask_hrf2lif = (torch.rand(n_hid, n_hid, device=device) < connectivity_hrf2lif).float()
-            h2h = h2h * mask_hrf2lif
-            n_connections_hrf2lif = mask_hrf2lif.sum().item()
-            self.n_hrf2lif_connections = n_connections_hrf2lif
-            print(f"HRF->LIF sparse recurrent connectivity: {n_connections_hrf2lif}/{n_hid**2} connections ({connectivity_hrf2lif*100:.1f}%)")
+            h2h  = h2h.to(device)
+            mask = (torch.rand(n_hid, n_hid, device=device) < connectivity_hrf2lif).float()
+            h2h  = h2h * mask
+            self.n_hrf2lif_connections = int(mask.sum().item())
+            print(f"HRF->LIF sparse: {self.n_hrf2lif_connections}/{n_hid**2} "
+                  f"({connectivity_hrf2lif*100:.1f}%)")
         else:
             h2h = h2h.to(device)
             self.n_hrf2lif_connections = n_hid ** 2
-            print(f"HRF->LIF dense recurrent connectivity: {n_hid**2}/{n_hid**2} connections (100%)")
+            print(f"HRF->LIF dense: {n_hid**2}/{n_hid**2} (100%)")
 
         self.h2h = nn.Parameter(h2h, requires_grad=False)
 
-        # Input weights (always dense)
-        x2h = torch.rand(n_inp, n_hid) * input_scaling
-        self.x2h = nn.Parameter(x2h, requires_grad=False)
-
-        # Rescaled bias
+        # ── Input weights ─────────────────────────────────────────────────────
+        x2h  = torch.rand(n_inp, n_hid) * input_scaling
         bias = (torch.rand(n_hid) * 2 - 1) * input_scaling
+        self.x2h  = nn.Parameter(x2h,  requires_grad=False)
         self.bias = nn.Parameter(bias, requires_grad=False)
 
-        # ===== LIF->HRF Synaptic Weights (POTENTIALLY SPARSE) =====
+        # ── LIF->HRF synaptic weights ─────────────────────────────────────────
         if sparse_lif2hrf:
             lif2hrf_full = (torch.rand(n_hid, n_hid, device=device) * 2 - 1) * 2.0
-            mask_lif2hrf = (torch.rand(n_hid, n_hid, device=device) < connectivity_lif2hrf).float()
-            lif2hrf = lif2hrf_full * mask_lif2hrf
-            n_connections_lif2hrf = mask_lif2hrf.sum().item()
-            self.n_lif2hrf_connections = n_connections_lif2hrf
-            print(f"LIF->HRF sparse connectivity: {n_connections_lif2hrf}/{n_hid**2} connections ({connectivity_lif2hrf*100:.1f}%)")
+            mask         = (torch.rand(n_hid, n_hid, device=device) < connectivity_lif2hrf).float()
+            lif2hrf      = lif2hrf_full * mask
+            self.n_lif2hrf_connections = int(mask.sum().item())
+            print(f"LIF->HRF sparse: {self.n_lif2hrf_connections}/{n_hid**2} "
+                  f"({connectivity_lif2hrf*100:.1f}%)")
         else:
             lif2hrf = (torch.rand(n_hid, n_hid, device=device) * 2 - 1) * 2.0
             self.n_lif2hrf_connections = n_hid ** 2
-            print(f"LIF->HRF dense connectivity: {n_hid**2}/{n_hid**2} connections (100%)")
+            print(f"LIF->HRF dense: {n_hid**2}/{n_hid**2} (100%)")
 
         self.lif2hrf = nn.Parameter(lif2hrf, requires_grad=False)
 
-        # Spike Gain
-        self.spike_gain = nn.Parameter(torch.tensor(1.0, device=device), requires_grad=False)
+        self.spike_gain = nn.Parameter(
+            torch.tensor(1.0, device=device), requires_grad=False
+        )
 
+    # ── Single timestep ──────────────────────────────────────────────────────
 
     def bio_cell(self, x, hy, hz, lif_v, s, ref_period=None):
-        dt = self.dt
-        device = self.device
+        dt        = self.dt
+        device    = self.device
         theta_lif = self.theta_lif
-        theta_rf = self.theta_rf
-
-        # ==== LIF parameters ====
+        theta_rf  = self.theta_rf
         lif_tau_m = 20.0
-        lif_tau_ref = 1e9
-        spike_gain = self.spike_gain
+        tau_ref   = 0.25
+        alpha = beta = 0.0
 
-        # ==== HRF parameters ====
-        alpha = 0.0
-        beta = 0.0
-        tau_ref = 0.25
-
-        # ==== Input drive (includes sparse HRF->HRF recurrence) ====
-        input_current = torch.matmul(x, self.x2h) + torch.matmul(s, self.h2h) + self.bias
-
-        # ==== LIF membrane update ====
+        # Encoder LIF
+        input_current = (
+            torch.matmul(x,  self.x2h)
+            + torch.matmul(s, self.h2h)
+            + self.bias
+        )
         lif_v = lif_v + dt * (-lif_v / lif_tau_m + input_current)
         lif_s = (lif_v > theta_lif).float()
         lif_v = lif_v - lif_s * theta_lif
 
-        # ==== HRF oscillator dynamics (with sparse LIF->HRF coupling) ====
+        # Reservoir HRF
         drive = torch.matmul(lif_s, self.lif2hrf)
-
-        hz = hz + dt * (drive - self.gamma * hy - self.epsilon * hz)
+        hz    = hz + dt * (drive - self.gamma * hy - self.epsilon * hz)
         if self.fading:
             hz = hz - dt * hz
         hy = hy + dt * hz
         if self.fading:
             hy = hy - dt * hy
 
-        # ==== HRF spike + reset + refractory ====
         if ref_period is None:
             ref_period = torch.zeros_like(hz)
 
         s = (hy - theta_rf - ref_period > 0).float()
-
         hy = hy * (1 - s * alpha)
         hz = hz * (1 - s * beta)
 
-        ref_decay = torch.exp(-torch.as_tensor(dt / tau_ref, device=device))
+        ref_decay  = torch.exp(
+            torch.as_tensor(-dt / tau_ref, device=device)
+        )
         ref_period = ref_period * ref_decay + s
 
         return hy, hz, s, ref_period, lif_v, lif_s
 
+    # ── Full forward pass ────────────────────────────────────────────────────
+
     def forward(self, x):
-        """
-        Forward pass. Output feature size depends on readout_mode:
-          "final"         -> (B, n_hid)    hy at final time step
-          "mean"          -> (B, n_hid)    temporal mean of hy
-          "rms_std_final" -> (B, 3*n_hid)  [RMS | Std | Final]
-        """
-        B = x.size(0)
-        L = x.size(1)
-        n_hid = self.n_hid
-        device = self.device
+        B, L, _ = x.shape
+        n_hid   = self.n_hid
+        device  = self.device
 
-        # Initialize states
-        hy        = torch.zeros(B, n_hid, device=device)
-        hz        = torch.zeros(B, n_hid, device=device)
-        ref_period= torch.zeros(B, n_hid, device=device)
-        s         = torch.zeros(B, n_hid, device=device)
-        lif_v     = torch.zeros(B, n_hid, device=device)
+        hy         = torch.zeros(B, n_hid, device=device)
+        hz         = torch.zeros(B, n_hid, device=device)
+        ref_period = torch.zeros(B, n_hid, device=device)
+        s          = torch.zeros(B, n_hid, device=device)
+        lif_v      = torch.zeros(B, n_hid, device=device)
 
-        # NEW: only allocate accumulators when the readout mode actually needs them
-        need_stats = self.readout_mode in ("mean", "rms_std_final")
-        if need_stats:
-            hy_sum    = torch.zeros(B, n_hid, device=device)
-            hy_sq_sum = torch.zeros(B, n_hid, device=device)
+        # Accumulator flags
+        need_hy_sum = self.readout_mode in ("mean", "std", "rms_std_final")
+        need_hy_sq  = self.readout_mode in ("rms",  "std", "rms_std_final")
+        need_sp_sum = self.readout_mode in ("spikes_mean", "spikes_rms_std_final")
+        need_sp_sq  = self.readout_mode in ("spikes_rms_std_final",)
 
-        # Spike counting for energy analysis
+        if need_hy_sum: hy_sum    = torch.zeros(B, n_hid, device=device)
+        if need_hy_sq:  hy_sq_sum = torch.zeros(B, n_hid, device=device)
+        if need_sp_sum: sp_sum    = torch.zeros(B, n_hid, device=device)
+        if need_sp_sq:  sp_sq_sum = torch.zeros(B, n_hid, device=device)
+
         total_hrf_spikes = 0.0
         total_lif_spikes = 0.0
 
@@ -434,29 +847,50 @@ class spiking_coESN_rescaled_II(nn.Module):
             hy, hz, s, ref_period, lif_v, lif_s = self.bio_cell(
                 x[:, t], hy, hz, lif_v, s, ref_period=ref_period
             )
-
-            # NEW: only accumulate when needed
-            if need_stats:
-                hy_sum    += hy
-                hy_sq_sum += hy ** 2
+            if need_hy_sum: hy_sum    += hy
+            if need_hy_sq:  hy_sq_sum += hy ** 2
+            if need_sp_sum: sp_sum    += s
+            if need_sp_sq:  sp_sq_sum += s ** 2
 
             total_hrf_spikes += s.sum()
             total_lif_spikes += lif_s.sum()
 
-        # NEW: build features according to readout_mode
+        # ── Features ──────────────────────────────────────────────────────────
         if self.readout_mode == "final":
-            features = hy                                            # (B, n_hid)
+            features = hy
 
         elif self.readout_mode == "mean":
-            features = hy_sum / L                                    # (B, n_hid)
+            features = hy_sum / L
+
+        elif self.readout_mode == "rms":
+            features = torch.sqrt(hy_sq_sum / L + 1e-8)
+
+        elif self.readout_mode == "std":
+            hy_mean  = hy_sum / L
+            features = torch.sqrt(
+                torch.clamp(hy_sq_sum / L - hy_mean ** 2, min=1e-8)
+            )
 
         elif self.readout_mode == "rms_std_final":
-            hy_mean  = hy_sum / L
-            hy_rms   = torch.sqrt(hy_sq_sum / L + 1e-8)
-            hy_std   = torch.sqrt(torch.clamp(hy_sq_sum / L - hy_mean ** 2, min=1e-8))
-            features = torch.cat([hy_rms, hy_std, hy], dim=1)       # (B, 3*n_hid)
+            hy_mean = hy_sum / L
+            hy_rms  = torch.sqrt(hy_sq_sum / L + 1e-8)
+            hy_std  = torch.sqrt(
+                torch.clamp(hy_sq_sum / L - hy_mean ** 2, min=1e-8)
+            )
+            features = torch.cat([hy_rms, hy_std, hy], dim=1)
 
-        # Compute average firing rates for energy analysis
+        elif self.readout_mode == "spikes_mean":
+            features = sp_sum / L
+
+        elif self.readout_mode == "spikes_rms_std_final":
+            sp_mean = sp_sum / L
+            sp_rms  = torch.sqrt(sp_sq_sum / L + 1e-8)
+            sp_std  = torch.sqrt(
+                torch.clamp(sp_sq_sum / L - sp_mean ** 2, min=1e-8)
+            )
+            features = torch.cat([sp_rms, sp_std, s], dim=1)
+
+        # ── Rates ─────────────────────────────────────────────────────────────
         r_hrf   = total_hrf_spikes / (B * L * n_hid)
         r_lif   = total_lif_spikes / (B * L * n_hid)
         r_total = (r_hrf + r_lif) if self.count_lif_spikes else r_hrf
@@ -464,17 +898,15 @@ class spiking_coESN_rescaled_II(nn.Module):
         return features, {
             "r_total": r_total.detach(),
             "r_hrf":   r_hrf.detach(),
-            "r_lif":   r_lif.detach()
+            "r_lif":   r_lif.detach(),
         }
 
+
+
+        
 '''
-
-
-
-
 class spiking_coESN_rescaled_II(nn.Module):
     """
-    Spiking reservoir-only version (no trainable readout).
     Batch-first input (B, L, I)
     Adds customizable LIF/HRF thresholds and feature options, including filtered spikes.
     
@@ -725,7 +1157,7 @@ class spiking_coESN_rescaled_II(nn.Module):
             "r_hrf":   r_hrf.detach(),
             "r_lif":   r_lif.detach()
         }
-
+'''
 
 
 # --- RESCALED SPIKING coESN (Reservoir only) ---

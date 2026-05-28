@@ -92,12 +92,14 @@ def main():
     # Readout — best C from search was 0.1
     parser.add_argument('--readout_C', type=float, default=0.1,
                        help="Inverse regularization for logistic regression")
+    #parser.add_argument('--readout_mode', type=str, default='final',
+                       #choices=['final', 'mean', 'rms_std_final'],
+                       #help="Reservoir readout strategy: "
+                            #"'final' (last hy, n_hid features), "
+                            #"'mean' (temporal mean, n_hid features), "
+                            #"'rms_std_final' (RMS+Std+Final, 3*n_hid features)")
     parser.add_argument('--readout_mode', type=str, default='final',
-                       choices=['final', 'mean', 'rms_std_final'],
-                       help="Reservoir readout strategy: "
-                            "'final' (last hy, n_hid features), "
-                            "'mean' (temporal mean, n_hid features), "
-                            "'rms_std_final' (RMS+Std+Final, 3*n_hid features)")
+                    choices=['final', 'mean', 'rms', 'std', 'rms_std_final', 'spikes_mean'])
 
     # Results
     parser.add_argument('--results_dir', type=str, default='results_fordA')

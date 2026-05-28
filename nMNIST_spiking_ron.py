@@ -180,8 +180,10 @@ def main():
     parser.add_argument('--test_trials', type=int, default=5)
     parser.add_argument('--data_dir',    type=str, default='data/NMNIST')
     parser.add_argument('--readout_C', type=float, default=0.1)
+    #parser.add_argument('--readout_mode', type=str, default='final',
+                        #choices=['final', 'mean', 'rms_std_final'])
     parser.add_argument('--readout_mode', type=str, default='final',
-                        choices=['final', 'mean', 'rms_std_final'])
+                    choices=['final', 'mean', 'rms', 'std', 'rms_std_final', 'spikes_mean'])
     parser.add_argument('--results_dir', type=str, default='results_nmnist')
 
     args = parser.parse_args()

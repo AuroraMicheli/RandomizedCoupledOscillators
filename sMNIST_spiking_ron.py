@@ -61,7 +61,7 @@ def main():
     parser = argparse.ArgumentParser(description='Spiking RON on Sequential MNIST')
 
     # Model architecture
-    parser.add_argument('--n_hid',  type=int, default=256)
+    parser.add_argument('--n_hid',  type=int, default=800)
     parser.add_argument('--batch',  type=int, default=256)
 
     # Oscillator parameters
@@ -96,12 +96,14 @@ def main():
     # Readout
     parser.add_argument('--readout_C', type=float, default=1.0,
                         help="Inverse regularization for logistic regression")
+    #parser.add_argument('--readout_mode', type=str, default='final',
+                        #choices=['final', 'mean', 'rms_std_final'],
+                        #help="Reservoir readout strategy: "
+                             #"'final' (last hy, n_hid features), "
+                             #"'mean' (temporal mean, n_hid features), "
+                             #"'rms_std_final' (RMS+Std+Final, 3*n_hid features)")
     parser.add_argument('--readout_mode', type=str, default='final',
-                        choices=['final', 'mean', 'rms_std_final'],
-                        help="Reservoir readout strategy: "
-                             "'final' (last hy, n_hid features), "
-                             "'mean' (temporal mean, n_hid features), "
-                             "'rms_std_final' (RMS+Std+Final, 3*n_hid features)")
+                    choices=['final', 'mean', 'rms', 'std', 'rms_std_final', 'spikes_mean'])
 
     # Results
     parser.add_argument('--results_dir', type=str, default='results_smnist')

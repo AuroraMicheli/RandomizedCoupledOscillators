@@ -894,18 +894,40 @@ def memory_capacity_curves(states, u, washout, k_max):
     states: (T, n_hid)
     u:      (T,)
     Returns:
-      mc_per_k : (k_max,)  array of r^2 per delay
+      mc_per_k : (k_max,)  array of r^2 per delay. Returns all zeros if the
+                 reservoir states are not finite (reservoir divergence under
+                 i.i.d. noise at this input scale, a known limitation of
+                 classical MC on spiking oscillatory reservoirs).
     """
     T, n_hid = states.shape
     mc = np.zeros(k_max)
-    # Training window goes from max(k_max, washout) to T
+
+    # Guard against non-finite reservoir states (HRF may diverge under
+    # i.i.d. noise input depending on scaling / thresholds).
+    if not np.all(np.isfinite(states)):
+        n_bad = int((~np.isfinite(states)).sum())
+        print(f"    WARNING: reservoir states contain {n_bad} non-finite "
+              f"values under i.i.d. noise input — MC cannot be computed. "
+              f"Returning zeros. (This typically means the noise amplitude "
+              f"is too large for the tuned HRF operating point.)")
+        return mc
+
     start = max(k_max, washout)
-    # Feature matrix (with bias col)
     X = np.hstack([states[start:T], np.ones((T - start, 1))])
-    # Precompute solver (ridge for numerical stability)
+
+    # Also guard the feature matrix
+    if not np.all(np.isfinite(X)):
+        print("    WARNING: non-finite values in feature matrix — MC skipped.")
+        return mc
+
     alpha = 1e-6
     A = X.T @ X + alpha * np.eye(X.shape[1])
-    A_inv = np.linalg.pinv(A)
+
+    try:
+        A_inv = np.linalg.pinv(A)
+    except np.linalg.LinAlgError as e:
+        print(f"    WARNING: pinv failed ({e}) — MC skipped.")
+        return mc
 
     for k in range(1, k_max + 1):
         target = u[start - k:T - k]
@@ -914,13 +936,13 @@ def memory_capacity_curves(states, u, washout, k_max):
             continue
         w = A_inv @ X.T @ target
         y_pred = X @ w
-        # r^2 = (cov(y,t) / (std(y)*std(t)))^2
         cov = np.cov(y_pred, target, ddof=0)
         denom = cov[0, 0] * cov[1, 1]
-        if denom < 1e-12:
+        if denom < 1e-12 or not np.isfinite(denom):
             mc[k-1] = 0.0
         else:
-            mc[k-1] = float(max(0.0, cov[0, 1] ** 2 / denom))
+            val = cov[0, 1] ** 2 / denom
+            mc[k-1] = float(max(0.0, val)) if np.isfinite(val) else 0.0
     return mc
 
 
@@ -1039,10 +1061,10 @@ def _run_cv_probe(X_hrf, X_lif, y, label_scaled=True, n_splits_max=5,
     with warnings.catch_warnings():
         warnings.simplefilter("ignore")
         s_h = cross_val_score(
-            LogisticRegression(max_iter=1000, C=C, n_jobs=-1),
+            LogisticRegression(max_iter=5000, C=C, n_jobs=-1),
             X_hrf, y, cv=skf, n_jobs=-1)
         s_l = cross_val_score(
-            LogisticRegression(max_iter=1000, C=C, n_jobs=-1),
+            LogisticRegression(max_iter=5000, C=C, n_jobs=-1),
             X_lif, y, cv=skf, n_jobs=-1)
     return (float(s_h.mean()), float(s_h.std()),
             float(s_l.mean()), float(s_l.std()), int(n_splits))
@@ -1084,11 +1106,11 @@ def run_linear_probe(hrf_model, lif_model, test_loader, train_loader,
         X_train_lif_s = sc_l.transform(X_train_lif)
         X_test_lif_s  = sc_l.transform(X_test_lif)
 
-        clf_h = LogisticRegression(max_iter=1000, C=1.0, n_jobs=-1)
+        clf_h = LogisticRegression(max_iter=5000, C=1.0, n_jobs=-1)
         clf_h.fit(X_train_hrf_s, y_train)
         acc_h = float(clf_h.score(X_test_hrf_s, y_test))
 
-        clf_l = LogisticRegression(max_iter=1000, C=1.0, n_jobs=-1)
+        clf_l = LogisticRegression(max_iter=5000, C=1.0, n_jobs=-1)
         clf_l.fit(X_train_lif_s, y_train)
         acc_l = float(clf_l.score(X_test_lif_s, y_test))
 
